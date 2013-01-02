@@ -53,7 +53,7 @@ public class ForwardCrawler extends Job {
 							JPA.em().getTransaction().commit();
 						}
 					} catch (Exception e) {
-						Logger.error(e, "Error in single post: %s", post);
+						Logger.error(e, "Error in single post: %s, current: %d", post, current);
 					}
 				} else {
 					state = "multiple-post";
@@ -83,7 +83,7 @@ public class ForwardCrawler extends Job {
 				Logger.error(e, "Exception in forward crawler. state: %s current: %d", state, current);
 			} finally {
 				try {
-					Thread.sleep(31000);
+					Thread.sleep(35000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
