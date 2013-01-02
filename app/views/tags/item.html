@@ -1,0 +1,43 @@
+<tr>
+	<td align=right valign=top class="title">${_index}.</td>
+	<td width="5px;"></td>
+	<td class="title"><a href="${_item.url}" target="_blank">${_item.title}</a>
+	#{if _item.comhead}
+		<span class="comhead"> (${_item.comhead}) </span>
+	#{/if}
+	</td>
+</tr>
+<tr>
+	<td colspan="2"></td>
+	<td class="subtext"><span id=score_${_item.hnid}>
+			#{if _item.points > -1}
+				${_item.points}
+				#{if _item.points > 1}
+					points
+				#{/if}
+				#{else}
+					point
+				#{/else}
+			#{/if}
+			#{else}
+				0 point
+			#{/else}
+			</span> by <a href="http://news.ycombinator.com/user?id=${_item.user}"
+		target="_blank">${_item.user}</a> ${new Date(_item.date.getTime()).since()} | <a
+		href="http://news.ycombinator.com/item?id=${_item.hnid}"
+		target="_blank">
+			#{if _item.comment > -1}
+				${_item.comment}
+				#{if _item.comment > 1}
+					comments
+				#{/if}
+				#{else}
+					comments
+				#{/else}
+			#{/if}
+			#{else}
+				comments
+			#{/else}
+	</a></td>
+</tr>
+<tr style="height: 5px"></tr>
