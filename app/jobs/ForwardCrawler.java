@@ -230,6 +230,7 @@ public class ForwardCrawler extends Job {
 			if (title == null || url == null || comhead == null || user == null
 					|| time == null || hnid == -1 || points == -1) {
 				Logger.error("Something wrong titleHtml: %s subText: %s", titleHtml, subText);
+				return null;
 			}
 			item = new Item(title, url, comhead, user, time, hnid, points,
 					comment);
@@ -297,7 +298,7 @@ public class ForwardCrawler extends Job {
 	public static void main(String[] args) {
 		// boolean child =
 		ForwardCrawler fw = new ForwardCrawler();
-		String itemStr = fw.extractPost(29);
+		String itemStr = fw.extractPost(4998199);
 		Item item = fw.extractItem(itemStr);
 		System.err.println("stop");
 
