@@ -10,9 +10,9 @@ $PLAY stop $HNTOPLINKS_PROD
 
 rm -Rf $HNTOPLINKS_PROD
 mkdir $HNTOPLINKS_PROD
-cp -R $HNTOPLINKS_SRC/* $TCOMMERCE_PROD/
+cp -R $HNTOPLINKS_SRC/* $HNTOPLINKS_PROD/
 rm $HNTOPLINKS_PROD/README.md
 rm $HNTOPLINKS_PROD/build.sh
 cd $HNTOPLINKS_PROD
 $PLAY deps --sync
-$PLAY start -Dpidfile.path=$TCOMMERCE_PROD/server.pid --%prod
+$PLAY start -Dpidfile.path=$HNTOPLINKS_PROD/server.pid --%prod
