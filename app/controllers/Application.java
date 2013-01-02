@@ -12,7 +12,7 @@ public class Application extends Controller {
     public static void index() {
     	renderArgs.put("activeTab", "today");
     	List<Item> items = Item.getDay();
-    	render("application/index.html",items);
+    	render("Application/index.html",items);
     }
     
     public static void today(){
@@ -21,22 +21,22 @@ public class Application extends Controller {
     public static void week(){
     	renderArgs.put("activeTab", "week");
     	List<Item> items = Item.getWeek();
-    	render("application/index.html", items);
+    	render("Application/index.html", items);
     }
     public static void month(){
     	renderArgs.put("activeTab", "month");
     	List<Item> items = Item.getMonth();
-    	render("application/index.html", items);
+    	render("Application/index.html", items);
     }
     public static void year(){
     	renderArgs.put("activeTab", "year");
     	List<Item> items = Item.getYear();
-    	render("application/index.html", items);
+    	render("Application/index.html", items);
     }
     public static void all(){
     	renderArgs.put("activeTab", "all");
     	List<Item> items = Item.getAll();
-    	render("application/index.html",items);
+    	render("Application/index.html",items);
     }
 
 }
