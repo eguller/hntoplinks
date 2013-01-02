@@ -1,3 +1,7 @@
+.project
+.classpath
+.settings/
+.settings/*
 /eclipse
 /eclipse/*
 /tmp
