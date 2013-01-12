@@ -14,7 +14,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import models.Item;
-import models.ItemType;
 
 import play.Logger;
 import play.db.jpa.JPA;
@@ -28,16 +27,15 @@ public class ForwardCrawler extends Job {
 
 	@Override
 	public void doJob() {
+		int moreLinkCount = 0;
+		String url = "http://news.ycombinator.com";
 		parentPattern = Pattern
 				.compile("<a href=\"item\\?id=\\d+\">parent</a>");
-		long current = Item.getMax();
 		while (true) {
-			String state = "";
 			try {
-				if (Math.random() > 0.2) {
-					state = "single-post";
-
-					String post = extractPost(current++);
+				String content = extractContent(url);
+				List<String> postList = extractPosts(content);
+				for (String post : postList) {
 					try {
 						Item item = extractItem(post);
 						if (item != null) {
@@ -45,7 +43,6 @@ public class ForwardCrawler extends Job {
 							if (existing != null) {
 								item = existing.update(item);
 							}
-							item.itemType = ItemType.SINGLE;
 							if (!JPA.em().getTransaction().isActive()) {
 								JPA.em().getTransaction().begin();
 							}
@@ -53,37 +50,23 @@ public class ForwardCrawler extends Job {
 							JPA.em().getTransaction().commit();
 						}
 					} catch (Exception e) {
-						Logger.error(e, "Error in single post: %s, current: %d", post, current);
-					}
-				} else {
-					state = "multiple-post";
-					List<String> postList = extractPosts();
-					for (String post : postList) {
-						try {
-							Item item = extractItem(post);
-							if (item != null) {
-								Item existing = Item.getByHnId(item.hnid);
-								if (existing != null) {
-									item = existing.update(item);
-								}
-								item.itemType = ItemType.MULTIPLE;
-								if (!JPA.em().getTransaction().isActive()) {
-									JPA.em().getTransaction().begin();
-								}
-								item.save();
-								JPA.em().getTransaction().commit();
-							}
-						} catch (Exception e) {
-							Logger.error(e, "Error while saving multiple post: %s",
-									post);
-						}
+						Logger.error(e, "Error while saving multiple post: %s",
+								post);
 					}
 				}
+				
+				url = extractMoreLink(content);
+				moreLinkCount ++;
+				if(moreLinkCount > 5){
+					moreLinkCount = 0;
+					url = "http://news.ycombinator.com";
+				}
+				
 			} catch (Exception e) {
-				Logger.error(e, "Exception in forward crawler. state: %s current: %d", state, current);
+				Logger.error(e, "Exception in forward crawler.");
 			} finally {
 				try {
-					Thread.sleep(35000);
+					Thread.sleep(((long) (MINUTE * Math.random())) * 3 + 3);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -91,12 +74,24 @@ public class ForwardCrawler extends Job {
 		}
 	}
 
-	private List<String> extractPosts() {
-		URL yc;
-		StringBuilder sb = new StringBuilder();
+	private List<String> extractPosts(String content) {
 		List<String> postList = null;
+		String mainTable = extractSubStr(content,
+				"<table border=0 cellpadding=0 cellspacing=0>", "</table>");
+		postList = Arrays.asList(mainTable
+				.split("<tr><td align=right valign=top class=\"title\">"));
+		if (postList.size() > 0 && postList.get(0).length() == 0) {
+			return postList.subList(1, postList.size());
+		} else {
+			return postList;
+		}
+	}
+
+	private String extractContent(String url) {
+		StringBuilder sb = new StringBuilder();
 		try {
-			yc = new URL("http://news.ycombinator.com");
+			URL yc;
+			yc = new URL(url);
 			BufferedReader in = new BufferedReader(new InputStreamReader(
 					yc.openStream()));
 
@@ -105,10 +100,6 @@ public class ForwardCrawler extends Job {
 				sb.append(inputLine);
 			}
 			in.close();
-			String mainTable = extractSubStr(sb.toString(),
-					"<table border=0 cellpadding=0 cellspacing=0>", "</table>");
-			postList = Arrays.asList(mainTable
-					.split("<tr><td align=right valign=top class=\"title\">"));
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -118,40 +109,16 @@ public class ForwardCrawler extends Job {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if (postList.size() > 0 && postList.get(0).length() == 0) {
-			return postList.subList(1, postList.size());
-		} else {
-			return postList;
-		}
+		return sb.toString();
 	}
 
-	private String extractPost(long itemId) {
-		// <textarea name="text" rows="6" cols="60"></textarea>
-		String post = null;
-		URL yc;
-		try {
-			yc = new URL("http://news.ycombinator.com/item?id=" + itemId);
-			BufferedReader in = new BufferedReader(new InputStreamReader(
-					yc.openStream()));
-
-			String inputLine;
-			while ((inputLine = in.readLine()) != null) {
-				if (inputLine.contains("<title>")) {
-					post = inputLine;
-					break;
-				}
-			}
-			in.close();
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SocketException e) {
-			Logger.error(e, "IP banned by hn");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	private String extractMoreLink(String content) {
+		String subStr = extractSubStr(content, "href=\"/x?fnid=", "\"");
+		if (subStr == null) {
+			return "http://news.ycombinator.com";
+		} else {
+			return "http://news.ycombinator.com/x?fnid=" + subStr;
 		}
-		return post;
 	}
 
 	public Item extractItem(String post) {
@@ -167,10 +134,10 @@ public class ForwardCrawler extends Job {
 			int comment = -1;
 			String titleHtml = extractSubStr(post, "<td class=\"title\">",
 					"</td>");
-			if("[dead]".equals(titleHtml)){
+			if ("[dead]".equals(titleHtml)) {
 				throw new IllegalArgumentException("Dead post: " + post);
 			}
-			
+
 			if (titleHtml == null) {
 				Logger.error("Unexpected text: %s", post);
 				throw new IllegalArgumentException("Unexpected text: " + post);
@@ -229,7 +196,8 @@ public class ForwardCrawler extends Job {
 			}
 			if (title == null || url == null || comhead == null || user == null
 					|| time == null || hnid == -1 || points == -1) {
-				Logger.error("Something wrong titleHtml: %s subText: %s", titleHtml, subText);
+				Logger.error("Something wrong titleHtml: %s subText: %s",
+						titleHtml, subText);
 				return null;
 			}
 			item = new Item(title, url, comhead, user, time, hnid, points,
@@ -296,14 +264,6 @@ public class ForwardCrawler extends Job {
 	}
 
 	public static void main(String[] args) {
-		// boolean child =
-		ForwardCrawler fw = new ForwardCrawler();
-		String itemStr = fw.extractPost(4998199);
-		Item item = fw.extractItem(itemStr);
-		System.err.println("stop");
-
-		// ForwardCrawler.isChild("csdcsdcdscds<a href=\"item?id=4992603\">parent</a>csdcsdcdscds");
-		// System.out.println(child);
 	}
 
 }

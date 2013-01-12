@@ -25,7 +25,6 @@ public class Item extends Model{
 	public int points;
 	public Date date;
 	@Enumerated(EnumType.STRING) 
-	public ItemType itemType;
 	public String user;
 	public int comment;
 	public String title;
@@ -50,16 +49,6 @@ public class Item extends Model{
 		this.comment = comment;
 		this.title = title;
 		this.points = points;
-	}
-	
-	public static long getMax(){
-		List<Item> itemList = Item.find("itemType=?1 order by hnid desc", ItemType.SINGLE).fetch(1);
-		if(itemList.isEmpty()){
-			return 0;
-		}
-		else{
-			return itemList.get(0).hnid;
-		}
 	}
 	
 	public static Item getByHnId(long hnid){
