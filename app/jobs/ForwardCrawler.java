@@ -57,7 +57,7 @@ public class ForwardCrawler extends Job {
 				
 				url = extractMoreLink(content);
 				moreLinkCount ++;
-				if(moreLinkCount > 5){
+				if(moreLinkCount > 10){
 					moreLinkCount = 0;
 					url = "http://news.ycombinator.com";
 				}
@@ -66,7 +66,7 @@ public class ForwardCrawler extends Job {
 				Logger.error(e, "Exception in forward crawler.");
 			} finally {
 				try {
-					Thread.sleep(((long) (MINUTE * Math.random())) * 3 + 3);
+					Thread.sleep(((long) (MINUTE * Math.random())) * 3 + 3 * MINUTE);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -87,7 +87,7 @@ public class ForwardCrawler extends Job {
 		}
 	}
 
-	private String extractContent(String url) {
+	private static String extractContent(String url) {
 		StringBuilder sb = new StringBuilder();
 		try {
 			URL yc;
@@ -113,6 +113,9 @@ public class ForwardCrawler extends Job {
 	}
 
 	private String extractMoreLink(String content) {
+		if(content.contains("<a href=\"news2\">More</a>")){
+			return "http://news.ycombinator.com/news2";
+		}
 		String subStr = extractSubStr(content, "href=\"/x?fnid=", "\"");
 		if (subStr == null) {
 			return "http://news.ycombinator.com";
@@ -121,7 +124,7 @@ public class ForwardCrawler extends Job {
 		}
 	}
 
-	public Item extractItem(String post) {
+	public static Item extractItem(String post) {
 		Item item = null;
 		if (post != null && !isChild(post)) {
 			String url = null;
@@ -194,7 +197,7 @@ public class ForwardCrawler extends Job {
 				String timeAgo = extractSubStr(subText, user + "</a> ", " ago");
 				time = findDate(timeAgo);
 			}
-			if (title == null || url == null || comhead == null || user == null
+			if (title == null || url == null || user == null
 					|| time == null || hnid == -1 || points == -1) {
 				Logger.error("Something wrong titleHtml: %s subText: %s",
 						titleHtml, subText);
@@ -207,7 +210,7 @@ public class ForwardCrawler extends Job {
 		return item;
 	}
 
-	public Date findDate(String timeAgo) {
+	public static Date findDate(String timeAgo) {
 		if (timeAgo == null) {
 			return null;
 		}
@@ -225,7 +228,7 @@ public class ForwardCrawler extends Job {
 		return new Date(postDate);
 	}
 
-	private String extractSubStr(String text, String begin, String end) {
+	private static String extractSubStr(String text, String begin, String end) {
 		if (begin == null || end == null)
 			return null;
 		int beginIndex = text.indexOf(begin);
@@ -238,7 +241,7 @@ public class ForwardCrawler extends Job {
 		return text.substring(beginIndex, endIndex);
 	}
 
-	private String extractSubStrRegex(String text, String begin, String end) {
+	private static String extractSubStrRegex(String text, String begin, String end) {
 		if (text == null || begin == null || end == null)
 			return null;
 		Pattern pattern = Pattern.compile(begin);
@@ -264,6 +267,8 @@ public class ForwardCrawler extends Job {
 	}
 
 	public static void main(String[] args) {
+		String fnid = extractSubStr(extractContent("http://news.ycombinator.com"), "href=\"/x?fnid=", "\"");
+		System.out.println(fnid);
 	}
 
 }
