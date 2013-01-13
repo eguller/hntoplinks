@@ -57,7 +57,7 @@ public class ForwardCrawler extends Job {
 				
 				url = extractMoreLink(content);
 				moreLinkCount ++;
-				if(moreLinkCount > 10){
+				if(moreLinkCount > 5){
 					moreLinkCount = 0;
 					url = "http://news.ycombinator.com";
 				}
