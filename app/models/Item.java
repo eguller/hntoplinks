@@ -24,10 +24,10 @@ public class Item extends Model{
 	public long hnid;
 	public int points;
 	public Date date;
-	@Enumerated(EnumType.STRING) 
 	public String user;
 	public int comment;
 	public String title;
+	public Date lastUpdate;
 	
 	public Item(String title, String url, String comhead, String user, Date date, long hnid, int points, int comment){
 		if(url == null || date == null || hnid < 0 || points < 0){
@@ -49,6 +49,7 @@ public class Item extends Model{
 		this.comment = comment;
 		this.title = title;
 		this.points = points;
+		this.lastUpdate = Calendar.getInstance().getTime();
 	}
 	
 	public static Item getByHnId(long hnid){
@@ -60,6 +61,7 @@ public class Item extends Model{
 		this.comhead = item.comhead;
 		this.url = item.url;
 		this.comment = item.comment;
+		this.lastUpdate = Calendar.getInstance().getTime();
 		return this;
 	}
 	

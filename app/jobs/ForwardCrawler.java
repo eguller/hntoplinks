@@ -66,7 +66,7 @@ public class ForwardCrawler extends Job {
 				Logger.error(e, "Exception in forward crawler.");
 			} finally {
 				try {
-					Thread.sleep(((long) (MINUTE * Math.random())) * 3 + 3 * MINUTE);
+					Thread.sleep(((long) (MINUTE * Math.random())) * 20 + 10 * MINUTE);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
