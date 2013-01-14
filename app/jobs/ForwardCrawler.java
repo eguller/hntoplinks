@@ -8,6 +8,7 @@ import java.net.SocketException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -62,6 +63,8 @@ public class ForwardCrawler extends Job {
 					url = "http://news.ycombinator.com";
 				}
 				
+				Logger.info("Last update : %t", Calendar.getInstance().getTime());
+				
 			} catch (Exception e) {
 				Logger.error(e, "Exception in forward crawler.");
 			} finally {
@@ -78,9 +81,12 @@ public class ForwardCrawler extends Job {
 		List<String> postList = null;
 		String mainTable = extractSubStr(content,
 				"<table border=0 cellpadding=0 cellspacing=0>", "</table>");
+		if(mainTable == null){
+			return Collections.EMPTY_LIST;
+		}
 		postList = Arrays.asList(mainTable
 				.split("<tr><td align=right valign=top class=\"title\">"));
-		if (postList.size() > 0 && postList.get(0).length() == 0) {
+		if (postList!= null && postList.size() > 0 && postList.get(0).length() == 0) {
 			return postList.subList(1, postList.size());
 		} else {
 			return postList;
