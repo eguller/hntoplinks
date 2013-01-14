@@ -63,7 +63,7 @@ public class ForwardCrawler extends Job {
 					url = "http://news.ycombinator.com";
 				}
 				
-				Logger.info("Last update : %t", Calendar.getInstance().getTime());
+				Logger.info("Last update : %s", Calendar.getInstance().getTime().toString());
 				
 			} catch (Exception e) {
 				Logger.error(e, "Exception in forward crawler.");
