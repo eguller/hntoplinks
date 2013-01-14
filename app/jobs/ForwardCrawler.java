@@ -77,7 +77,7 @@ public class ForwardCrawler extends Job {
 		}
 	}
 
-	private List<String> extractPosts(String content) {
+	private static List<String> extractPosts(String content) {
 		List<String> postList = null;
 		String mainTable = extractSubStr(content,
 				"<table border=0 cellpadding=0 cellspacing=0>", "</table>");
@@ -273,7 +273,8 @@ public class ForwardCrawler extends Job {
 	}
 
 	public static void main(String[] args) {
-		String fnid = extractSubStr(extractContent("http://news.ycombinator.com"), "href=\"/x?fnid=", "\"");
+		String fnid = extractContent("http://news.ycombinator.com");
+		List<String> posts = extractPosts(fnid);
 		System.out.println(fnid);
 	}
 
