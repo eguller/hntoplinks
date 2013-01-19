@@ -9,6 +9,7 @@ GET     /week                                  Application.week
 GET     /month                                  Application.month
 GET     /year                                  Application.year
 GET     /all                                  Application.all
+GET     /about                                  Application.about
 
 # Ignore favicon requests
 GET     /favicon.ico                            404

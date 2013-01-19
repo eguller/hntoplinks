@@ -58,10 +58,13 @@ public class ForwardCrawler extends Job {
 				
 				url = extractMoreLink(content);
 				moreLinkCount ++;
-				if(moreLinkCount > 5){
-					moreLinkCount = 0;
+				if(moreLinkCount == 6){
 					url = "http://news.ycombinator.com";
 				}
+                else if(moreLinkCount == 7){
+                    url = "http://news.ycombinator.com/best";
+                    moreLinkCount = 0;
+                }
 				
 				Logger.info("Last update : %s", Calendar.getInstance().getTime().toString());
 				
@@ -69,7 +72,7 @@ public class ForwardCrawler extends Job {
 				Logger.error(e, "Exception in forward crawler.");
 			} finally {
 				try {
-					Thread.sleep(((long) (MINUTE * Math.random())) * 20 + 10 * MINUTE);
+					Thread.sleep(((long) (MINUTE * Math.random())) * 10 + 5 * MINUTE);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

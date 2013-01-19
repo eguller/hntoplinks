@@ -39,4 +39,8 @@ public class Application extends Controller {
     	render("Application/index.html",items);
     }
 
+    public static void about(){
+        render("Application/about.html");
+    }
+
 }
