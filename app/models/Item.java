@@ -61,6 +61,7 @@ public class Item extends Model{
 		this.comhead = item.comhead;
 		this.url = item.url;
 		this.comment = item.comment;
+        this.title = item.title;
 		this.lastUpdate = Calendar.getInstance().getTime();
 		return this;
 	}
