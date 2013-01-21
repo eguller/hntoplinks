@@ -66,27 +66,27 @@ public class Item extends Model{
 		return this;
 	}
 	
-	public static List<Item> getAll(){
-		return getAfter(new Date(0L));
+	public static List<Item> getAll(int page){
+		return getAfter(new Date(0L), page);
 	}
 	
-	public static List<Item> getDay(){
-		return getAfter(new Date(Calendar.getInstance().getTimeInMillis() - DAY));
+	public static List<Item> getDay(int page){
+		return getAfter(new Date(Calendar.getInstance().getTimeInMillis() - DAY), page);
 	}
 	
-	public static List<Item> getWeek(){
-		return getAfter(new Date(Calendar.getInstance().getTimeInMillis() - WEEK));
+	public static List<Item> getWeek(int page){
+		return getAfter(new Date(Calendar.getInstance().getTimeInMillis() - WEEK), page);
 	}
 	
-	public static List<Item> getMonth(){
-		return getAfter(new Date(Calendar.getInstance().getTimeInMillis() - MONTH));
+	public static List<Item> getMonth(int page){
+		return getAfter(new Date(Calendar.getInstance().getTimeInMillis() - MONTH), page);
 	}
 	
-	public static List<Item> getYear(){
-		return getAfter(new Date(Calendar.getInstance().getTimeInMillis() - YEAR));
+	public static List<Item> getYear(int page){
+		return getAfter(new Date(Calendar.getInstance().getTimeInMillis() - YEAR), page);
 	}
 	
-	public static List<Item> getAfter(Date date){
-		return Item.find("date > ?1 order by points desc", date).fetch(30);
+	public static List<Item> getAfter(Date date, int page){
+		return Item.find("date > ?1 order by points desc", date).fetch(page, 30);
 	}
 }

@@ -3,13 +3,24 @@
 # ~~~~
 
 # Home page
-GET     /                                      Application.index
-GET     /today                                 Application.index
-GET     /week                                  Application.week
-GET     /month                                 Application.month
-GET     /year                                  Application.year
-GET     /all                                   Application.all
-GET     /about                                 Application.about
+GET     /                                                     Application.today(page:1)
+GET     /{<[0-9]+>page}                                       Application.today
+
+GET     /today/                                               Application.today(page:1)
+GET     /today/{<[0-9]+>page}                                 Application.today
+
+GET     /week                                                 Application.week(page:1)
+GET     /week/{<[0-9]+>page}                                  Application.week
+
+GET     /month                                                Application.month(page:1)
+GET     /month/{<[0-9]+>page}                                 Application.month
+
+GET     /year                                                 Application.year(page:1)
+GET     /year/{<[0-9]+>page}                                  Application.year
+
+GET     /all                                                  Application.all(page:1)
+GET     /all/{<[0-9]+>page}                                   Application.all
+GET     /about                                                Application.about
 
 # Ignore favicon requests
 GET     /favicon.ico                            404

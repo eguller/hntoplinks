@@ -9,34 +9,45 @@ import models.*;
 
 public class Application extends Controller {
 
-    public static void index() {
-    	renderArgs.put("activeTab", "today");
-    	List<Item> items = Item.getDay();
-    	render("Application/index.html",items);
+    public static void today(Integer page){
+        renderArgs.put("activeTab", "today");
+        if(page == null){
+            page = 1;
+        }
+        List<Item> items = Item.getDay(page);
+        render("Application/index.html",items,page);
     }
-    
-    public static void today(){
-    	index();
-    }
-    public static void week(){
+    public static void week(Integer page){
     	renderArgs.put("activeTab", "week");
-    	List<Item> items = Item.getWeek();
-    	render("Application/index.html", items);
+        if(page == null){
+            page = 1;
+        }
+    	List<Item> items = Item.getWeek(page);
+    	render("Application/index.html", items, page);
     }
-    public static void month(){
+    public static void month(Integer page){
     	renderArgs.put("activeTab", "month");
-    	List<Item> items = Item.getMonth();
-    	render("Application/index.html", items);
+        if(page == null){
+            page = 1;
+        }
+    	List<Item> items = Item.getMonth(page);
+    	render("Application/index.html", items, page);
     }
-    public static void year(){
+    public static void year(Integer page){
     	renderArgs.put("activeTab", "year");
-    	List<Item> items = Item.getYear();
-    	render("Application/index.html", items);
+        if(page == null){
+            page = 1;
+        }
+    	List<Item> items = Item.getYear(page);
+    	render("Application/index.html", items, page);
     }
-    public static void all(){
+    public static void all(Integer page){
     	renderArgs.put("activeTab", "all");
-    	List<Item> items = Item.getAll();
-    	render("Application/index.html",items);
+        if(page == null){
+            page = 1;
+        }
+    	List<Item> items = Item.getAll(page);
+    	render("Application/index.html",items, page);
     }
 
     public static void about(){
