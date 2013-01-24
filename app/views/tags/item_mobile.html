@@ -1,11 +1,11 @@
 <li>
 	<a href="${_item.url}" target="_blank">
-		<span style="font-size: 20px;">${((_page - 1) * 30) + _index}. ${_item.title}</span>
+		<span style="font-size: 16px;">${((_page - 1) * 30) + _index}. ${_item.title}</span>
 		<br>
 		#{if _item.comhead}
-			<span style="font-size: 14px;"> (${_item.comhead}) </span> <br>
+			<span style="font-size: 12px;"> (${_item.comhead}) </span> <br>
 		#{/if}
-		<span style="font-size: 11px;">
+		<span style="font-size: 9px;">
 		#{if _item.points > -1}
 			${_item.points}
 			#{if _item.points > 1}
