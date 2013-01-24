@@ -1,38 +1,38 @@
 <div data-role="navbar">
 	<ul>
 		#{if _activeTab == "today"}
-			<li><a href="/" class="ui-btn-active ui-state-persist">Today</a></li>
+			<li><a href="/" class="ui-btn-active ui-state-persist" data-transition="slide">Today</a></li>
 		#{/if}
 		#{else}
-			<li><a href="/">Today</a></li>
+			<li><a href="/" data-transition="slide">Today</a></li>
 		#{/else}
 		
 		#{if _activeTab == 'week'}
-			<li><a href="/week" class="ui-btn-active ui-state-persist">Week</a></li>		
+			<li><a href="/week" class="ui-btn-active ui-state-persist" data-transition="slide">Week</a></li>		
 		#{/if}
 		#{else}
-			<li><a href="/week">Week</a></li>
+			<li><a href="/week" data-transition="slide">Week</a></li>
 		#{/else}
 		
 		#{if _activeTab == 'month'}
-			<li><a href="/month" class="ui-btn-active ui-state-persist">Month</a></li>
+			<li><a href="/month" class="ui-btn-active ui-state-persist" data-transition="slide">Month</a></li>
 		#{/if}
 		#{else}
-			<li><a href="/month">Month</a></li>
+			<li><a href="/month" data-transition="slide">Month</a></li>
 		#{/else}
 		
 		#{if _activeTab == 'year'}
-			<li><a href="/year" class="ui-btn-active ui-state-persist">Year</a></li>
+			<li><a href="/year" class="ui-btn-active ui-state-persist" data-transition="slide">Year</a></li>
 		#{/if}
 		#{else}
-			<li><a href="/year">Year</a></li>
+			<li><a href="/year" data-transition="slide">Year</a></li>
 		#{/else}
 		
 		#{if _activeTab == 'all'}
-			<li><a href="/all" class="ui-btn-active ui-state-persist">All Time</a></li>
+			<li><a href="/all" class="ui-btn-active ui-state-persist" data-transition="slide">All</a></li>
 		#{/if}
 		#{else}
-			<li><a href="/all">All Time</a></li>
+			<li><a href="/all" data-transition="slide">All Time</a></li>
 		#{/else}
 	</ul>
 </div>
