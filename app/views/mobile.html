@@ -1,19 +1,28 @@
 <!DOCTYPE html>
-
-
 <html>
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="shortcut icon" href="@{'/public/images/favicon.ico'}">
-<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
-<style type="text/css">
-body{
-font-family: 'Source Sans Pro', sans-serif;
-}
-</style>
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css" />
+<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+<script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
+
 <title>Hacker News Top Links</title>
 </head>
 <body>
-	#{doLayout /}
+	<div data-role="page">
+		<div data-role="header" data-position="fixed">
+		#{menu_mobile activeTab:activeTab/}
+		</div>
+		<!-- /header -->
+		<div data-role="content">
+			#{doLayout /}
+		</div>
+		<!-- /content -->
+		<div data-role="footer" style="text-align: center;">
+			#{footer_mobile /}
+		</div>
+	</div>	
 	<script type="text/javascript">
 		var _gaq = _gaq || [];
 		_gaq.push([ '_setAccount', 'UA-7030369-6' ]);

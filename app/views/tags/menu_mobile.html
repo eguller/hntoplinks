@@ -1,47 +1,38 @@
-<span>
-	<b><a href="/">Hacker News Top Links</a> </b>
-	#{if _activeTab == "today"}
-		<span style="text-decoration: none;"> 
-			<a href="/">today</a>
-		</span> |
-	#{/if}
-	#{else}
-		<a href="/">today</a> |
-	#{/else}
-	
-	#{if _activeTab == 'week'}
-		<span style="text-decoration: none;"> 
-			<a href="/week">this week</a>
-		</span> |		
-	#{/if}
-	#{else}
-		<a href="/week">this week</a> |
-	#{/else}
-	
-	#{if _activeTab == 'month'}
-		<span style="text-decoration: none;"> 
-			<a href="/month">this month</a>
-		</span>	|
-	#{/if}
-	#{else}
-		<a href="/month">this month</a> |
-	#{/else}
-	
-	#{if _activeTab == 'year'}
-		<span style="text-decoration: none;"> 
-			<a href="/year">this year</a>
-		</span> |
-	#{/if}
-	#{else}
-		<a href="/year">this year</a> |
-	#{/else}
-	
-	#{if _activeTab == 'all'}
-		<span style="text-decoration: none;"> 
-			<a href="/all">all time</a>
-		</span>
-	#{/if}
-	#{else}
-		<a href="/all">all time</a> 
-	#{/else}
-</span>
+<div data-role="navbar">
+	<ul>
+		#{if _activeTab == "today"}
+			<li><a href="/" class="ui-btn-active ui-state-persist">Today</a></li>
+		#{/if}
+		#{else}
+			<li><a href="/">Today</a></li>
+		#{/else}
+		
+		#{if _activeTab == 'week'}
+			<li><a href="/week" class="ui-btn-active ui-state-persist">Week</a></li>		
+		#{/if}
+		#{else}
+			<li><a href="/week">Week</a></li>
+		#{/else}
+		
+		#{if _activeTab == 'month'}
+			<li><a href="/month" class="ui-btn-active ui-state-persist">Month</a></li>
+		#{/if}
+		#{else}
+			<li><a href="/month">Month</a></li>
+		#{/else}
+		
+		#{if _activeTab == 'year'}
+			<li><a href="/year" class="ui-btn-active ui-state-persist">Year</a></li>
+		#{/if}
+		#{else}
+			<li><a href="/year">Year</a></li>
+		#{/else}
+		
+		#{if _activeTab == 'all'}
+			<li><a href="/all" class="ui-btn-active ui-state-persist">All Time</a></li>
+		#{/if}
+		#{else}
+			<li><a href="/all">All Time</a></li>
+		#{/else}
+	</ul>
+</div>
