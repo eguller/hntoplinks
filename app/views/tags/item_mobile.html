@@ -1,0 +1,26 @@
+<li>
+	<a href="${_item.url}" style="text-decoration: none;">
+		<div style="position: absolute; text-align: right;">${((_page - 1) * 30) + _index}.</div>
+		<div style="margin-left: 20px; padding-left: 5px;">
+			<b style="font-size: 24px;">${_item.title}</b>
+			<span style="display: block;">
+				#{if _item.comhead}
+					<span class="comhead"> (${_item.comhead}) </span> <br>
+				#{/if}
+							#{if _item.points > -1}
+				${_item.points}
+				#{if _item.points > 1}
+					points
+				#{/if}
+				#{else}
+					point
+				#{/else}
+				#{/if}
+				#{else}
+					0 point
+				#{/else}
+				by ${_item.user} ${new Date(_item.date.getTime()).since()} 
+			</span>
+		</div>
+	</a>
+</li>

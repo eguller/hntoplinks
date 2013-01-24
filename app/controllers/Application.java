@@ -5,9 +5,11 @@ import play.mvc.*;
 
 import java.util.*;
 
+import com.hntoplinks.controller.HnController;
+
 import models.*;
 
-public class Application extends Controller {
+public class Application extends HnController {
 
     public static void today(Integer page){
         renderArgs.put("activeTab", "today");
@@ -15,7 +17,9 @@ public class Application extends Controller {
             page = 1;
         }
         List<Item> items = Item.getDay(page);
-        render("Application/index.html",items,page);
+        renderArgs.put("items",items);
+        renderArgs.put("page", page);
+        render("Application/index.html");
     }
     public static void week(Integer page){
     	renderArgs.put("activeTab", "week");
@@ -23,6 +27,8 @@ public class Application extends Controller {
             page = 1;
         }
     	List<Item> items = Item.getWeek(page);
+        renderArgs.put("items",items);
+        renderArgs.put("page", page);
     	render("Application/index.html", items, page);
     }
     public static void month(Integer page){
@@ -31,6 +37,8 @@ public class Application extends Controller {
             page = 1;
         }
     	List<Item> items = Item.getMonth(page);
+        renderArgs.put("items",items);
+        renderArgs.put("page", page);
     	render("Application/index.html", items, page);
     }
     public static void year(Integer page){
@@ -39,6 +47,8 @@ public class Application extends Controller {
             page = 1;
         }
     	List<Item> items = Item.getYear(page);
+        renderArgs.put("items",items);
+        renderArgs.put("page", page);
     	render("Application/index.html", items, page);
     }
     public static void all(Integer page){
@@ -47,6 +57,8 @@ public class Application extends Controller {
             page = 1;
         }
     	List<Item> items = Item.getAll(page);
+        renderArgs.put("items",items);
+        renderArgs.put("page", page);
     	render("Application/index.html",items, page);
     }
 

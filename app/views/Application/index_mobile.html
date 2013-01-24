@@ -1,0 +1,17 @@
+#{extends 'mobile.html' /}
+<div>
+#{menu_mobile /}
+</div>
+<div>
+	<ul style="list-style: none;">
+		#{list items, as:'item'}
+			#{item_mobile item:item , index: item_index, page:page /}
+		#{/list}
+		#{if items!= null && items.size() == 30 }
+			<li>Load More</li>
+		#{/if}
+		#{else}
+			<li>No more items</li>
+		#{/else}
+	</ul>
+</div>

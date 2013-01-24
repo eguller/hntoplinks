@@ -1,0 +1,47 @@
+<span>
+	<b><a href="/">Hacker News Top Links</a> </b>
+	#{if _activeTab == "today"}
+		<span style="text-decoration: none;"> 
+			<a href="/">today</a>
+		</span> |
+	#{/if}
+	#{else}
+		<a href="/">today</a> |
+	#{/else}
+	
+	#{if _activeTab == 'week'}
+		<span style="text-decoration: none;"> 
+			<a href="/week">this week</a>
+		</span> |		
+	#{/if}
+	#{else}
+		<a href="/week">this week</a> |
+	#{/else}
+	
+	#{if _activeTab == 'month'}
+		<span style="text-decoration: none;"> 
+			<a href="/month">this month</a>
+		</span>	|
+	#{/if}
+	#{else}
+		<a href="/month">this month</a> |
+	#{/else}
+	
+	#{if _activeTab == 'year'}
+		<span style="text-decoration: none;"> 
+			<a href="/year">this year</a>
+		</span> |
+	#{/if}
+	#{else}
+		<a href="/year">this year</a> |
+	#{/else}
+	
+	#{if _activeTab == 'all'}
+		<span style="text-decoration: none;"> 
+			<a href="/all">all time</a>
+		</span>
+	#{/if}
+	#{else}
+		<a href="/all">all time</a> 
+	#{/else}
+</span>

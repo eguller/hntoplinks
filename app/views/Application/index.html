@@ -9,7 +9,7 @@
 				#{list items, as:'item'}
 					#{item item:item , index: item_index, page:page /}
 				#{/list}
-                #{if items.size() == 30 }
+                #{if items!= null && items.size() == 30 }
                     <tr style="height:5px"></tr>
                     <tr style="height:10px"></tr>
                     <tr><td colspan="2"></td><td class="title"><a href="/${activeTab}/${page+1}" rel="nofollow">More</a></td></tr>
