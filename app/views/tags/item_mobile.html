@@ -1,38 +1,39 @@
 <li>
 	<a href="${_item.url}" target="_blank">
-		<span style="font-size: 16px;">${((_page - 1) * 30) + _index}. ${_item.title}</span>
+		<span style="font-size: 14px;">${((_page - 1) * 30) + _index}. ${_item.title}</span>
 		<br>
 		#{if _item.comhead}
-			<span style="font-size: 12px;"> (${_item.comhead}) </span> <br>
+			<span style="font-size: 11px;"> (${_item.comhead}) </span> 
 		#{/if}
-		<span style="font-size: 9px;">
-		#{if _item.points > -1}
-			${_item.points}
-			#{if _item.points > 1}
-				points
-			#{/if}
-			#{else}
-				point
-			#{/else}
-		#{/if}
-		#{else}
-			0 point
-		#{/else}
-		by ${_item.user} ${new Date(_item.date.getTime()).since()} 
-		</span>
-		<span class="ui-li-count ui-btn-up-c ui-btn-corner-all">
-			#{if _item.comment > -1}
+		<br><span style="font-size: 9px;">
+
+		by ${_item.user} ${new Date(_item.date.getTime()).since()} 			
+		#{if _item.comment > -1}
 			${_item.comment}
 			#{if _item.comment > 1}
 				comments
 			#{/if}
 			#{else}
-				comments
+				comment
 			#{/else}
+		#{/if}
+		#{else}
+			0 comments
+		#{/else} 
+		</span>
+		<span class="ui-li-count ui-btn-up-c ui-btn-corner-all">
+			#{if _item.points > -1}
+				${_item.points}
+				#{if _item.points > 1}
+					points
+				#{/if}
+				#{else}
+					point
+				#{/else}
 			#{/if}
 			#{else}
-				comments
-			#{/else}
+				0 point
+			#{/else}			
 		</span>
 	</a>
 </li>
