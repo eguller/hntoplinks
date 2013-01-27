@@ -1,6 +1,6 @@
-Aggregate daily, weekly, monthly, yearly and all time top links from Hacker News (http://news.ycombinator.com)
-It does a similar job as http://news.ycombinator.com/best
-Application is hosted at http://www.hntoplinks.com
+Aggregate daily, weekly, monthly, yearly and all time top links from Hacker News (http://news.ycombinator.com)<br>
+It does a similar job as http://news.ycombinator.com/best <br>
+Application is hosted at http://www.hntoplinks.com <br>
 
 See following applications for alternatives.
 <ul>
