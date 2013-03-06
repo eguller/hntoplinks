@@ -2,12 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1044b266-f818-497c-bc90-40bc4fcf9af2" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hntoplinks.ipr" afterPath="" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/hntoplinks.iws" afterPath="" />
     </list>
     <ignored path="hntoplinks.iws" />
     <ignored path=".idea/workspace.xml" />
-    <file path="/Dummy.txt" changelist="1044b266-f818-497c-bc90-40bc4fcf9af2" time="1362595447934" ignored="false" />
+    <file path="/Dummy.txt" changelist="1044b266-f818-497c-bc90-40bc4fcf9af2" time="1362595709486" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -482,7 +481,11 @@
       <created>1362595451276</created>
       <updated>1362595451276</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="delete project files">
+      <created>1362595714790</created>
+      <updated>1362595714790</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="ToolWindowManager">
