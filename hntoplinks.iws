@@ -2,11 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1044b266-f818-497c-bc90-40bc4fcf9af2" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/hntoplinks.iws" afterPath="$PROJECT_DIR$/hntoplinks.iws" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/hntoplinks.ipr" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/hntoplinks.iws" afterPath="" />
     </list>
     <ignored path="hntoplinks.iws" />
     <ignored path=".idea/workspace.xml" />
-    <file path="/Dummy.txt" changelist="1044b266-f818-497c-bc90-40bc4fcf9af2" time="1362595313177" ignored="false" />
+    <file path="/Dummy.txt" changelist="1044b266-f818-497c-bc90-40bc4fcf9af2" time="1362595447934" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -477,7 +478,11 @@
       <created>1362595322416</created>
       <updated>1362595322416</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="delete project files">
+      <created>1362595451276</created>
+      <updated>1362595451276</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -549,7 +554,7 @@
     <option name="MAXIMUM_HISTORY_ROWS" value="1000" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="update read.mb" />
+    <option name="LAST_COMMIT_MESSAGE" value="delete project files" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="false" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -570,6 +575,7 @@
     <MESSAGE value="pagination." />
     <MESSAGE value="google web master verification" />
     <MESSAGE value="update read.mb" />
+    <MESSAGE value="delete project files" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
