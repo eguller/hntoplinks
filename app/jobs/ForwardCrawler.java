@@ -6,13 +6,20 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.SocketException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import models.Item;
 
@@ -29,7 +36,7 @@ public class ForwardCrawler extends Job {
 	@Override
 	public void doJob() {
 		int moreLinkCount = 0;
-		String url = "http://news.ycombinator.com";
+		String url = "https://news.ycombinator.com";
 		parentPattern = Pattern
 				.compile("<a href=\"item\\?id=\\d+\">parent</a>");
 		while (true) {
@@ -59,10 +66,10 @@ public class ForwardCrawler extends Job {
 				url = extractMoreLink(content);
 				moreLinkCount ++;
 				if(moreLinkCount == 6){
-					url = "http://news.ycombinator.com";
+					url = "https://news.ycombinator.com";
 				}
                 else if(moreLinkCount == 7){
-                    url = "http://news.ycombinator.com/best";
+                    url = "https://news.ycombinator.com/best";
                     moreLinkCount = 0;
                 }
 				
@@ -123,13 +130,13 @@ public class ForwardCrawler extends Job {
 
 	private String extractMoreLink(String content) {
 		if(content.contains("<a href=\"news2\">More</a>")){
-			return "http://news.ycombinator.com/news2";
+			return "https://news.ycombinator.com/news2";
 		}
 		String subStr = extractSubStr(content, "href=\"/x?fnid=", "\"");
 		if (subStr == null) {
-			return "http://news.ycombinator.com";
+			return "https://news.ycombinator.com";
 		} else {
-			return "http://news.ycombinator.com/x?fnid=" + subStr;
+			return "https://news.ycombinator.com/x?fnid=" + subStr;
 		}
 	}
 
@@ -158,7 +165,7 @@ public class ForwardCrawler extends Job {
 			url = extractSubStr(titleHtml, "<a href=\"", "\"");
 			if (!titleHtml.contains("comhead")) {
 				url = url == null ? null : url.trim();
-				url = "http://news.ycombinator.com/" + url;
+				url = "https://news.ycombinator.com/" + url;
 			} else {
 				comhead = extractSubStr(titleHtml, "<span class=\"comhead\">",
 						"</span>");
@@ -274,11 +281,77 @@ public class ForwardCrawler extends Job {
 		Matcher m = parentPattern2.matcher(post);
 		return m.find();
 	}
-
-	public static void main(String[] args) {
-		String fnid = extractContent("http://news.ycombinator.com");
-		List<String> posts = extractPosts(fnid);
-		System.out.println(fnid);
+	
+	public static String getMoreLink(Document doc){
+		Element element = doc.select("a[href=news2]").last();
+		
+		if(element != null){
+			return "https://news.ycombinator.com/" + element.attr("href");
+		}
+		element = doc.select("a[href^=/x?fnid]").last();
+		if(element != null){
+			return "https://news.ycombinator.com" + element.attr("href");
+		}
+		return null;
 	}
-
+	
+	/**
+	 * Extract content with jsoup maybe later.
+	 * @param doc
+	 * @return
+	 */
+	public static List<Item> extractItem(Document doc){
+		List<Item> itemList = new ArrayList<Item>();
+		Elements itemRows = doc.select("tr");
+		Iterator iterator = itemRows.iterator();
+		while(iterator.hasNext()){
+			Element element = (Element) iterator.next();
+			Element titleElement = element.select(".title a").first();
+			if(titleElement == null){
+				continue;
+			}
+			String titleStr = titleElement.text().trim();
+			String urlStr = titleElement.attr("href").trim();
+			
+			Element comHeadElement = element.select(".comhead").first();
+			if(comHeadElement == null){
+				continue;
+			}
+			
+			String comheadStr = comHeadElement.text().trim();
+			
+			Element pointsElement = element.select("span[id^=score_]").first();
+			if(pointsElement == null){
+				continue;
+			}
+			String pointsStr = pointsElement.text();
+			if(pointsStr == null){
+				continue;
+			}
+			String[] pointsArr = pointsStr.split(" ");
+			if(pointsArr.length != 2){
+				continue;
+			}
+			int points = -1;
+			try{
+				points = Integer.parseInt(pointsArr[0]);
+			}
+			catch (NumberFormatException e) {
+			}
+			
+			if(points < 0){
+				continue;
+			}
+			Element userElement = element.select("a[href^=user]").first();
+			if(userElement == null){
+				continue;
+			}
+			
+			String user = userElement.text().trim();
+			
+			Element dateElement = element.select(".subtext").first();
+		}
+		
+		return itemList;
+	}
 }

@@ -3,3 +3,4 @@
 require:
     - play
     - mysql -> mysql-connector-java 5.1.13
+    - org.jsoup -> jsoup 1.7.2
