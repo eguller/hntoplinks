@@ -2,5 +2,5 @@
 
 require:
     - play
-    - mysql -> mysql-connector-java 5.1.13
+    - postgresql -> postgresql 9.1-901.jdbc4
     - org.jsoup -> jsoup 1.7.2
