@@ -9,3 +9,12 @@
 hntoplinks.iml
 hntoplinks.ipr
 hntoplinks.iws
+bin/
+data/
+db/
+dist/
+logs/
+test-result/
+lib/
+tmp/
+modules/
