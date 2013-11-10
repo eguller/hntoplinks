@@ -4,12 +4,12 @@
 		<td style="width: 18px; padding-right: 4px"><a
 			href="/"><img
 				src="@{'/public/images/y81.gif'}" width=18 height=18
-				style="border: 1px #ffffff solid;"></img> </a>
+				style="border: 1px #ffffff solid;" /> </a>
 		</td>
 		<td style="line-height: 12pt; height: 10px;">
 			<span class="pagetop">
 				<b><a href="/">Hacker News Top Links</a> </b>
-				#{if _activeTab == "today"}
+				#{if _activeTab == cache.CacheUnit.TODAY}
 					<span class="topsel"> 
 						<a href="/">today</a>
 					</span> |
@@ -18,7 +18,7 @@
 					<a href="/">today</a> |
 				#{/else}
 				
-				#{if _activeTab == 'week'}
+				#{if _activeTab == cache.CacheUnit.WEEK}
 					<span class="topsel"> 
 						<a href="/week">this week</a>
 					</span> |		
@@ -27,7 +27,7 @@
 					<a href="/week">this week</a> |
 				#{/else}
 				
-				#{if _activeTab == 'month'}
+				#{if _activeTab == cache.CacheUnit.MONTH}
 					<span class="topsel"> 
 						<a href="/month">this month</a>
 					</span>	|
@@ -36,7 +36,7 @@
 					<a href="/month">this month</a> |
 				#{/else}
 				
-				#{if _activeTab == 'year'}
+				#{if _activeTab == cache.CacheUnit.YEAR}
 					<span class="topsel"> 
 						<a href="/year">this year</a>
 					</span> |
@@ -45,7 +45,7 @@
 					<a href="/year">this year</a> |
 				#{/else}
 				
-				#{if _activeTab == 'all'}
+				#{if _activeTab == cache.CacheUnit.ALL}
 					<span class="topsel"> 
 						<a href="/all">all time</a>
 					</span>

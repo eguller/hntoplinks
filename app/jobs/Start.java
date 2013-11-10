@@ -1,12 +1,18 @@
 package jobs;
 
+import cache.ItemCache;
+import models.Item;
 import play.jobs.Job;
 import play.jobs.OnApplicationStart;
+
+import java.util.List;
 
 @OnApplicationStart
 public class Start extends Job {
 	@Override
 	public void doJob(){
-		new ForwardCrawler().now();
+        List<Item> allItems = Item.findAll();
+        ItemCache.getInstance().updateCache(allItems);
+        new ForwardCrawler().now();
 	}
 }

@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -12,21 +13,101 @@ import javax.persistence.Enumerated;
 import play.db.jpa.Model;
 
 @Entity
-public class Item extends Model{
+public class Item extends Model implements  Comparable<Item>{
 	private static final long DAY = 1000 * 60 * 60 * 24;
 	private static final long WEEK = 7 * DAY;
 	private static final long MONTH = 30 * DAY;
 	private static final long YEAR = DAY * 365;
-	
-	
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getComhead() {
+        return comhead;
+    }
+
+    public void setComhead(String comhead) {
+        this.comhead = comhead;
+    }
+
+    public long getHnid() {
+        return hnid;
+    }
+
+    public void setHnid(long hnid) {
+        this.hnid = hnid;
+    }
+
+    public int getPoints() {
+        return points;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    public int getComment() {
+        return comment;
+    }
+
+    public void setComment(int comment) {
+        this.comment = comment;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Date getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(Date lastUpdate) {
+        this.lastUpdate = lastUpdate;
+    }
+
+    @Column(name = "POSTURL")
 	public String url;
+    @Column(name = "COMHEAD")
 	public String comhead;
+    @Column(name = "HNID")
 	public long hnid;
+    @Column(name = "POINTS")
 	public int points;
+    @Column(name = "POSTDATE")
 	public Date date;
+    @Column(name = "HNUSER")
 	public String user;
+    @Column(name = "COMMENT")
 	public int comment;
+    @Column(name = "TITLE")
 	public String title;
+    @Column(name = "LASTUPDATE")
 	public Date lastUpdate;
 	
 	public Item(String title, String url, String comhead, String user, Date date, long hnid, int points, int comment){
@@ -89,4 +170,29 @@ public class Item extends Model{
 	public static List<Item> getAfter(Date date, int page){
 		return Item.find("date > ?1 order by points desc", date).fetch(page, 30);
 	}
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        Item item = (Item) o;
+
+        if (hnid != item.hnid) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (int) (hnid ^ (hnid >>> 32));
+        return result;
+    }
+
+    @Override
+    public int compareTo(Item item) {
+        return points >  item.points ? -1 : 1;
+    }
 }

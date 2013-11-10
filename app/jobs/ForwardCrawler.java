@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import cache.ItemCache;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -43,6 +44,7 @@ public class ForwardCrawler extends Job {
 			try {
 				String content = extractContent(url);
 				List<String> postList = extractPosts(content);
+                List<Item> parsedItemList = new ArrayList<Item>();
 				for (String post : postList) {
 					try {
 						Item item = extractItem(post);
@@ -54,15 +56,21 @@ public class ForwardCrawler extends Job {
 							if (!JPA.em().getTransaction().isActive()) {
 								JPA.em().getTransaction().begin();
 							}
-							item.save();
+                            if(existing != null){
+                                item.merge();
+                            }
+                            else{
+							    item.save();
+                            }
 							JPA.em().getTransaction().commit();
+                            parsedItemList.add(item);
 						}
 					} catch (Exception e) {
 						Logger.error(e, "Error while saving multiple post: %s",
 								post);
 					}
 				}
-				
+				ItemCache.getInstance().updateCache(parsedItemList);
 				url = extractMoreLink(content);
 				moreLinkCount ++;
 				if(moreLinkCount == 6){
