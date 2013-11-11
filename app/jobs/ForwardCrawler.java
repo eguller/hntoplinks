@@ -33,8 +33,6 @@ public class ForwardCrawler extends Job {
     private static final long MINUTE = 60 * 1000;
     private static final long HOUR = 60 * MINUTE;
     private static final long DAY = 24 * HOUR;
-    private static Pattern parentPattern = Pattern
-            .compile("<a href=\"item\\?id=\\d+\">parent</a>");
 
     @Override
     public void doJob() {
