@@ -13,6 +13,5 @@ public class Start extends Job {
 	public void doJob(){
         List<Item> allItems = Item.findAll();
         ItemCache.getInstance().updateCache(allItems);
-        new ForwardCrawler().now();
 	}
 }
