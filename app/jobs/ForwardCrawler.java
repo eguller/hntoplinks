@@ -28,7 +28,7 @@ import play.Logger;
 import play.jobs.Every;
 import play.jobs.Job;
 
-@Every("10m")
+@Every("10mn")
 public class ForwardCrawler extends Job {
     private static final long MINUTE = 60 * 1000;
     private static final long HOUR = 60 * MINUTE;
