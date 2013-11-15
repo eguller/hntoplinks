@@ -13,7 +13,7 @@ import javax.persistence.Enumerated;
 import play.db.jpa.Model;
 
 @Entity
-public class Item extends Model implements  Comparable<Item>{
+public class Item extends Model implements  Comparable<Item> , Cloneable{
 	private static final long DAY = 1000 * 60 * 60 * 24;
 	private static final long WEEK = 7 * DAY;
 	private static final long MONTH = 30 * DAY;
@@ -194,5 +194,9 @@ public class Item extends Model implements  Comparable<Item>{
     @Override
     public int compareTo(Item item) {
         return points >  item.points ? -1 : 1;
+    }
+
+    public Item clone(){
+        return new Item(title, url, comhead, user, date, hnid, points, comment);
     }
 }

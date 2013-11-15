@@ -9,7 +9,7 @@
 		<td style="line-height: 12pt; height: 10px;">
 			<span class="pagetop">
 				<b><a href="/">Hacker News Top Links</a> </b>
-				#{if _activeTab == cache.CacheUnit.TODAY}
+				#{if _activeTab == cache.CacheUnit.today}
 					<span class="topsel"> 
 						<a href="/">today</a>
 					</span> |
@@ -18,7 +18,7 @@
 					<a href="/">today</a> |
 				#{/else}
 				
-				#{if _activeTab == cache.CacheUnit.WEEK}
+				#{if _activeTab == cache.CacheUnit.week}
 					<span class="topsel"> 
 						<a href="/week">this week</a>
 					</span> |		
@@ -27,7 +27,7 @@
 					<a href="/week">this week</a> |
 				#{/else}
 				
-				#{if _activeTab == cache.CacheUnit.MONTH}
+				#{if _activeTab == cache.CacheUnit.month}
 					<span class="topsel"> 
 						<a href="/month">this month</a>
 					</span>	|
@@ -36,7 +36,7 @@
 					<a href="/month">this month</a> |
 				#{/else}
 				
-				#{if _activeTab == cache.CacheUnit.YEAR}
+				#{if _activeTab == cache.CacheUnit.year}
 					<span class="topsel"> 
 						<a href="/year">this year</a>
 					</span> |
@@ -45,7 +45,7 @@
 					<a href="/year">this year</a> |
 				#{/else}
 				
-				#{if _activeTab == cache.CacheUnit.ALL}
+				#{if _activeTab == cache.CacheUnit.all}
 					<span class="topsel"> 
 						<a href="/all">all time</a>
 					</span>

@@ -25,55 +25,82 @@ import org.jsoup.select.Elements;
 import models.Item;
 
 import play.Logger;
-import play.jobs.Every;
+import play.db.jpa.JPA;
 import play.jobs.Job;
 
-@Every("10mn")
 public class ForwardCrawler extends Job {
     private static final long MINUTE = 60 * 1000;
     private static final long HOUR = 60 * MINUTE;
     private static final long DAY = 24 * HOUR;
+    Pattern parentPattern = null;
 
     @Override
     public void doJob() {
-        String url = "https://news.ycombinator.com/best";
-        String content = extractContent(url);
-        List<String> postList = extractPosts(content);
-        List<Item> parsedItemList = new ArrayList<Item>();
-        for (String post : postList) {
+        int moreLinkCount = 0;
+        String url = "https://news.ycombinator.com";
+        parentPattern = Pattern
+                .compile("<a href=\"item\\?id=\\d+\">parent</a>");
+        while (true) {
             try {
-                Item item = extractItem(post);
-                if (item != null) {
-                    Item existing = Item.getByHnId(item.hnid);
-                    if (existing != null) {
-                        item = existing.update(item);
+                String content = extractContent(url);
+                List<String> postList = extractPosts(content);
+                List<Item> newItemList = new ArrayList<Item>();
+                for (String post : postList) {
+                    try {
+                        Item item = extractItem(post);
+                        if (item != null) {
+                            Item existing = Item.getByHnId(item.hnid);
+                            if (existing != null) {
+                                item = existing.update(item);
+                            }
+                            if (!JPA.em().getTransaction().isActive()) {
+                                JPA.em().getTransaction().begin();
+                            }
+                            item.save();
+                            JPA.em().getTransaction().commit();
+                            newItemList.add(item.clone());
+                        }
+                    } catch (Exception e) {
+                        Logger.error(e, "Error while saving multiple post: %s",
+                                post);
                     }
-                    if (existing != null) {
-                        item.merge();
-                    } else {
-                        item.save();
-                    }
-                    parsedItemList.add(item);
                 }
+                ItemCache.getInstance().updateCache(newItemList);
+
+                url = extractMoreLink(content);
+                moreLinkCount ++;
+                if(moreLinkCount == 6){
+                    url = "https://news.ycombinator.com";
+                }
+                else if(moreLinkCount == 7){
+                    url = "https://news.ycombinator.com/best";
+                    moreLinkCount = 0;
+                }
+
+                Logger.info("Last update : %s", Calendar.getInstance().getTime().toString());
+
             } catch (Exception e) {
-                Logger.error(e, "Error while saving multiple post: %s",
-                        post);
+                Logger.error(e, "Exception in forward crawler.");
+            } finally {
+                try {
+                    Thread.sleep(((long) (MINUTE * Math.random())) * 10 + 5 * MINUTE);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
-        ItemCache.getInstance().updateCache(parsedItemList);
-        Logger.info("Last update : %s", Calendar.getInstance().getTime().toString());
     }
 
     private static List<String> extractPosts(String content) {
         List<String> postList = null;
         String mainTable = extractSubStr(content,
                 "<table border=0 cellpadding=0 cellspacing=0>", "</table>");
-        if (mainTable == null) {
+        if(mainTable == null){
             return Collections.EMPTY_LIST;
         }
         postList = Arrays.asList(mainTable
                 .split("<tr><td align=right valign=top class=\"title\">"));
-        if (postList != null && postList.size() > 0 && postList.get(0).length() == 0) {
+        if (postList!= null && postList.size() > 0 && postList.get(0).length() == 0) {
             return postList.subList(1, postList.size());
         } else {
             return postList;
@@ -106,7 +133,7 @@ public class ForwardCrawler extends Job {
     }
 
     private String extractMoreLink(String content) {
-        if (content.contains("<a href=\"news2\">More</a>")) {
+        if(content.contains("<a href=\"news2\">More</a>")){
             return "https://news.ycombinator.com/news2";
         }
         String subStr = extractSubStr(content, "href=\"/x?fnid=", "\"");
@@ -259,14 +286,14 @@ public class ForwardCrawler extends Job {
         return m.find();
     }
 
-    public static String getMoreLink(Document doc) {
+    public static String getMoreLink(Document doc){
         Element element = doc.select("a[href=news2]").last();
 
-        if (element != null) {
+        if(element != null){
             return "https://news.ycombinator.com/" + element.attr("href");
         }
         element = doc.select("a[href^=/x?fnid]").last();
-        if (element != null) {
+        if(element != null){
             return "https://news.ycombinator.com" + element.attr("href");
         }
         return null;
@@ -274,53 +301,53 @@ public class ForwardCrawler extends Job {
 
     /**
      * Extract content with jsoup maybe later.
-     *
      * @param doc
      * @return
      */
-    public static List<Item> extractItem(Document doc) {
+    public static List<Item> extractItem(Document doc){
         List<Item> itemList = new ArrayList<Item>();
         Elements itemRows = doc.select("tr");
         Iterator iterator = itemRows.iterator();
-        while (iterator.hasNext()) {
+        while(iterator.hasNext()){
             Element element = (Element) iterator.next();
             Element titleElement = element.select(".title a").first();
-            if (titleElement == null) {
+            if(titleElement == null){
                 continue;
             }
             String titleStr = titleElement.text().trim();
             String urlStr = titleElement.attr("href").trim();
 
             Element comHeadElement = element.select(".comhead").first();
-            if (comHeadElement == null) {
+            if(comHeadElement == null){
                 continue;
             }
 
             String comheadStr = comHeadElement.text().trim();
 
             Element pointsElement = element.select("span[id^=score_]").first();
-            if (pointsElement == null) {
+            if(pointsElement == null){
                 continue;
             }
             String pointsStr = pointsElement.text();
-            if (pointsStr == null) {
+            if(pointsStr == null){
                 continue;
             }
             String[] pointsArr = pointsStr.split(" ");
-            if (pointsArr.length != 2) {
+            if(pointsArr.length != 2){
                 continue;
             }
             int points = -1;
-            try {
+            try{
                 points = Integer.parseInt(pointsArr[0]);
-            } catch (NumberFormatException e) {
+            }
+            catch (NumberFormatException e) {
             }
 
-            if (points < 0) {
+            if(points < 0){
                 continue;
             }
             Element userElement = element.select("a[href^=user]").first();
-            if (userElement == null) {
+            if(userElement == null){
                 continue;
             }
 

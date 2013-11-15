@@ -2,8 +2,6 @@ package controllers;
 
 import cache.CacheUnit;
 import cache.ItemCache;
-import play.*;
-import play.mvc.*;
 
 import java.util.*;
 
@@ -14,51 +12,51 @@ import models.*;
 public class Application extends HnController {
 
     public static void today(Integer page){
-        renderArgs.put("activeTab", CacheUnit.TODAY);
+        renderArgs.put("activeTab", CacheUnit.today);
         if(page == null){
             page = 1;
         }
-        List<Item> items = ItemCache.getInstance().get(CacheUnit.TODAY, page);
+        List<Item> items = ItemCache.getInstance().get(CacheUnit.today, page);
         renderArgs.put("items",items);
         renderArgs.put("page", page);
         render("Application/index.html");
     }
     public static void week(Integer page){
-    	renderArgs.put("activeTab", CacheUnit.WEEK);
+    	renderArgs.put("activeTab", CacheUnit.week);
         if(page == null){
             page = 1;
         }
-    	List<Item> items = ItemCache.getInstance().get(CacheUnit.WEEK, page);
+    	List<Item> items = ItemCache.getInstance().get(CacheUnit.week, page);
         renderArgs.put("items",items);
         renderArgs.put("page", page);
     	render("Application/index.html", items, page);
     }
     public static void month(Integer page){
-    	renderArgs.put("activeTab", CacheUnit.MONTH);
+    	renderArgs.put("activeTab", CacheUnit.month);
         if(page == null){
             page = 1;
         }
-    	List<Item> items = ItemCache.getInstance().get(CacheUnit.MONTH, page);
+    	List<Item> items = ItemCache.getInstance().get(CacheUnit.month, page);
         renderArgs.put("items",items);
         renderArgs.put("page", page);
     	render("Application/index.html", items, page);
     }
     public static void year(Integer page){
-    	renderArgs.put("activeTab", CacheUnit.YEAR);
+    	renderArgs.put("activeTab", CacheUnit.year);
         if(page == null){
             page = 1;
         }
-    	List<Item> items = ItemCache.getInstance().get(CacheUnit.YEAR, page);
+    	List<Item> items = ItemCache.getInstance().get(CacheUnit.year, page);
         renderArgs.put("items",items);
         renderArgs.put("page", page);
     	render("Application/index.html", items, page);
     }
     public static void all(Integer page){
-    	renderArgs.put("activeTab", CacheUnit.ALL);
+    	renderArgs.put("activeTab", CacheUnit.all);
         if(page == null){
             page = 1;
         }
-    	List<Item> items = ItemCache.getInstance().get(CacheUnit.ALL, page);
+    	List<Item> items = ItemCache.getInstance().get(CacheUnit.all, page);
         renderArgs.put("items",items);
         renderArgs.put("page", page);
     	render("Application/index.html",items, page);
