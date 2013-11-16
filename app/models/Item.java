@@ -175,8 +175,6 @@ public class Item extends Model implements  Comparable<Item> , Cloneable{
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-
         Item item = (Item) o;
 
         if (hnid != item.hnid) return false;
