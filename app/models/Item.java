@@ -191,7 +191,15 @@ public class Item extends Model implements  Comparable<Item> , Cloneable{
 
     @Override
     public int compareTo(Item item) {
-        return points >  item.points ? -1 : 1;
+        if(points > item.points){
+            return -1;
+        }
+        else if(points < item.points){
+            return 1;
+        }
+        else {
+            return 0;
+        }
     }
 
     public Item clone(){
