@@ -186,9 +186,7 @@ public class Item extends Model implements  Comparable<Item> , Cloneable{
 
     @Override
     public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + (int) (hnid ^ (hnid >>> 32));
-        return result;
+        return  (int) (hnid ^ (hnid >>> 32));
     }
 
     @Override
