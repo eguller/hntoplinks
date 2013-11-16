@@ -26,6 +26,8 @@ import models.Item;
 
 import play.Logger;
 import play.db.jpa.JPA;
+import play.db.jpa.JPAPlugin;
+import play.db.jpa.NoTransaction;
 import play.jobs.Job;
 
 public class ForwardCrawler extends Job {
@@ -34,7 +36,7 @@ public class ForwardCrawler extends Job {
     private static final long DAY = 24 * HOUR;
     Pattern parentPattern = null;
 
-    @Override
+    @Override @NoTransaction
     public void doJob() {
         int moreLinkCount = 0;
         String url = "https://news.ycombinator.com";
@@ -42,9 +44,11 @@ public class ForwardCrawler extends Job {
                 .compile("<a href=\"item\\?id=\\d+\">parent</a>");
         while (true) {
             try {
+
                 String content = extractContent(url);
                 List<String> postList = extractPosts(content);
                 List<Item> newItemList = new ArrayList<Item>();
+                JPAPlugin.startTx(false);
                 for (String post : postList) {
                     try {
                         Item item = extractItem(post);
@@ -71,6 +75,7 @@ public class ForwardCrawler extends Job {
                                 post);
                     }
                 }
+                JPAPlugin.closeTx(false);
                 ItemCache.getInstance().updateCache(newItemList);
 
                 url = extractMoreLink(content);
