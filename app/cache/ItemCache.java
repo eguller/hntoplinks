@@ -77,6 +77,7 @@ public class ItemCache {
                 if(i >= start && i < end){
                     pageList.add(item);
                 }
+                i++;
             }
             return pageList;
         }
