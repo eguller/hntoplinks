@@ -56,7 +56,13 @@ public class ForwardCrawler extends Job {
                             if (!JPA.em().getTransaction().isActive()) {
                                 JPA.em().getTransaction().begin();
                             }
-                            item.save();
+
+                            if(existing == null){
+                                item.save();
+                            }
+                            else{
+                                item.merge();
+                            }
                             JPA.em().getTransaction().commit();
                             newItemList.add(item.clone());
                         }
@@ -211,7 +217,7 @@ public class ForwardCrawler extends Job {
                         comment = Integer.parseInt(commentStr);
                     }
                 } catch (NumberFormatException e) {
-                    Logger.error("Error while parsin comments: %s", commentStr);
+                    Logger.error("Error while parsing comments: %s", commentStr);
                 }
 
                 String timeAgo = extractSubStr(subText, user + "</a> ", " ago");
