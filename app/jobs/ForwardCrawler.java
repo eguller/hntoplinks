@@ -63,7 +63,7 @@ public class ForwardCrawler extends Job {
 
                             if(existing == null){
                                 item.save();
-                                newItemList.add(existing.clone());
+                                newItemList.add(item.clone());
                             }
                             else{
                                 existing.merge();
