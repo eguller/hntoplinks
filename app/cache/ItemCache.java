@@ -55,11 +55,6 @@ public class ItemCache {
             this.daysOld = daysOld;
         }
 
-        ItemCacheUnit(int daysOld, int maxSize) {
-            this(daysOld);
-            this.maxSize = maxSize;
-        }
-
         public void addNewItems(List<Item> itemList) {
             Calendar calendar = Calendar.getInstance();
             calendar.add(Calendar.DAY_OF_YEAR, -daysOld);
