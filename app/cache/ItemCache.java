@@ -55,7 +55,7 @@ public class ItemCache {
             this.daysOld = daysOld;
         }
 
-        public void addNewItems(List<Item> itemList) {
+        public synchronized void addNewItems(List<Item> itemList) {
             Calendar calendar = Calendar.getInstance();
             calendar.add(Calendar.DAY_OF_YEAR, -daysOld);
             for (Item item : itemList) {
