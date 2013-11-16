@@ -93,7 +93,7 @@ public class ItemCache {
             }
 
             itemList.removeAll(expiredItems);
-            Logger.info("%s items expired in cache and cleaned up");
+            Logger.info("%s items expired in cache and cleaned up", expiredItems.size());
         }
     }
 
