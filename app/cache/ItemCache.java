@@ -47,7 +47,7 @@ public class ItemCache {
 
     public static class ItemCacheUnit {
         private static final int DEFAULT_MAX_SIZE = 300;
-        List<Item> itemList = new ArrayList<Item>();
+        TreeSet<Item> itemSet = new TreeSet<Item>();
         int daysOld;
         int maxSize = DEFAULT_MAX_SIZE;
 
@@ -60,38 +60,38 @@ public class ItemCache {
             calendar.add(Calendar.DAY_OF_YEAR, -daysOld);
             for (Item item : itemList) {
                 if (item.date.after(calendar.getTime())) {
-                    if (!this.itemList.contains(item)) {
-                        this.itemList.add(item);
-                    }
-                    else{
-                        this.itemList.remove(item);
-                        this.itemList.add(item);
-                    }
+                    this.itemSet.add(item);
                 }
             }
-            Collections.sort(this.itemList);
-            for (; this.itemList.size() > maxSize; this.itemList.remove(this.itemList.size() - 1));
+            for (; this.itemSet.size() > maxSize; this.itemSet.pollLast());
 
             Logger.info("%s new items added to item cache.", itemList.size());
         }
 
         public List<Item> getItemsForPage(int page) {
-            int start = Math.min((page - 1) * ITEM_PER_PAGE, itemList.size());
-            int end = Math.min(start + ITEM_PER_PAGE, itemList.size());
-            return itemList.subList(start, end);
+            int start = Math.min((page - 1) * ITEM_PER_PAGE, itemSet.size());
+            int end = Math.min(start + ITEM_PER_PAGE, itemSet.size());
+            List<Item> pageList = new ArrayList<Item>();
+            int i = 0;
+            for(Item item : itemSet){
+                if(i >= start && i < end){
+                    pageList.add(item);
+                }
+            }
+            return pageList;
         }
 
         public void cleanupExpired() {
             List<Item> expiredItems = new ArrayList<Item>();
             Calendar calendar = Calendar.getInstance();
             calendar.add(Calendar.DAY_OF_YEAR, -daysOld);
-            for (Item item : itemList) {
+            for (Item item : itemSet) {
                 if (item.date.before(calendar.getTime())) {
                     expiredItems.add(item);
                 }
             }
 
-            itemList.removeAll(expiredItems);
+            itemSet.removeAll(expiredItems);
             Logger.info("%s items expired in cache and cleaned up", expiredItems.size());
         }
     }
