@@ -55,7 +55,7 @@ public class ForwardCrawler extends Job {
                         if (item != null) {
                             Item existing = Item.getByHnId(item.hnid);
                             if (existing != null) {
-                                item = existing.update(item);
+                                existing.update(item);
                             }
                             if (!JPA.em().getTransaction().isActive()) {
                                 JPA.em().getTransaction().begin();
@@ -63,12 +63,14 @@ public class ForwardCrawler extends Job {
 
                             if(existing == null){
                                 item.save();
+                                newItemList.add(existing.clone());
                             }
                             else{
-                                item.merge();
+                                existing.merge();
+                                newItemList.add(existing.clone());
                             }
                             JPA.em().getTransaction().commit();
-                            newItemList.add(item.clone());
+
                         }
                     } catch (Exception e) {
                         Logger.error(e, "Error while saving multiple post: %s",

@@ -63,6 +63,10 @@ public class ItemCache {
                     if (!this.itemList.contains(item)) {
                         this.itemList.add(item);
                     }
+                    else{
+                        this.itemList.remove(item);
+                        this.itemList.add(item);
+                    }
                 }
             }
             Collections.sort(this.itemList);
