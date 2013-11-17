@@ -66,7 +66,7 @@ public class ForwardCrawler extends Job {
                                 newItemList.add(item.clone());
                             }
                             else{
-                                existing.merge();
+                                existing.save();
                                 newItemList.add(existing.clone());
                             }
                             JPA.em().getTransaction().commit();
