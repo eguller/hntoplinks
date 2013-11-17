@@ -38,6 +38,11 @@ public class ItemCache {
         return cacheUnit.getItemsForPage(page);
     }
 
+    public List<Item> get(CacheUnit unit){
+        ItemCacheUnit cacheUnit = cacheMap.get(unit);
+        return cacheUnit.getAll();
+    }
+
 
     public void cleanupExpired() {
         for (ItemCacheUnit icu : cacheMap.values()) {
@@ -80,6 +85,10 @@ public class ItemCache {
                 i++;
             }
             return pageList;
+        }
+
+        public List<Item> getAll(){
+            return new ArrayList<Item>(itemSet);
         }
 
         public void cleanupExpired() {
