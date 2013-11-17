@@ -15,13 +15,25 @@ public class BasicTest extends UnitTest {
     }
 
     @Test
-    public void itemUniqueInSet(){
+    public void itemUniqueInSetTest(){
         Item item1 = new Item("Unique Item Test", "http://hntoplinks.com", "hntoplinks.com", "eguller" , Calendar.getInstance().getTime(), 1, 1, 1);
         Item item2 = new Item("Unique Item Test", "http://hntoplinks.com", "hntoplinks.com", "eguller" , Calendar.getInstance().getTime(), 1, 2, 2);
         TreeSet<Item> itemTreeSet = new TreeSet<Item>();
         itemTreeSet.add(item1);
         itemTreeSet.add(item2);
         assertEquals(1, itemTreeSet.size());
+    }
+
+    @Test
+    public void itemUpdatedTest(){
+        Item item1 = new Item("Unique Item Test", "http://hntoplinks.com", "hntoplinks.com", "eguller" , Calendar.getInstance().getTime(), 1, 1, 1);
+        Item item2 = new Item("Unique Item Test", "http://hntoplinks.com", "hntoplinks.com", "eguller" , Calendar.getInstance().getTime(), 1, 2, 2);
+        TreeSet<Item> itemTreeSet = new TreeSet<Item>();
+        itemTreeSet.add(item1);
+        itemTreeSet.remove(item2);
+        itemTreeSet.add(item2);
+        Item item = itemTreeSet.first();
+        assertEquals(2, item.points);
     }
 
 }

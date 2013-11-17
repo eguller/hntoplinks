@@ -65,7 +65,8 @@ public class ItemCache {
             calendar.add(Calendar.DAY_OF_YEAR, -daysOld);
             for (Item item : itemList) {
                 if (item.date.after(calendar.getTime())) {
-                    this.itemSet.add(item);
+                    this.itemSet.remove(item); //remove old one
+                    this.itemSet.add(item); //add updated
                 }
             }
             for (; this.itemSet.size() > maxSize; this.itemSet.pollLast());
