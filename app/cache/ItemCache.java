@@ -52,7 +52,7 @@ public class ItemCache {
 
     public static class ItemCacheUnit {
         private static final int DEFAULT_MAX_SIZE = 300;
-        TreeSet<Item> itemSet = new TreeSet<Item>();
+        List<Item> itemList = new ArrayList<Item>();
         int daysOld;
         int maxSize = DEFAULT_MAX_SIZE;
 
@@ -61,25 +61,42 @@ public class ItemCache {
         }
 
         public synchronized void addNewItems(List<Item> itemList) {
+            addNewItemList(itemList);
+            sortItems();
+            removeExpiredItems();
+            Logger.info("%s new items added to item cache.", itemList.size());
+        }
+
+        public void sortItems(){
+            Collections.sort(itemList, new Comparator<Item>() {
+                @Override
+                public int compare(Item item, Item item2) {
+                    return item.points > item2.points ? 1 : -1;
+                }
+            });
+        }
+
+        private void addNewItemList(List<Item> itemList) {
             Calendar calendar = Calendar.getInstance();
             calendar.add(Calendar.DAY_OF_YEAR, -daysOld);
             for (Item item : itemList) {
                 if (item.date.after(calendar.getTime())) {
-                    this.itemSet.remove(item); //remove old one
-                    this.itemSet.add(item); //add updated
+                    this.itemList.remove(item); //remove old one
+                    this.itemList.add(item); //add updated
                 }
             }
-            for (; this.itemSet.size() > maxSize; this.itemSet.pollLast());
+        }
 
-            Logger.info("%s new items added to item cache.", itemList.size());
+        private void removeExpiredItems(){
+            for (; this.itemList.size() > maxSize; this.itemList.remove(itemList.size() - 1));
         }
 
         public List<Item> getItemsForPage(int page) {
-            int start = Math.min((page - 1) * ITEM_PER_PAGE, itemSet.size());
-            int end = Math.min(start + ITEM_PER_PAGE, itemSet.size());
+            int start = Math.min((page - 1) * ITEM_PER_PAGE, itemList.size());
+            int end = Math.min(start + ITEM_PER_PAGE, itemList.size());
             List<Item> pageList = new ArrayList<Item>();
             int i = 0;
-            for(Item item : itemSet){
+            for(Item item : itemList){
                 if(i >= start && i < end){
                     pageList.add(item);
                 }
@@ -89,20 +106,20 @@ public class ItemCache {
         }
 
         public List<Item> getAll(){
-            return new ArrayList<Item>(itemSet);
+            return new ArrayList<Item>(itemList);
         }
 
         public void cleanupExpired() {
             List<Item> expiredItems = new ArrayList<Item>();
             Calendar calendar = Calendar.getInstance();
             calendar.add(Calendar.DAY_OF_YEAR, -daysOld);
-            for (Item item : itemSet) {
+            for (Item item : itemList) {
                 if (item.date.before(calendar.getTime())) {
                     expiredItems.add(item);
                 }
             }
 
-            itemSet.removeAll(expiredItems);
+            itemList.removeAll(expiredItems);
             Logger.info("%s items expired in cache and cleaned up", expiredItems.size());
         }
     }
