@@ -71,7 +71,7 @@ public class ItemCache {
             Collections.sort(itemList, new Comparator<Item>() {
                 @Override
                 public int compare(Item item, Item item2) {
-                    return item.points > item2.points ? 1 : -1;
+                    return item.points - item2.points;
                 }
             });
         }
