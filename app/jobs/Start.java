@@ -7,7 +7,7 @@ import play.jobs.OnApplicationStart;
 
 import java.util.List;
 
-@OnApplicationStart
+@OnApplicationStart(async = true)
 public class Start extends Job {
 	@Override
 	public void doJob(){
