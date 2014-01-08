@@ -15,7 +15,7 @@ import java.util.List;
  * Time: 12:05 AM
  */
 
-@Every("12h")
+@Every("10mn")
 public class DbTruncate extends Job {
     private static final int MAX_ITEM_COUNT = 6000;
     @Override
