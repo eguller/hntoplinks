@@ -31,5 +31,8 @@ public class DbTruncate extends Job {
             }
             Logger.info("Diff is %s, %s elements was deleted", diff, expiredItems.size());
         }
+        else {
+            Logger.info("Diff is %s deleting elements was skipped", diff);
+        }
     }
 }
