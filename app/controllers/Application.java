@@ -8,6 +8,7 @@ import java.util.*;
 import com.hntoplinks.controller.HnController;
 
 import models.*;
+import play.data.validation.Required;
 
 public class Application extends HnController {
 
@@ -60,6 +61,29 @@ public class Application extends HnController {
         renderArgs.put("items",items);
         renderArgs.put("page", page);
     	render("Application/index.html",items, page);
+    }
+
+    public static void viewSubscribe(){
+        renderArgs.put("daily", "");
+        renderArgs.put("weekly", "checked");
+        renderArgs.put("annually", "");
+        renderArgs.put("email", "");
+        render("Application/subscribe.html");
+    }
+
+    public static void doSubscribe(){
+        String email = params.get("email");
+        boolean daily = checked(params.get("daily"));
+        boolean weekly = checked(params.get("weekly"));
+        boolean monthly = checked(params.get("monthly"));
+        boolean annually = checked(params.get("annually"));
+        validation.email(email);
+        validation.isTrue(daily || weekly || monthly || annually);
+        System.out.println("stop");
+    }
+
+    private static boolean checked(String value){
+        return "on".equals(value);
     }
 
     public static void about(){
