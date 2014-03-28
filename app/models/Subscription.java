@@ -13,24 +13,24 @@ import java.util.Date;
  */
 @Entity
 public class Subscription extends Model {
-    @Column(name="EMAIL")
-    String email;
+    @Column(name="EMAIL", nullable = false, unique = true)
+    String email = "";
     @Column(name="DAILY")
-    boolean daily;
+    boolean daily = false;
     @Column(name="WEEKLY")
-    boolean weekly;
+    boolean weekly = true;
     @Column(name="MONTHLY")
-    boolean monthly;
+    boolean monthly = false;
     @Column(name="ANNUALLY")
-    boolean annually;
-    @Column(name="SUBSUUID")
+    boolean annually = false;
+    @Column(name="SUBSUUID", nullable = false)
     String subsUUID;
-    @Column(name="SUBSCRIPTION_DATE")
+    @Column(name="SUBSCRIPTION_DATE", nullable = false)
     Date subscriptionDate;
-    @Column(name="VALIDATION_DATE")
-    Date validationDate;
-    @Column(name="VALIDATED")
-    boolean validated;
+    @Column(name="ACTIVATION_DATE", nullable = true)
+    Date activationDate;
+    @Column(name="ACTIVATED")
+    boolean activated = false;
 
     public String getEmail() {
         return email;
@@ -88,20 +88,41 @@ public class Subscription extends Model {
         this.subscriptionDate = subscriptionDate;
     }
 
-    public Date getValidationDate() {
-        return validationDate;
+    public Date getActivationDate() {
+        return activationDate;
     }
 
-    public void setValidationDate(Date validationDate) {
-        this.validationDate = validationDate;
+    public void setActivationDate(Date activationDate) {
+        this.activationDate = activationDate;
     }
 
-    public boolean isValidated() {
-        return validated;
+    public boolean isActivated() {
+        return activated;
     }
 
-    public void setValidated(boolean validated) {
-        this.validated = validated;
+    public void setActivated(boolean activated) {
+        this.activated = activated;
+    }
+
+    public boolean subscribedBefore(){
+        return Subscription.find("byEmail", email).fetch().size() > 0;
+    }
+
+    public void fixEmailFormat(){
+        email = email.replaceAll("[ \t\n\r]", "").toLowerCase();
+    }
+
+    public boolean emailDomainExists(){
+        return email.split("@").length == 2;
+    }
+
+    public String emailDomain(){
+        String[] userAtDomain = email.split("@");
+        if(userAtDomain.length == 2){
+            return userAtDomain[1];
+        } else {
+            return email;
+        }
     }
 
 

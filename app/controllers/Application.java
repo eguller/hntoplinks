@@ -8,7 +8,7 @@ import java.util.*;
 import com.hntoplinks.controller.HnController;
 
 import models.*;
-import play.data.validation.Required;
+import play.libs.Codec;
 
 public class Application extends HnController {
 
@@ -64,22 +64,27 @@ public class Application extends HnController {
     }
 
     public static void viewSubscribe(){
-        renderArgs.put("daily", "");
-        renderArgs.put("weekly", "checked");
-        renderArgs.put("annually", "");
-        renderArgs.put("email", "");
+        renderArgs.put("subscription", new Subscription());
         render("Application/subscribe.html");
     }
 
-    public static void doSubscribe(){
-        String email = params.get("email");
-        boolean daily = checked(params.get("daily"));
-        boolean weekly = checked(params.get("weekly"));
-        boolean monthly = checked(params.get("monthly"));
-        boolean annually = checked(params.get("annually"));
-        validation.email(email);
-        validation.isTrue(daily || weekly || monthly || annually);
-        System.out.println("stop");
+    public static void doSubscribe(Subscription subscription){
+        subscription.fixEmailFormat();
+        validation.email(subscription.getEmail());
+        validation.isTrue(subscription.isDaily() || subscription.isWeekly() || subscription.isMonthly() || subscription.isAnnually());
+
+        subscription.setSubscriptionDate(Calendar.getInstance().getTime());
+        subscription.setSubsUUID(Codec.UUID().toLowerCase());
+        subscription.setActivated(false);
+        subscription.setActivationDate(null);
+        if (!subscription.subscribedBefore()) {
+            subscription.save();
+            renderArgs.put("subscription", subscription);
+            render("Application/subscription_complete.html");
+        } else {
+            renderArgs.put("subscription", subscription);
+            render("Application/subscribe.html");
+        }
     }
 
     private static boolean checked(String value){
