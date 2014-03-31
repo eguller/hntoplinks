@@ -64,11 +64,11 @@ public class Application extends HnController {
     }
 
     public static void viewSubscribe(){
-        renderArgs.put("subscription", new Subscription());
+        renderArgs.put("subscription", new Subscriber());
         render("Application/subscribe.html");
     }
 
-    public static void doSubscribe(Subscription subscription){
+    public static void doSubscribe(Subscriber subscription){
         subscription.fixEmailFormat();
         validation.email(subscription.getEmail());
         validation.isTrue(subscription.isDaily() || subscription.isWeekly() || subscription.isMonthly() || subscription.isAnnually());

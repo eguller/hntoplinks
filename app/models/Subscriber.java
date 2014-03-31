@@ -12,7 +12,7 @@ import java.util.Date;
  * Time: 8:18 AM
  */
 @Entity
-public class Subscription extends Model {
+public class Subscriber extends Model {
     @Column(name="EMAIL", nullable = false, unique = true)
     String email = "";
     @Column(name="DAILY")
@@ -31,6 +31,14 @@ public class Subscription extends Model {
     Date activationDate;
     @Column(name="ACTIVATED")
     boolean activated = false;
+    @Column(name="SENTDAY", nullable = false)
+    int day = -1;
+    @Column(name="SENTWEEK", nullable = false)
+    int week = -1;
+    @Column(name="SENTMONTH", nullable = false)
+    int month = -1;
+    @Column(name="SENTYEAR", nullable = false)
+    int year = -1;
 
     public String getEmail() {
         return email;
@@ -105,7 +113,7 @@ public class Subscription extends Model {
     }
 
     public boolean subscribedBefore(){
-        return Subscription.find("byEmail", email).fetch().size() > 0;
+        return Subscriber.find("byEmail", email).fetch().size() > 0;
     }
 
     public void fixEmailFormat(){
@@ -124,6 +132,4 @@ public class Subscription extends Model {
             return email;
         }
     }
-
-
 }
