@@ -6,8 +6,10 @@ import play.db.jpa.NoTransaction;
 import play.jobs.Every;
 import play.jobs.Job;
 import play.jobs.On;
+import play.vfs.VirtualFile;
+import utils.Templater;
 
-import java.util.List;
+import java.util.*;
 
 /**
  * User: eguller
@@ -23,18 +25,46 @@ public class EmailSender extends Job{
     int sentEmailCount = 0;
     @Override @NoTransaction
     public void doJob(){
-          String sender = Play.configuration.getProperty("mail.smtp.user");
+
+        String sender = Play.configuration.getProperty("mail.smtp.user");
     }
 
     public void sendEmail(String to){
 
     }
 
-    public String createHtml(List<Item> itemList){
+    public static String createHtml(List<Item> itemList){
+        String itemContent = templateItems(itemList);
+        Map<String, String> values = new HashMap<String, String>();
+        values.put("items", itemContent);
+        values.put("time", "Yesterday");
+        String content = VirtualFile.fromRelativePath("/app/template/email.html").contentAsString();
+        String templated = Templater.template(content, values);
+        return templated;
+    }
+
+    private static String templateItems(List<Item> itemList) {
+        String content = VirtualFile.fromRelativePath("/app/template/item.html").contentAsString();
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < itemList.size(); i ++){
+            Item item = itemList.get(i);
+            Map<String, String> values = new HashMap<String, String>();
+            values.put("url", item.getUrl());
+            values.put("index", String.valueOf(i + 1));
+            values.put("title", item.getTitle());
+            values.put("comhead", item.getComhead());
+            values.put("userid", item.getUser());
+            values.put("username", item.getUser());
+            values.put("points", String.valueOf(item.getPoints()));
+            values.put("comment", String.valueOf(item.getComment()));
+            String templated = Templater.template(content, values);
+            sb.append(templated);
+        }
+        return sb.toString();
+    }
+
+    private static String createText(List<Item> itemList){
         return null;
     }
 
-    public String createText(List<Item> itemList){
-        return null;
-    }
 }

@@ -3,10 +3,14 @@ package controllers;
 import cache.CacheUnit;
 import cache.ItemCache;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 import com.hntoplinks.controller.HnController;
 
+import jobs.EmailSender;
 import models.*;
 import play.libs.Codec;
 
@@ -63,12 +67,12 @@ public class Application extends HnController {
     	render("Application/index.html",items, page);
     }
 
-    public static void viewSubscribe(){
-        renderArgs.put("subscription", new Subscriber());
-        render("Application/subscribe.html");
+    public static void viewSubscription(String subsUUid){
+        renderArgs.put("subscription", new Subscription());
+        render("Application/subscription.html");
     }
 
-    public static void doSubscribe(Subscriber subscription){
+    public static void doSubscribe(Subscription subscription){
         subscription.fixEmailFormat();
         validation.email(subscription.getEmail());
         validation.isTrue(subscription.isDaily() || subscription.isWeekly() || subscription.isMonthly() || subscription.isAnnually());
@@ -83,8 +87,32 @@ public class Application extends HnController {
             render("Application/subscription_complete.html");
         } else {
             renderArgs.put("subscription", subscription);
-            render("Application/subscribe.html");
+            render("Application/subscription.html");
         }
+    }
+
+    public static void unsubscribe(String subscriptionid){
+        Subscription.deleteSubscription(subscriptionid);
+        render("Application/unsubscribed.html");
+    }
+
+    public static void emailTemplate(){
+        Item item1 = new Item("Email template test",
+                "http://www.google.com",
+                "google.com", "eguller", Calendar.getInstance().getTime(), 34343, 221, 17);
+        List<Item> itemList = new ArrayList<Item>();
+        itemList.add(item1);
+        String emailTemplate = EmailSender.createHtml(itemList);
+        File file = new File("template.html");
+        FileWriter fw= null;
+        try {
+            fw = new FileWriter(file);
+            fw.write(emailTemplate);
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private static boolean checked(String value){

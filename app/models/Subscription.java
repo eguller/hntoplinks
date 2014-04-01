@@ -4,6 +4,7 @@ import play.db.jpa.Model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.Date;
 
 /**
@@ -12,7 +13,8 @@ import java.util.Date;
  * Time: 8:18 AM
  */
 @Entity
-public class Subscriber extends Model {
+@Table(name="SUBSCRIPTION")
+public class Subscription extends Model {
     @Column(name="EMAIL", nullable = false, unique = true)
     String email = "";
     @Column(name="DAILY")
@@ -113,7 +115,11 @@ public class Subscriber extends Model {
     }
 
     public boolean subscribedBefore(){
-        return Subscriber.find("byEmail", email).fetch().size() > 0;
+        return Subscription.find("byEmail", email).fetch().size() > 0;
+    }
+
+    public static boolean deleteSubscription(String subscriptionId){
+        return Subscription.delete("bySubsUUID", subscriptionId) > 0;
     }
 
     public void fixEmailFormat(){
