@@ -119,7 +119,7 @@ public class Subscription extends Model {
     }
 
     public static boolean deleteSubscription(String subscriptionId){
-        return Subscription.delete("bySubsUUID", subscriptionId) > 0;
+        return Subscription.delete("subsUUID = ?", subscriptionId) > 0;
     }
 
     public void fixEmailFormat(){

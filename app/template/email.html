@@ -3,12 +3,30 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title></title>
+    <style type="text/css">
+        body { font-family:Verdana; font-size:10pt; color:#828282; }
+        td { font-family:Verdana; font-size:10pt; color:#828282; }
+        .subtext td { font-family:Verdana; font-size: 7pt; color:#828282; }
+        a:link { color:#000000; text-decoration:none; }
+        a:visited { color:#828282; text-decoration:none; }
+        .admin { font-family:Verdana; font-size:8.5pt; color:#000000; }
+        .title { font-family:Verdana; font-size: 10pt; color:#828282; }
+        .subtext { font-family:Verdana; font-size: 7pt; color:#828282; }
+        .yclinks { font-family:Verdana; font-size: 8pt; color:#828282; }
+        .pagetop { font-family:Verdana; font-size: 10pt; color:#222222; }
+        .comhead { font-family:Verdana; font-size: 8pt; color:#828282; }
+        .pagetop a:visited { color:#000000;}
+        .subtext a:link, .subtext a:visited { color:#828282; }
+        .subtext a:hover { text-decoration:underline; }
+        .comhead a:link, .subtext a:visited { color:#828282; }
+        .comhead a:hover { text-decoration:underline; }
+    </style>
 </head>
 <body>
 <center>
     <table border=0 cellpadding=0 cellspacing=0 width="85%" bgcolor=#f6f6ef>
         <tr>
-            <td bgcolor=#ff6600>
+            <td bgcolor=#ff6600 colspan="3">
                 <table border=0 cellpadding=0 cellspacing=0 width="100%"
                        style="padding: 2px">
                     <td style="line-height: 12pt; height: 10px;">
@@ -20,15 +38,21 @@
                 </table>
             </td>
         </tr>
-        ${items}
+        <tr>
+            <td>
+                <table border="0" cellpadding="0" cellspacing="0">
+                    ${items}
+                </table>
+            </td>
+        </tr>
+
         <tr style="height: 5px"></tr>
         <tr style="height:5px"></tr>
         <tr style="height:10px"></tr>
-    </table>
     </td>
     </tr>
     <tr>
-        <td>
+        <td colspan="3">
             <table width="100%" cellspacing="0" cellpadding="1">
                 <tbody>
                 <tr>
@@ -40,13 +64,15 @@
             <center>
 			<span class="yclinks">
                 | <a href="http://www.hntoplinks/unsubscribe/${subscriptionid}">Unsubscribe</a>
-                | <a href="http://www.hntoplinks/subscribe/update/${subscriptionid}">Modify Subscription</a>
-
+                | <a href="http://www.hntoplinks/subscription/modify/${subscriptionid}">Modify Subscription</a>
+                |
 
 			</span><br><br>
 
             </center>
         </td>
-    </tr></table>	</center>
+    </tr>
+    </table>
+</center>
 </body>
 </html>

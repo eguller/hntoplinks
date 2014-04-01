@@ -67,7 +67,7 @@ public class Application extends HnController {
     	render("Application/index.html",items, page);
     }
 
-    public static void viewSubscription(String subsUUid){
+    public static void viewSubscriptionPage(){
         renderArgs.put("subscription", new Subscription());
         render("Application/subscription.html");
     }
@@ -93,16 +93,21 @@ public class Application extends HnController {
 
     public static void unsubscribe(String subscriptionid){
         Subscription.deleteSubscription(subscriptionid);
-        render("Application/unsubscribed.html");
+        String message = "You have unsubscribed. Bye...";
+        renderArgs.put("message", message);
+        render("Application/message.html");
     }
 
     public static void emailTemplate(){
         Item item1 = new Item("Email template test",
                 "http://www.google.com",
                 "google.com", "eguller", Calendar.getInstance().getTime(), 34343, 221, 17);
+        Item item2 = new Item("Yahoo Link", "http://www.yahoo.com", "yahoo.com", "bisanthe", Calendar.getInstance().getTime(), 23233, 193, 21);
+
         List<Item> itemList = new ArrayList<Item>();
         itemList.add(item1);
-        String emailTemplate = EmailSender.createHtml(itemList);
+        itemList.add(item2);
+        String emailTemplate = EmailSender.createHtml(UUID.randomUUID().toString(), itemList);
         File file = new File("template.html");
         FileWriter fw= null;
         try {

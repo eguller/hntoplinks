@@ -33,17 +33,18 @@ public class EmailSender extends Job{
 
     }
 
-    public static String createHtml(List<Item> itemList){
-        String itemContent = templateItems(itemList);
+    public static String createHtml(String subscriptionId, List<Item> itemList){
+        String itemContent = templateItems(subscriptionId, itemList);
         Map<String, String> values = new HashMap<String, String>();
         values.put("items", itemContent);
         values.put("time", "Yesterday");
+        values.put("subscriptionid", subscriptionId);
         String content = VirtualFile.fromRelativePath("/app/template/email.html").contentAsString();
         String templated = Templater.template(content, values);
         return templated;
     }
 
-    private static String templateItems(List<Item> itemList) {
+    private static String templateItems(String subscriptionId, List<Item> itemList) {
         String content = VirtualFile.fromRelativePath("/app/template/item.html").contentAsString();
         StringBuilder sb = new StringBuilder();
         for(int i = 0; i < itemList.size(); i ++){
@@ -57,6 +58,7 @@ public class EmailSender extends Job{
             values.put("username", item.getUser());
             values.put("points", String.valueOf(item.getPoints()));
             values.put("comment", String.valueOf(item.getComment()));
+            values.put("hnid", String.valueOf(item.getHnid()));
             String templated = Templater.template(content, values);
             sb.append(templated);
         }

@@ -22,13 +22,15 @@ GET     /all                                                  Application.all(pa
 GET     /all/{<[0-9]+>page}                                   Application.all
 GET     /about                                                Application.about
 
-GET     /subscribe/{subscriptionid}                           Application.viewSubscription
+GET     /subscribe                                            Application.viewSubscriptionPage
 
 POST    /subscribe                                            Application.doSubscribe
 
-GET    /unsubscribe/{subscriptionid}                          Application.unsubscribe
+GET     /unsubscribe/{subscriptionid}                         Application.unsubscribe
 
-GET   /template                                               Application.emailTemplate
+GET     /template                                             Application.emailTemplate
+
+GET     /subscription/modify/{subscriptionid}                 Application.viewModifySubscription
 
 # Ignore favicon requests
 GET     /favicon.ico                            404
