@@ -1,0 +1,4 @@
+Configuration(email_mock):
+    group: EMAIL_MOCK
+    key: mail.smtp
+    value: mock

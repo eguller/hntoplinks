@@ -67,9 +67,20 @@ public class Application extends HnController {
     	render("Application/index.html",items, page);
     }
 
-    public static void viewSubscriptionPage(){
-        renderArgs.put("subscription", new Subscription());
-        render("Application/subscription.html");
+    public static void viewSubscription(){
+            renderArgs.put("subscription", new Subscription());
+            render("Application/subscription.html");
+    }
+
+    public static void viewModifySubscription(String subscriptionId){
+        Subscription subscription = Subscription.findBySubscriptionId(subscriptionId);
+        if(subscription == Subscription.NONE){
+            renderArgs.put("message", String.format("Subscription for id %s was not found",subscriptionId));
+            render("Application/message.html");
+        } else {
+            renderArgs.put("subscription", subscription);
+            render("Application/modify_subscription.html");
+        }
     }
 
     public static void doSubscribe(Subscription subscription){
@@ -91,6 +102,18 @@ public class Application extends HnController {
         }
     }
 
+    public static void modifySubscription(Subscription subscription){
+        Subscription subscriptionFromDB = Subscription.findBySubscriptionId(subscription.getSubsUUID());
+        if(subscriptionFromDB == Subscription.NONE){
+            renderArgs.put("message", String.format("Subscription for id %s was not found",subscription.getSubsUUID()));
+            render("Application/message.html");
+        } else {
+            subscriptionFromDB.update(subscription);
+            renderArgs.put("message", "Your subscription was updated.");
+            render("Application/message.html");
+        }
+    }
+
     public static void unsubscribe(String subscriptionid){
         Subscription.deleteSubscription(subscriptionid);
         String message = "You have unsubscribed. Bye...";
@@ -107,8 +130,9 @@ public class Application extends HnController {
         List<Item> itemList = new ArrayList<Item>();
         itemList.add(item1);
         itemList.add(item2);
-        String emailTemplate = EmailSender.createHtml(UUID.randomUUID().toString(), itemList);
-        File file = new File("template.html");
+        //String emailTemplate = EmailSender.createHtml(UUID.randomUUID().toString(), "Yesterday" ,itemList);
+        String emailTemplate = EmailSender.createText(UUID.randomUUID().toString(), "Yesterday" ,itemList);
+        File file = new File("template.txt");
         FileWriter fw= null;
         try {
             fw = new FileWriter(file);

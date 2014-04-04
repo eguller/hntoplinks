@@ -1,0 +1,47 @@
+#{extends 'main.html' /}
+<table border=0 cellpadding=0 cellspacing=0 width="85%" bgcolor=#f6f6ef>
+    <tr>
+        #{menu activeTab:'subscribe'/}</td>
+    </tr>
+    <tr style="height: 10px"></tr>
+    <tr>
+        <td colspan="2">
+            #{form @Application.modifySubscription(subscription), id:"subscribe", method:"POST"}
+            <input type="hidden" value="${subscription.subsUUID}">
+            <table border=0 cellpadding=0 cellspacing=0 style="margin-left: 30%;">
+                <tr>
+                    <td colspan="2" class="head">Subscribe Hacker News Top Links</td>
+                </tr>
+                <tr>
+                    <td class="cright">Daily Top Links</td>
+                    <td class="cleft"><input type="checkbox" name="subscription.daily" ${subscription.daily ? "checked" : ""}/></td>
+                </tr>
+                <tr>
+                    <td class="cright">Wekly Top Links</td>
+                    <td class="cleft"><input type="checkbox" name="subscription.weekly" ${subscription.weekly ? "checked" : ""}/></td>
+                </tr>
+                <tr>
+                    <td class="cright">Monthly Top Links</td>
+                    <td class="cleft"><input type="checkbox" name="subscription.monthly" ${subscription.monthly ? "checked" : ""}/></td>
+                </tr>
+                <tr>
+                    <td class="cright">Annually Top Links</td>
+                    <td class="cleft"><input type="checkbox" name="subscription.annually" ${subscription.annually ? "checked" : ""}/></td>
+                </tr>
+                <tr>
+                    <td class="cright">Email</td>
+                    <td class="cleft">
+                        <input type="text" name="subscription.email" value="${subscription.email}" style="width: 160px;"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="cright">
+                        <input type="submit" value="Submit">
+                    </td>
+                </tr>
+            </table>
+            #{/form}
+        </td>
+    </tr>
+    #{footer /}
+</table>

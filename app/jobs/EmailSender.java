@@ -19,9 +19,6 @@ import java.util.*;
 
 @On("0 0 1 ? * *")
 public class EmailSender extends Job{
-    private static final
-    int previousDay = -1;
-    int previousWeek = -1;
     int sentEmailCount = 0;
     @Override @NoTransaction
     public void doJob(){
@@ -33,11 +30,11 @@ public class EmailSender extends Job{
 
     }
 
-    public static String createHtml(String subscriptionId, List<Item> itemList){
+    public static String createHtml(String subscriptionId, String time,  List<Item> itemList){
         String itemContent = templateItems(subscriptionId, itemList);
         Map<String, String> values = new HashMap<String, String>();
         values.put("items", itemContent);
-        values.put("time", "Yesterday");
+        values.put("time", time);
         values.put("subscriptionid", subscriptionId);
         String content = VirtualFile.fromRelativePath("/app/template/email.html").contentAsString();
         String templated = Templater.template(content, values);
@@ -59,14 +56,34 @@ public class EmailSender extends Job{
             values.put("points", String.valueOf(item.getPoints()));
             values.put("comment", String.valueOf(item.getComment()));
             values.put("hnid", String.valueOf(item.getHnid()));
+            values.put("applicationBaseUrl", Play.configuration.getProperty("application.baseUrl"));
             String templated = Templater.template(content, values);
             sb.append(templated);
         }
         return sb.toString();
     }
 
-    private static String createText(List<Item> itemList){
-        return null;
+
+    public static String createText(String subscriptionId, String time, List<Item> itemList){
+        StringBuilder sb = new StringBuilder();
+        sb.append(time);
+        sb.append(" - Hacker News Top Links");
+        sb.append("\n");
+        for(int i = 0; i < itemList.size(); i ++){
+            Item item = itemList.get(i);
+            sb.append(i+1);
+            sb.append(". ");
+            sb.append(item.getTitle());
+            sb.append(" (");
+            sb.append(item.getPoints());
+            sb.append(" points) ");
+            sb.append(item.getUrl());
+            sb.append("\n");
+        }
+        sb.append("\n");
+        sb.append("Unsubscribe - ").append(Play.configuration.getProperty("application.baseUrl")).append("/unsubscribe/").append(subscriptionId).append("\n");
+        sb.append("Modify Subscription - ").append(Play.configuration.getProperty("application.baseUrl")).append("/subscription/modify/").append(subscriptionId).append("\n");
+        return sb.toString();
     }
 
 }
