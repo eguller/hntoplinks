@@ -5,6 +5,7 @@ import play.db.jpa.Model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -36,13 +37,13 @@ public class Subscription extends Model {
     @Column(name = "ACTIVATED")
     boolean activated = false;
     @Column(name = "SENTDAY", nullable = false)
-    int day = -1;
+    int day = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
     @Column(name = "SENTWEEK", nullable = false)
-    int week = -1;
+    int week = Calendar.getInstance().get(Calendar.WEEK_OF_YEAR);
     @Column(name = "SENTMONTH", nullable = false)
-    int month = -1;
+    int month = Calendar.getInstance().get(Calendar.MONTH);
     @Column(name = "SENTYEAR", nullable = false)
-    int year = -1;
+    int year = Calendar.getInstance().get(Calendar.YEAR);
 
     public String getEmail() {
         return email;
@@ -157,5 +158,21 @@ public class Subscription extends Model {
         this.setMonthly(subscription.isMonthly());
         this.setAnnually(subscription.isAnnually());
         this.save();
+    }
+
+    public static List<Subscription> dailySubscribers(int today){
+        return Subscription.find("daily = ? and activated = ? and day != ? ", true, true, today).fetch();
+    }
+
+    public static List<Subscription> weeklySubscribers(int thisWeek){
+        return Subscription.find("weekly = ? and activated = ? and week != ?", true, true, thisWeek).fetch();
+    }
+
+    public static List<Subscription> monthlySubscribers(int thisMonth){
+        return Subscription.find("monthly = ? and activated = ? and month != ?", true, true, thisMonth).fetch();
+    }
+
+    public static List<Subscription> annualSubscribers(int thisYear){
+        return Subscription.find("annually = ? and activated = ? and year != ?", true, true, thisYear).fetch();
     }
 }
