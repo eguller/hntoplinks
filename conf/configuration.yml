@@ -1,4 +1,5 @@
 Configuration(email_mock):
-    group: EMAIL_MOCK
+    group: EMAIL_CONFIG
     key: mail.smtp
     value: mock
+    overridePlayConfig: true

@@ -25,8 +25,9 @@ import java.util.*;
  * Time: 7:03 AM
  */
 
-@On("0 0 1 ? * *")
-public class EmailSender extends Job {
+//@On("0 0 1 ? * *")
+    @Every("1mn")
+public class EmailSendJob extends Job {
     int sentEmailCount = 0;
 
     @Override

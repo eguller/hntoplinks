@@ -21,6 +21,8 @@ public class Configuration extends Model{
     String key;
     @Column(name="CVALUE")
     String value;
+    @Column(name="OVERRIDE_PLAY_CONFIG")
+    boolean overridePlayConfig;
 
     public String getGroup() {
         return group;
@@ -44,6 +46,14 @@ public class Configuration extends Model{
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public boolean isOverridePlayConfig() {
+        return overridePlayConfig;
+    }
+
+    public void setOverridePlayConfig(boolean overridePlayConfig) {
+        this.overridePlayConfig = overridePlayConfig;
     }
 
     public static Map<String, String> getConfigurationByGroup(ConfigGroup configGroup){

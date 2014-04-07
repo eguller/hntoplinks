@@ -12,7 +12,7 @@ import java.util.*;
  */
 public class ItemCache {
     private static final ItemCache INSTANCE = new ItemCache();
-    private static final int ITEM_PER_PAGE = 30;
+    public static final int ITEM_PER_PAGE = 30;
     Map<CacheUnit, ItemCacheUnit> cacheMap = new HashMap<CacheUnit, ItemCacheUnit>();
 
     private ItemCache() {

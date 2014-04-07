@@ -7,6 +7,7 @@ import org.apache.commons.mail.HtmlEmail;
 import play.Play;
 import play.libs.Mail;
 import play.vfs.VirtualFile;
+import utils.EmailUtil;
 import utils.Templater;
 
 import java.util.HashMap;
@@ -21,32 +22,20 @@ import java.util.Map;
 public abstract class EmailList {
 
     public abstract void send();
+
     public abstract String subject();
 
-    protected void sendEmail(List<Subscription> subscriptions, List<Item> itemList, String subjectTime) {
-        for (Subscription subscription : subscriptions) {
-            String htmlContent = createHtml(subscription.getSubsUUID(), itemList, subjectTime);
-            String textContent = createText(subscription.getSubsUUID(), itemList, subjectTime);
-            try {
-                sendEmail(htmlContent, textContent, subscription.getEmail(), subjectTime + " - Hacker News Top Links");
+    public abstract void sendEmail(List<Subscription> subscriptions, List<Item> itemList, String subject) throws EmailException;
 
-            } catch (EmailException e) {
-                e.printStackTrace();
-            }
-        }
+    protected void sendEmail(Subscription subscription, List<Item> itemList, String subjectTime) throws EmailException {
+        String htmlContent = createHtml(subscription.getSubsUUID(), itemList, subjectTime);
+        String textContent = createText(subscription.getSubsUUID(), itemList, subjectTime);
+        EmailUtil.sendEmail(htmlContent, textContent, subscription.getEmail(), subjectTime + " - Hacker News Top Links");
+
     }
 
-    public static void sendEmail(String htmlContent, String textContent, String to, String subject) throws EmailException {
-        HtmlEmail email = new HtmlEmail();
-        email.addTo(to);
-        email.setFrom("toplinks@hntoplinks.com", "Hacker News Top Links");
-        email.setSubject(subject);
-        email.setHtmlMsg(htmlContent);
-        email.setTextMsg(textContent);
-        Mail.send(email);
-    }
 
-    private static String createHtml(String subscriptionId, List<Item> itemList, String subject) {
+    private String createHtml(String subscriptionId, List<Item> itemList, String subject) {
         String itemContent = templateItems(itemList);
         Map<String, String> values = new HashMap<String, String>();
         values.put("items", itemContent);
@@ -57,7 +46,7 @@ public abstract class EmailList {
         return templated;
     }
 
-    private static String templateItems(List<Item> itemList) {
+    private String templateItems(List<Item> itemList) {
         String content = VirtualFile.fromRelativePath("/app/template/item.html").contentAsString();
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < itemList.size(); i++) {
@@ -80,7 +69,7 @@ public abstract class EmailList {
     }
 
 
-    private static String createText(String subscriptionId, List<Item> itemList, String subject) {
+    private String createText(String subscriptionId, List<Item> itemList, String subject) {
         StringBuilder sb = new StringBuilder();
         sb.append(subject);
         sb.append("\n");

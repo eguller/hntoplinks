@@ -1,5 +1,6 @@
 package jobs;
 
+import cache.ConfigCache;
 import cache.ItemCache;
 import models.ConfigGroup;
 import models.Configuration;
@@ -14,14 +15,15 @@ import java.util.List;
 public class Start extends Job {
 	@Override
 	public void doJob(){
+        loadDataFill();
+        ConfigCache.instance().load();
         List<Item> allItems = Item.findAll();
         ItemCache.getInstance().updateCache(allItems);
-        loadDataFill();
         new ForwardCrawler().now();
 	}
 
     public void loadDataFill(){
-        if(Configuration.getConfigurationGroupSize(ConfigGroup.EMAIL_MOCK) == 0) {
+        if(Configuration.getConfigurationGroupSize(ConfigGroup.EMAIL_CONFIG) == 0) {
             Fixtures.loadModels("configuration.yml");
         }
     }

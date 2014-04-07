@@ -10,9 +10,11 @@ import java.util.*;
 
 import com.hntoplinks.controller.HnController;
 
-import jobs.EmailSender;
+import jobs.EmailList;
 import models.*;
+import org.apache.commons.mail.EmailException;
 import play.libs.Codec;
+import utils.EmailUtil;
 
 public class Application extends HnController {
 
@@ -90,12 +92,21 @@ public class Application extends HnController {
 
         subscription.setSubscriptionDate(Calendar.getInstance().getTime());
         subscription.setSubsUUID(Codec.UUID().toLowerCase());
-        subscription.setActivated(false);
+
         subscription.setActivationDate(null);
         if (!subscription.subscribedBefore()) {
-            subscription.save();
-            renderArgs.put("subscription", subscription);
-            render("Application/subscription_complete.html");
+
+            try {
+                EmailUtil.sendActivationEmail(subscription, subscription.getEmail());
+                subscription.setActivated(false);
+            } catch (EmailException e) {
+                subscription.setActivated(true);
+                e.printStackTrace();
+            }finally {
+                subscription.save();
+                renderArgs.put("subscription", subscription);
+                render("Application/subscription_complete.html");
+            }
         } else {
             renderArgs.put("subscription", subscription);
             render("Application/subscription.html");
@@ -130,13 +141,13 @@ public class Application extends HnController {
         List<Item> itemList = new ArrayList<Item>();
         itemList.add(item1);
         itemList.add(item2);
-        //String emailTemplate = EmailSender.createHtml(UUID.randomUUID().toString(), "Yesterday" ,itemList);
-        String emailTemplate = EmailSender.createText(UUID.randomUUID().toString(), "Yesterday" ,itemList);
+        //String emailTemplate = EmailSendJob.createHtml(UUID.randomUUID().toString(), "Yesterday" ,itemList);
+        //String emailTemplate = EmailSendJob.createText(UUID.randomUUID().toString(), "Yesterday" ,itemList);
         File file = new File("template.txt");
         FileWriter fw= null;
         try {
             fw = new FileWriter(file);
-            fw.write(emailTemplate);
+            //fw.write(emailTemplate);
             fw.close();
         } catch (IOException e) {
             e.printStackTrace();

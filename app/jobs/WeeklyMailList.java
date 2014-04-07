@@ -4,6 +4,8 @@ import cache.CacheUnit;
 import cache.ItemCache;
 import models.Item;
 import models.Subscription;
+import org.apache.commons.mail.EmailException;
+import play.db.jpa.JPAPlugin;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -16,12 +18,17 @@ import java.util.List;
  * Time: 11:26 PM
  */
 public class WeeklyMailList extends EmailList{
+    int week;
+    public WeeklyMailList(){
+        week = Calendar.getInstance().get(Calendar.WEEK_OF_YEAR);
+    }
     @Override
     public void send() {
-        int week = Calendar.getInstance().get(Calendar.WEEK_OF_YEAR);
         List<Subscription> subscriptionList = Subscription.weeklySubscribers(week);
         List<Item> itemList = ItemCache.getInstance().get(CacheUnit.week);
-        sendEmail(subscriptionList, itemList, subject());
+        if(!(itemList.size() < ItemCache.ITEM_PER_PAGE)) {
+            sendEmail(subscriptionList, itemList, subject());
+        }
     }
 
     @Override
@@ -33,5 +40,20 @@ public class WeeklyMailList extends EmailList{
         calendar.add(Calendar.DATE, -7);
         String fromDate = dateFormat.format(calendar.getTime());
         return String.format("%s - %s Hacker News Top Links", fromDate, toDate);
+    }
+
+    @Override
+    public void sendEmail(List<Subscription> subscriptions, List<Item> itemList, String subject){
+        for(Subscription subscription : subscriptions){
+            try {
+                sendEmail(subscription, itemList, subject);
+                JPAPlugin.startTx(false);
+                subscription.setWeek(week);
+                subscription.save();
+                JPAPlugin.closeTx(false);
+            } catch (EmailException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

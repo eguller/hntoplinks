@@ -4,6 +4,8 @@ import cache.CacheUnit;
 import cache.ItemCache;
 import models.Item;
 import models.Subscription;
+import org.apache.commons.mail.EmailException;
+import play.db.jpa.JPAPlugin;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -16,12 +18,17 @@ import java.util.List;
  * Time: 11:25 PM
  */
 public class DailyMailList extends EmailList{
+    int today;
+    public DailyMailList(){
+        today =  Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
+    }
     @Override
     public void send() {
-        int today = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
         List<Subscription> subscriptionList = Subscription.dailySubscribers(today);
         List<Item> itemList = ItemCache.getInstance().get(CacheUnit.today);
-        sendEmail(subscriptionList, itemList, subject());
+        if(!(itemList.size() < ItemCache.ITEM_PER_PAGE)) {
+            sendEmail(subscriptionList, itemList, subject());
+        }
     }
 
     @Override
@@ -31,5 +38,20 @@ public class DailyMailList extends EmailList{
         DateFormat yesterday = new SimpleDateFormat("EEEE, dd MMMM");
         String timePrefix =  yesterday.format(calendar.getTime());
         return timePrefix + " - Hacker News Top Links";
+    }
+
+    @Override
+    public void sendEmail(List<Subscription> subscriptions, List<Item> itemList, String subject) {
+        for(Subscription subscription : subscriptions){
+            try {
+                sendEmail(subscription, itemList, subject);
+                JPAPlugin.startTx(false);
+                subscription.setDay(today);
+                subscription.save();
+                JPAPlugin.closeTx(false);
+            } catch (EmailException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

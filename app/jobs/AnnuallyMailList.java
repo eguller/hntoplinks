@@ -4,6 +4,9 @@ import cache.CacheUnit;
 import cache.ItemCache;
 import models.Item;
 import models.Subscription;
+import org.apache.commons.mail.EmailException;
+import play.db.jpa.JPA;
+import play.db.jpa.JPAPlugin;
 
 import java.util.Calendar;
 import java.util.List;
@@ -22,11 +25,28 @@ public class AnnuallyMailList extends EmailList{
     public void send() {
         List<Subscription> subscriptionList = Subscription.annualSubscribers(year);
         List<Item> itemList = ItemCache.getInstance().get(CacheUnit.year);
-        sendEmail(subscriptionList, itemList, subject());
+        if(!(itemList.size() < ItemCache.ITEM_PER_PAGE)) {
+            sendEmail(subscriptionList, itemList, subject());
+        }
     }
 
     @Override
     public String subject() {
         return String.format("%d - Hacker News Top Links", year);
+    }
+
+    @Override
+    public void sendEmail(List<Subscription> subscriptions, List<Item> itemList, String subject) {
+        for(Subscription subscription : subscriptions){
+            try {
+                sendEmail(subscription, itemList, subject);
+                JPAPlugin.startTx(false);
+                subscription.setYear(year);
+                subscription.save();
+                JPAPlugin.closeTx(false);
+            } catch (EmailException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
