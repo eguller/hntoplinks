@@ -33,7 +33,7 @@ public class EmailUtil {
 
     public static void sendActivationEmail(Subscription subscription, String to) throws EmailException {
         String htmlContent = VirtualFile.fromRelativePath("/app/template/activation_email.html").contentAsString();
-        String textContent = VirtualFile.fromRelativePath("/app/template/activation_email.html").contentAsString();
+        String textContent = VirtualFile.fromRelativePath("/app/template/activation_email.txt").contentAsString();
         Map<String, String> values = new HashMap<String, String>();
         values.put("activationurl", subscription.getActivationUrl());
         values.put("unsubscribeurl", subscription.getUnSubsribeUrl());

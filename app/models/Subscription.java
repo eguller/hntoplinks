@@ -2,10 +2,12 @@ package models;
 
 import play.Play;
 import play.db.jpa.Model;
+import play.mvc.Router;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -18,7 +20,6 @@ import java.util.List;
 @Entity
 @Table(name = "SUBSCRIPTION")
 public class Subscription extends Model {
-    public static final Subscription NONE = new Subscription();
     @Column(name = "EMAIL", nullable = false, unique = true)
     String email = "";
     @Column(name = "DAILY")
@@ -165,7 +166,7 @@ public class Subscription extends Model {
         if (subscriptionList.size() > 0) {
             return subscriptionList.get(0);
         } else {
-            return Subscription.NONE;
+            return null;
         }
     }
 
@@ -211,14 +212,14 @@ public class Subscription extends Model {
     }
 
     public String getUnSubsribeUrl(){
-        return new StringBuilder(Play.configuration.getProperty("application.baseUrl")).append("/unsubscribe/").append(this.getSubsUUID()).toString();
+        return new StringBuilder(Play.configuration.getProperty("application.baseUrl")).append("unsubscribe/").append(this.getSubsUUID()).toString();
     }
 
     public String getModifyUrl(){
-        return new StringBuilder(Play.configuration.getProperty("application.baseUrl")).append("/subscription/modify/").append(this.getSubsUUID()).toString();
+        return new StringBuilder(Play.configuration.getProperty("application.baseUrl")).append("subscription/modify/").append(this.getSubsUUID()).toString();
     }
 
     public String getActivationUrl() {
-        return new StringBuilder(Play.configuration.getProperty("application.baseUrl")).append("/subscription/activate/").append(this.getSubsUUID()).toString();
+        return new StringBuilder(Play.configuration.getProperty("application.baseUrl")).append("subscription/activate/").append(this.getSubsUUID()).toString();
     }
 }

@@ -24,7 +24,7 @@ GET     /about                                                Application.about
 
 
 #subscribe
-GET     /subscribe/?                                           Application.viewSubscription
+GET     /subscribe/?                                          Application.viewSubscription
 POST    /subscribe                                            Application.doSubscribe
 
 #unsubscribe
@@ -34,7 +34,8 @@ GET     /unsubscribe/{subscriptionid}                         Application.unsubs
 GET     /subscription/modify/{subscriptionid}                 Application.viewModifySubscription
 POST    /subscription/modify/?                                Application.modifySubscription
 
-GET     /template                                             Application.emailTemplate
+#activate
+GET     /subscription/activate/{subscriptionid}               Application.activate
 
 # Ignore favicon requests
 GET     /favicon.ico                            404

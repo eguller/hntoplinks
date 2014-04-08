@@ -8,13 +8,15 @@
         <td colspan="2">
                 <table border=0 cellpadding=0 cellspacing=0 width="100%">
                     <tr>
-                        <td colspan="2" style="text-align: center;">Your subscription completed. Please go to
+                        <td colspan="2" style="text-align: center;">Your subscription completed. <br/>
+                            Please go to <br/>
                             #{if subscription.emailDomainExists()}
                                <a href="http://${subscription.emailDomain()}" target="_blank">${subscription.email}</a>
                             #{/if}
                             #{else}
                                 ${subscription.email}
-                            #{/else} and activate your subscription.
+                            #{/else}
+                            <br/>and activate your subscription.
                         </td>
                     </tr>
                 </table>

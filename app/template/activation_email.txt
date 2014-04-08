@@ -1,11 +1,10 @@
 Hello,
 Please click
 ${activationurl}
-to verify your email address.
-Once you verified, you will start to receive Hacker News Top Links emails periodically.
+to verify your email address. Once you verified, you will start to receive Hacker News Top Links emails periodically.
 
 If you did not register, please click
 ${applicationBaseUrl}/unsubscribe/${subscriptionid}
-to remove your email completely.
+to remove your email from out system completely.
 
 Best wishes, hntoplinks.com
