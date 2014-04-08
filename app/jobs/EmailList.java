@@ -27,20 +27,23 @@ public abstract class EmailList {
 
     public abstract void sendEmail(List<Subscription> subscriptions, List<Item> itemList, String subject) throws EmailException;
 
-    protected void sendEmail(Subscription subscription, List<Item> itemList, String subjectTime) throws EmailException {
-        String htmlContent = createHtml(subscription.getSubsUUID(), itemList, subjectTime);
-        String textContent = createText(subscription.getSubsUUID(), itemList, subjectTime);
-        EmailUtil.sendEmail(htmlContent, textContent, subscription.getEmail(), subjectTime + " - Hacker News Top Links");
+    protected void sendEmail(Subscription subscription, List<Item> itemList, String subject) throws EmailException {
+        String htmlContent = createHtml(subscription, itemList, subject);
+        String textContent = createText(subscription, itemList, subject);
+        Map<String, String> headers = new HashMap<String, String>();
+        headers.put("List-Unsubscribe", subscription.getUnSubsribeUrl());
+        EmailUtil.sendEmail(htmlContent, textContent, subscription.getEmail(), subject, headers);
 
     }
 
 
-    private String createHtml(String subscriptionId, List<Item> itemList, String subject) {
+    private String createHtml(Subscription subscription, List<Item> itemList, String subject) {
         String itemContent = templateItems(itemList);
         Map<String, String> values = new HashMap<String, String>();
         values.put("items", itemContent);
         values.put("subject", subject);
-        values.put("subscriptionid", subscriptionId);
+        values.put("unsubscribeurl", subscription.getUnSubsribeUrl());
+        values.put("modifyurl", subscription.getModifyUrl());
         String content = VirtualFile.fromRelativePath("/app/template/email.html").contentAsString();
         String templated = Templater.template(content, values);
         return templated;
@@ -61,7 +64,6 @@ public abstract class EmailList {
             values.put("points", String.valueOf(item.getPoints()));
             values.put("comment", String.valueOf(item.getComment()));
             values.put("hnid", String.valueOf(item.getHnid()));
-            values.put("applicationBaseUrl", Play.configuration.getProperty("application.baseUrl"));
             String templated = Templater.template(content, values);
             sb.append(templated);
         }
@@ -69,7 +71,7 @@ public abstract class EmailList {
     }
 
 
-    private String createText(String subscriptionId, List<Item> itemList, String subject) {
+    private String createText(Subscription subscription, List<Item> itemList, String subject) {
         StringBuilder sb = new StringBuilder();
         sb.append(subject);
         sb.append("\n");
@@ -85,8 +87,8 @@ public abstract class EmailList {
             sb.append("\n");
         }
         sb.append("\n");
-        sb.append("Unsubscribe - ").append(Play.configuration.getProperty("application.baseUrl")).append("/unsubscribe/").append(subscriptionId).append("\n");
-        sb.append("Modify Subscription - ").append(Play.configuration.getProperty("application.baseUrl")).append("/subscription/modify/").append(subscriptionId).append("\n");
+        sb.append("Unsubscribe - ").append(subscription.getUnSubsribeUrl()).append("\n");
+        sb.append("Modify Subscription - ").append(subscription.getModifyUrl()).append("\n");
         return sb.toString();
     }
 }

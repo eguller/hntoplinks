@@ -39,7 +39,7 @@ public class WeeklyMailList extends EmailList{
         String toDate = dateFormat.format(calendar.getTime());
         calendar.add(Calendar.DATE, -7);
         String fromDate = dateFormat.format(calendar.getTime());
-        return String.format("%s - %s Hacker News Top Links", fromDate, toDate);
+        return String.format("%s - %s Weekly Top Links", fromDate, toDate);
     }
 
     @Override

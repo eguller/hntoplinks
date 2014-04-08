@@ -38,7 +38,7 @@ public class MonthlyMailList extends EmailList{
         calendar.add(Calendar.DATE, -15);
         DateFormat lastMonth = new SimpleDateFormat("MMMM yyyy");
         String lmString = lastMonth.format(calendar.getTime());
-        return lmString + " - Hacker News Top Links";
+        return lmString + " - Best of Last Month";
     }
 
     @Override

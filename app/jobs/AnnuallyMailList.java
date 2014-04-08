@@ -32,7 +32,7 @@ public class AnnuallyMailList extends EmailList{
 
     @Override
     public String subject() {
-        return String.format("%d - Hacker News Top Links", year);
+        return String.format("Best of %d", year);
     }
 
     @Override

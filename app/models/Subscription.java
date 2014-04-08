@@ -1,5 +1,6 @@
 package models;
 
+import play.Play;
 import play.db.jpa.Model;
 
 import javax.persistence.Column;
@@ -207,5 +208,17 @@ public class Subscription extends Model {
 
     public static List<Subscription> annualSubscribers(int thisYear){
         return Subscription.find("annually = ? and activated = ? and year != ?", true, true, thisYear).fetch();
+    }
+
+    public String getUnSubsribeUrl(){
+        return new StringBuilder(Play.configuration.getProperty("application.baseUrl")).append("/unsubscribe/").append(this.getSubsUUID()).toString();
+    }
+
+    public String getModifyUrl(){
+        return new StringBuilder(Play.configuration.getProperty("application.baseUrl")).append("/subscription/modify/").append(this.getSubsUUID()).toString();
+    }
+
+    public String getActivationUrl() {
+        return new StringBuilder(Play.configuration.getProperty("application.baseUrl")).append("/subscription/activate/").append(this.getSubsUUID()).toString();
     }
 }

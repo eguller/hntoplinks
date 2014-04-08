@@ -1,6 +1,6 @@
 Hello,
 Please click
-${applicationBaseURL}/subscription/activate/${subscriptionid}
+${activationurl}
 to verify your email address.
 Once you verified, you will start to receive Hacker News Top Links emails periodically.
 

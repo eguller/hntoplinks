@@ -5,12 +5,16 @@ import cache.ItemCache;
 import models.Item;
 import models.Subscription;
 import org.apache.commons.mail.EmailException;
+import play.Play;
 import play.db.jpa.JPAPlugin;
+import utils.EmailUtil;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * User: eguller
@@ -37,7 +41,7 @@ public class DailyMailList extends EmailList{
         calendar.add(Calendar.DATE, -1);
         DateFormat yesterday = new SimpleDateFormat("EEEE, dd MMMM");
         String timePrefix =  yesterday.format(calendar.getTime());
-        return timePrefix + " - Hacker News Top Links";
+        return timePrefix + " - Daily Top Links";
     }
 
     @Override
