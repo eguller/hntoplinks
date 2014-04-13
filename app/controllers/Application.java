@@ -37,7 +37,7 @@ public class Application extends HnController {
         List<Item> items = ItemCache.getInstance().get(CacheUnit.week, page);
         renderArgs.put("items", items);
         renderArgs.put("page", page);
-        render("Application/index.html", items, page);
+        render("Application/index.html");
     }
 
     public static void month(Integer page) {
@@ -48,7 +48,7 @@ public class Application extends HnController {
         List<Item> items = ItemCache.getInstance().get(CacheUnit.month, page);
         renderArgs.put("items", items);
         renderArgs.put("page", page);
-        render("Application/index.html", items, page);
+        render("Application/index.html");
     }
 
     public static void year(Integer page) {
@@ -59,7 +59,7 @@ public class Application extends HnController {
         List<Item> items = ItemCache.getInstance().get(CacheUnit.year, page);
         renderArgs.put("items", items);
         renderArgs.put("page", page);
-        render("Application/index.html", items, page);
+        render("Application/index.html");
     }
 
     public static void all(Integer page) {
@@ -70,7 +70,7 @@ public class Application extends HnController {
         List<Item> items = ItemCache.getInstance().get(CacheUnit.all, page);
         renderArgs.put("items", items);
         renderArgs.put("page", page);
-        render("Application/index.html", items, page);
+        render("Application/index.html");
     }
 
     public static void viewSubscription() {
@@ -90,30 +90,30 @@ public class Application extends HnController {
         }
     }
 
-    public static void doSubscribe(Subscription subscription) {
-        subscription.fixEmailFormat();
-        validation.email(subscription.getEmail());
-        validation.isTrue(subscription.isDaily() || subscription.isWeekly() || subscription.isMonthly() || subscription.isAnnually());
+    public static void doSubscribe(Subscription newSubscription) {
+        newSubscription.fixEmailFormat();
+        validation.email(newSubscription.getEmail());
+        validation.isTrue(newSubscription.isDaily() || newSubscription.isWeekly() || newSubscription.isMonthly() || newSubscription.isAnnually());
 
-        subscription.setSubscriptionDate(Calendar.getInstance().getTime());
-        subscription.setSubsUUID(Codec.UUID().toLowerCase());
+        newSubscription.setSubscriptionDate(Calendar.getInstance().getTime());
+        newSubscription.setSubsUUID(Codec.UUID().toLowerCase());
 
-        subscription.setActivationDate(null);
-        if (!subscription.subscribedBefore()) {
+        newSubscription.setActivationDate(null);
+        if (!newSubscription.subscribedBefore()) {
 
             try {
-                EmailUtil.sendActivationEmail(subscription, subscription.getEmail());
-                subscription.setActivated(false);
+                EmailUtil.sendActivationEmail(newSubscription, newSubscription.getEmail());
+                newSubscription.setActivated(false);
             } catch (EmailException e) {
-                subscription.setActivated(true);
+                newSubscription.setActivated(true);
                 e.printStackTrace();
             } finally {
-                subscription.save();
-                renderArgs.put("subscription", subscription);
+                newSubscription.save();
+                renderArgs.put("subscription", newSubscription);
                 render("Application/subscription_complete.html");
             }
         } else {
-            renderArgs.put("subscription", subscription);
+            renderArgs.put("subscription", newSubscription);
             render("Application/subscription.html");
         }
     }

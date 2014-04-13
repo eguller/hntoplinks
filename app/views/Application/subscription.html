@@ -6,31 +6,31 @@
     <tr style="height: 10px"></tr>
     <tr>
         <td colspan="2">
-            #{form @Application.doSubscribe(subscription), id:"subscribe", method:"POST"}
+            #{form @Application.doSubscribe(newSubscription), id:"subscribe", method:"POST"}
                 <table border=0 cellpadding=0 cellspacing=0 style="margin-left: 30%;">
                     <tr>
                         <td colspan="2" class="head">Subscribe Hacker News Top Links</td>
                     </tr>
                     <tr>
                         <td class="cright">Daily Top Links</td>
-                        <td class="cleft"><input type="checkbox" name="subscription.daily" ${subscription.daily ? "checked" : ""}/></td>
+                        <td class="cleft"><input type="checkbox" name="newSubscription.daily" ${subscription.daily ? "checked" : ""}/></td>
                     </tr>
                     <tr>
                         <td class="cright">Wekly Top Links</td>
-                        <td class="cleft"><input type="checkbox" name="subscription.weekly" ${subscription.weekly ? "checked" : ""}/></td>
+                        <td class="cleft"><input type="checkbox" name="newSubscription.weekly" ${subscription.weekly ? "checked" : ""}/></td>
                     </tr>
                     <tr>
                         <td class="cright">Monthly Top Links</td>
-                        <td class="cleft"><input type="checkbox" name="subscription.monthly" ${subscription.monthly ? "checked" : ""}/></td>
+                        <td class="cleft"><input type="checkbox" name="newSubscription.monthly" ${subscription.monthly ? "checked" : ""}/></td>
                     </tr>
                     <tr>
                         <td class="cright">Annually Top Links</td>
-                        <td class="cleft"><input type="checkbox" name="subscription.annually" ${subscription.annually ? "checked" : ""}/></td>
+                        <td class="cleft"><input type="checkbox" name="newSubscription.annually" ${subscription.annually ? "checked" : ""}/></td>
                     </tr>
                     <tr>
                         <td class="cright">Email</td>
                         <td class="cleft">
-                            <input type="text" name="subscription.email" value="${subscription.email}" style="width: 160px;"/>
+                            <input type="text" name="newSubscription.email" value="${subscription.email}" style="width: 160px;"/>
                         </td>
                     </tr>
                     <tr>
