@@ -75,10 +75,10 @@ public class Application extends HnController {
         render("Application/subscription.html");
     }
 
-    public static void viewModifySubscription(String subscriptionId) {
-        Subscription subscription = Subscription.findBySubscriptionId(subscriptionId);
+    public static void viewModifySubscription(String subscriptionid) {
+        Subscription subscription = Subscription.findBySubscriptionId(subscriptionid);
         if (subscription == null) {
-            renderArgs.put("message", String.format("Subscription for id %s was not found", subscriptionId));
+            renderArgs.put("message", String.format("Subscription for id %s was not found", subscriptionid));
             render("Application/message.html");
         } else {
             renderArgs.put("subscription", subscription);
