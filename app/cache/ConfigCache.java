@@ -32,7 +32,7 @@ public class ConfigCache {
     }
 
     public void load(){
-        List<Configuration> configurationList =Configuration.findAll();
+        List<Configuration> configurationList = Configuration.findAll();
         for(Configuration configuration : configurationList){
             ConfigCacheItem item = new ConfigCacheItem(configuration.getKey(), configuration.getValue(), configuration.isOverridePlayConfig());
             configCache.put(configuration.getKey(), item);
