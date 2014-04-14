@@ -2,19 +2,15 @@ package controllers;
 
 import cache.CacheUnit;
 import cache.ItemCache;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.*;
-
 import com.hntoplinks.controller.HnController;
-
-import jobs.EmailList;
-import models.*;
+import models.Item;
+import models.Subscription;
 import org.apache.commons.mail.EmailException;
 import play.libs.Codec;
 import utils.EmailUtil;
+
+import java.util.Calendar;
+import java.util.List;
 
 public class Application extends HnController {
 

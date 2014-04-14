@@ -120,29 +120,14 @@ public class ForwardCrawler extends Job {
         }
     }
 
-    private static String extractContent(String url) {
-        StringBuilder sb = new StringBuilder();
+    public static String extractContent(String url) {
         try {
-            URL yc;
-            yc = new URL(url);
-            BufferedReader in = new BufferedReader(new InputStreamReader(
-                    yc.openStream()));
-
-            String inputLine;
-            while ((inputLine = in.readLine()) != null) {
-                sb.append(inputLine);
-            }
-            in.close();
-        } catch (MalformedURLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (SocketException e) {
-            Logger.error(e, "IP banned by hn");
+            Document document = Jsoup.connect(url).userAgent("Mozilla").get();
+            return document.html();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            Logger.error(url + " cannot be read.",e);
+            return "";
         }
-        return sb.toString();
     }
 
     private String extractMoreLink(String content) {
