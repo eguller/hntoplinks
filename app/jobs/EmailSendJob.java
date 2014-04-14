@@ -25,8 +25,8 @@ import java.util.*;
  * Time: 7:03 AM
  */
 
-//@On("0 0 1 ? * *")
-    @Every("1mn")
+@On("0 0 1 ? * *")
+//@Every("1h")
 public class EmailSendJob extends Job {
     int sentEmailCount = 0;
 
