@@ -144,6 +144,9 @@ public class Application extends HnController {
             renderArgs.put("message", String.format("Error!</br> Subscription id %s does not exist in our system.", subscriptionid));
             render("Application/message.html");
         } else {
+            subscription.setActivated(true);
+            subscription.setActivationDate(Calendar.getInstance().getTime());
+            subscription.save();
             renderArgs.put("message", "Congratulations! <br/> Your subscription has been activated. <br/> You will receive periodic e-mail from now on.");
             render("Application/message.html");
         }
