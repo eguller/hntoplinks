@@ -124,7 +124,7 @@ public class ForwardCrawler extends Job {
             int responseCode = response.statusCode();
             if(response.statusCode() == OK) {
                 String body = response.body();
-                Logger.info("%s retrieved, content length %d, time %s", url, body.length(), FormatUtil.millis2Seconds(diff));
+                Logger.info("%s retrieved, content length %d, time %s sec.", url, body.length(), FormatUtil.millis2Seconds(diff));
                 return response.body();
             } else {
                 Logger.error("%s returned %d", url, responseCode);
