@@ -76,12 +76,12 @@ public class Application extends HnController {
     }
 
     public static void viewModifySubscription(String subscriptionid) {
-        Subscription subscription = Subscription.findBySubscriptionId(subscriptionid);
-        if (subscription == null) {
+        Subscription existingSubscription = Subscription.findBySubscriptionId(subscriptionid);
+        if (existingSubscription == null) {
             renderArgs.put("message", String.format("Subscription for id %s was not found", subscriptionid));
             render("Application/message.html");
         } else {
-            renderArgs.put("subscription", subscription);
+            renderArgs.put("existingSubscription", existingSubscription);
             render("Application/modify_subscription.html");
         }
     }

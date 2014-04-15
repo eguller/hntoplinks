@@ -2,12 +2,10 @@ package models;
 
 import play.Play;
 import play.db.jpa.Model;
-import play.mvc.Router;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -195,31 +193,42 @@ public class Subscription extends Model {
         this.save();
     }
 
-    public static List<Subscription> dailySubscribers(int today){
+    public static List<Subscription> dailySubscribers(int today) {
         return Subscription.find("daily = ? and activated = ? and day != ? ", true, true, today).fetch();
     }
 
-    public static List<Subscription> weeklySubscribers(int thisWeek){
+    public static List<Subscription> weeklySubscribers(int thisWeek) {
         return Subscription.find("weekly = ? and activated = ? and week != ?", true, true, thisWeek).fetch();
     }
 
-    public static List<Subscription> monthlySubscribers(int thisMonth){
+    public static List<Subscription> monthlySubscribers(int thisMonth) {
         return Subscription.find("monthly = ? and activated = ? and month != ?", true, true, thisMonth).fetch();
     }
 
-    public static List<Subscription> annualSubscribers(int thisYear){
+    public static List<Subscription> annualSubscribers(int thisYear) {
         return Subscription.find("annually = ? and activated = ? and year != ?", true, true, thisYear).fetch();
     }
 
-    public String getUnSubsribeUrl(){
+    public String getUnSubsribeUrl() {
         return new StringBuilder(Play.configuration.getProperty("application.baseUrl")).append("unsubscribe/").append(this.getSubsUUID()).toString();
     }
 
-    public String getModifyUrl(){
+    public String getModifyUrl() {
         return new StringBuilder(Play.configuration.getProperty("application.baseUrl")).append("subscription/modify/").append(this.getSubsUUID()).toString();
     }
 
     public String getActivationUrl() {
         return new StringBuilder(Play.configuration.getProperty("application.baseUrl")).append("subscription/activate/").append(this.getSubsUUID()).toString();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("subsUUID: ").append(subsUUID).append("\n");
+        sb.append("daily: ").append(daily).append("\n");
+        sb.append("weekly: ").append(weekly).append("\n");
+        sb.append("monthly: ").append(monthly).append("\n");
+        sb.append("annually").append(annually).append("\n");
+        return sb.toString();
     }
 }
