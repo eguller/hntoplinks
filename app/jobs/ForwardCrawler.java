@@ -12,6 +12,7 @@ import play.db.jpa.JPA;
 import play.db.jpa.JPAPlugin;
 import play.db.jpa.NoTransaction;
 import play.jobs.Job;
+import utils.FormatUtil;
 
 import java.io.IOException;
 import java.util.*;
@@ -19,6 +20,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ForwardCrawler extends Job {
+    private static final int GET_TIMEOUT = 10000;
+    private static final long OK = 200;
+    private static final String USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.21 (KHTML, like Gecko) Chrome/19.0.1042.0 Safari/535.21";
     private static final long MINUTE = 60 * 1000;
     private static final long HOUR = 60 * MINUTE;
     private static final long DAY = 24 * HOUR;
@@ -111,14 +115,16 @@ public class ForwardCrawler extends Job {
     public static String extractContent(String url) {
         try {
             Connection connection = Jsoup.connect(url);
-            connection.userAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.21 (KHTML, like Gecko) Chrome/19.0.1042.0 Safari/535.21");
+            connection.userAgent(USER_AGENT);
             connection.followRedirects(true);
-            connection.timeout(10000);
+            connection.timeout(GET_TIMEOUT);
+            long start = System.currentTimeMillis();
             Connection.Response response = connection.execute();
+            long diff = System.currentTimeMillis() - start;
             int responseCode = response.statusCode();
-            if(response.statusCode() == 200) {
+            if(response.statusCode() == OK) {
                 String body = response.body();
-                Logger.info("%s retrieved, content length %d", url, body.length());
+                Logger.info("%s retrieved, content length %d, time %s", url, body.length(), FormatUtil.millis2Seconds(diff));
                 return response.body();
             } else {
                 Logger.error("%s returned %d", url, responseCode);
