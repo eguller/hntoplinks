@@ -88,14 +88,16 @@ public class Application extends HnController {
 
     public static void doSubscribe(Subscription newSubscription) {
         newSubscription.fixEmailFormat();
+        validation.required(newSubscription.getEmail()).message("validation.required.email");
         validation.email(newSubscription.getEmail());
-        validation.isTrue(newSubscription.isDaily() || newSubscription.isWeekly() || newSubscription.isMonthly() || newSubscription.isAnnually());
-
-        newSubscription.setSubscriptionDate(Calendar.getInstance().getTime());
-        newSubscription.setSubsUUID(Codec.UUID().toLowerCase());
-
-        newSubscription.setActivationDate(null);
-        if (!newSubscription.subscribedBefore()) {
+        validation.isTrue(newSubscription.isDaily() || newSubscription.isWeekly() || newSubscription.isMonthly() || newSubscription.isAnnually()).message("validation.isTrue.timeperiod");
+        if (newSubscription.subscribedBefore()) {
+            validation.addError("subscription.email", "This email address is already registered");
+        }
+        if (!validation.hasErrors()) {
+            newSubscription.setSubscriptionDate(Calendar.getInstance().getTime());
+            newSubscription.setSubsUUID(Codec.UUID().toLowerCase());
+            newSubscription.setActivationDate(null);
 
             try {
                 EmailUtil.sendActivationEmail(newSubscription, newSubscription.getEmail());
@@ -108,6 +110,7 @@ public class Application extends HnController {
                 renderArgs.put("subscription", newSubscription);
                 render("Application/subscription_complete.html");
             }
+
         } else {
             renderArgs.put("subscription", newSubscription);
             render("Application/subscription.html");
