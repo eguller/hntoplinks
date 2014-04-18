@@ -3,12 +3,9 @@ package jobs;
 import models.Item;
 import models.Subscription;
 import org.apache.commons.mail.EmailException;
-import org.apache.commons.mail.HtmlEmail;
-import play.Play;
-import play.libs.Mail;
-import play.vfs.VirtualFile;
+import play.templates.Template;
+import play.templates.TemplateLoader;
 import utils.EmailUtil;
-import utils.Templater;
 
 import java.util.HashMap;
 import java.util.List;
@@ -38,38 +35,12 @@ public abstract class EmailList {
 
 
     private String createHtml(Subscription subscription, List<Item> itemList, String subject) {
-        String itemContent = templateItems(itemList);
-        Map<String, String> values = new HashMap<String, String>();
-        values.put("items", itemContent);
+        Template template = TemplateLoader.load("email/email.html");
+        Map<String, Object> values = new HashMap<String, Object>();
+        values.put("items", itemList);
         values.put("subject", subject);
-        values.put("unsubscribeurl", subscription.getUnSubsribeUrl());
-        values.put("modifyurl", subscription.getModifyUrl());
-        String content = VirtualFile.fromRelativePath("/app/template/email.html").contentAsString();
-        String templated = Templater.template(content, values);
-        return templated;
+        return template.render(values);
     }
-
-    private String templateItems(List<Item> itemList) {
-        String content = VirtualFile.fromRelativePath("/app/template/item.html").contentAsString();
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < itemList.size(); i++) {
-            Item item = itemList.get(i);
-            Map<String, String> values = new HashMap<String, String>();
-            values.put("url", item.getUrl());
-            values.put("index", String.valueOf(i + 1));
-            values.put("title", item.getTitle());
-            values.put("comhead", item.getComhead());
-            values.put("userid", item.getUser());
-            values.put("username", item.getUser());
-            values.put("points", String.valueOf(item.getPoints()));
-            values.put("comment", String.valueOf(item.getComment()));
-            values.put("hnid", String.valueOf(item.getHnid()));
-            String templated = Templater.template(content, values);
-            sb.append(templated);
-        }
-        return sb.toString();
-    }
-
 
     private String createText(Subscription subscription, List<Item> itemList, String subject) {
         StringBuilder sb = new StringBuilder();

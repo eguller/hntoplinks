@@ -1,16 +1,13 @@
 package models;
 
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import play.db.jpa.Model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-
-import play.db.jpa.Model;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 public class Item extends Model implements Cloneable{
@@ -170,6 +167,30 @@ public class Item extends Model implements Cloneable{
 	public static List<Item> getAfter(Date date, int page){
 		return Item.find("date > ?1 order by points desc", date).fetch(page, 30);
 	}
+
+    public String getCommentStr(){
+        if(comment > -1){
+            if(comment > 1){
+                return String.format("%d comments", comment);
+            } else {
+                return String.format("%d comment", comment);
+            }
+        } else {
+            return "comments";
+        }
+    }
+
+    public String getPointStr(){
+        if(points > -1){
+            if(points > 1){
+                return String.format("%d points", points);
+            } else {
+                return String.format("%d point", points);
+            }
+        } else {
+            return "0 point";
+        }
+    }
 
     @Override
     public boolean equals(Object o) {

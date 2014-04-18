@@ -3,9 +3,9 @@ package utils;
 import models.Subscription;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
-import play.Play;
 import play.libs.Mail;
-import play.vfs.VirtualFile;
+import play.templates.Template;
+import play.templates.TemplateLoader;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,13 +32,12 @@ public class EmailUtil {
     }
 
     public static void sendActivationEmail(Subscription subscription, String to) throws EmailException {
-        String htmlContent = VirtualFile.fromRelativePath("/app/template/activation_email.html").contentAsString();
-        String textContent = VirtualFile.fromRelativePath("/app/template/activation_email.txt").contentAsString();
-        Map<String, String> values = new HashMap<String, String>();
-        values.put("activationurl", subscription.getActivationUrl());
-        values.put("unsubscribeurl", subscription.getUnSubsribeUrl());
-        htmlContent = Templater.template(htmlContent, values);
-        textContent = Templater.template(textContent, values);
+        Template emailHtmlTemplate = TemplateLoader.load("email/activation_email.html");
+        Template emailTxtTemplate = TemplateLoader.load("email/activation_email.txt");
+        Map<String, Object> templateValues = new HashMap<String, Object>();
+        templateValues.put("subscription", subscription);
+        String htmlContent = emailHtmlTemplate.render(templateValues);
+        String textContent = emailTxtTemplate.render(templateValues);
        sendEmail(htmlContent, textContent, to, "Email Verification");
     }
 
