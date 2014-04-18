@@ -44,8 +44,19 @@
                     <td class="cleft">
                         <input type="text" name="newSubscription.email" value="${subscription.email}"
                                style="width: 160px;"/>
+                        <input type="hidden" name="randomId" value="${randomId}" />
                     </td>
                 </tr>
+                #{if captchaRequired}
+                <tr>
+                    <td class="cright">Code</td>
+                    <td class="cleft"><img src="@{Application.captcha(randomId)}" /></td>
+                </tr>
+                <tr>
+                    <td class="cright">Type Code</td>
+                    <td class="cleft"><input type="text" name="captchaText" style="width: 160px;" /></td>
+                </tr>
+                #{/if}
                 <tr>
                     <td colspan="2" class="cright">
                         <input type="submit" value="Submit">

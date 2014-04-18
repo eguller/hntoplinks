@@ -37,6 +37,9 @@ POST    /subscription/modify/?                                Application.modify
 #activate
 GET     /subscription/activate/{subscriptionid}               Application.activate
 
+#captcha
+GET     /captcha                                             Application.captcha
+
 # Ignore favicon requests
 GET     /favicon.ico                            404
 

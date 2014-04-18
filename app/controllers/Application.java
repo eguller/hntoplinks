@@ -1,12 +1,16 @@
 package controllers;
 
 import cache.CacheUnit;
+import cache.IPCache;
 import cache.ItemCache;
 import com.hntoplinks.controller.HnController;
 import models.Item;
+import models.RequestData;
 import models.Subscription;
 import org.apache.commons.mail.EmailException;
+import play.cache.Cache;
 import play.libs.Codec;
+import play.libs.Images;
 import utils.EmailUtil;
 
 import java.util.Calendar;
@@ -70,9 +74,26 @@ public class Application extends HnController {
     }
 
     public static void viewSubscription() {
+        String randomId = Codec.UUID();
+        String ip = request.remoteAddress;
+        boolean captchaRequired = IPCache.getInstance().checkRequired(ip);
+
         Subscription subscription = new Subscription();
         renderArgs.put("subscription", subscription);
+        renderArgs.put("randomId", randomId);
+        if(captchaRequired) {
+            renderArgs.put("captchaRequired", true);
+        } else {
+            Cache.set(randomId, new RequestData(), "10mn");
+        }
         render("Application/subscription.html");
+    }
+
+    public static void captcha(String randomId){
+        Images.Captcha captcha = Images.captcha();
+        String code = captcha.getText("#000000");
+        Cache.set(randomId, new RequestData(code), "10mn");
+        renderBinary(captcha);
     }
 
     public static void viewModifySubscription(String subscriptionid) {
@@ -86,34 +107,57 @@ public class Application extends HnController {
         }
     }
 
-    public static void doSubscribe(Subscription newSubscription) {
+    public static void doSubscribe(Subscription newSubscription, String randomId, String captchaText) {
         newSubscription.fixEmailFormat();
         validation.required(newSubscription.getEmail()).message("validation.required.email");
         validation.email(newSubscription.getEmail());
         validation.isTrue(newSubscription.isDaily() || newSubscription.isWeekly() || newSubscription.isMonthly() || newSubscription.isAnnually()).message("validation.isTrue.timeperiod");
-        if (newSubscription.subscribedBefore()) {
-            validation.addError("subscription.email", "This email address is already registered");
-        }
-        if (!validation.hasErrors()) {
-            newSubscription.setSubscriptionDate(Calendar.getInstance().getTime());
-            newSubscription.setSubsUUID(Codec.UUID().toLowerCase());
-            newSubscription.setActivationDate(null);
 
-            try {
-                EmailUtil.sendActivationEmail(newSubscription, newSubscription.getEmail());
-                newSubscription.setActivated(false);
-            } catch (EmailException e) {
-                newSubscription.setActivated(true);
-                e.printStackTrace();
-            } finally {
-                newSubscription.save();
-                renderArgs.put("subscription", newSubscription);
-                render("Application/subscription_complete.html");
+        if(randomId == null){
+            renderArgs.put("message", "Form data manually edited. Please open subscription page again.");
+            render("Application/message.html");
+        } else {
+            RequestData requestData = (RequestData) Cache.get(randomId);
+            if(requestData != null) {
+                if (requestData.isCaptchaRequired()) {
+                    renderArgs.put("captchaRequired", true);
+                    if (captchaText == null || captchaText.trim().length() == 0) {
+                        validation.addError("captchaText", "Code field cannot be empty.");
+                    } else if(!requestData.getCaptchaText().equalsIgnoreCase(captchaText)){
+                        validation.addError("captchaText", "Your input does not match with code.");
+                    }
+                }
+            } else {
+                renderArgs.put("message", "Session expired. Please open subscription page again.");
+                render("Application/message.html");
             }
 
-        } else {
-            renderArgs.put("subscription", newSubscription);
-            render("Application/subscription.html");
+            if (newSubscription.subscribedBefore()) {
+                validation.addError("subscription.email", "This email address is already registered");
+            }
+            if (!validation.hasErrors()) {
+                newSubscription.setSubscriptionDate(Calendar.getInstance().getTime());
+                newSubscription.setSubsUUID(Codec.UUID().toLowerCase());
+                newSubscription.setActivationDate(null);
+
+                try {
+                    EmailUtil.sendActivationEmail(newSubscription, newSubscription.getEmail());
+                    newSubscription.setActivated(false);
+                } catch (EmailException e) {
+                    newSubscription.setActivated(true);
+                    e.printStackTrace();
+                } finally {
+                    newSubscription.save();
+                    IPCache.getInstance().addIp(request.remoteAddress);
+                    renderArgs.put("subscription", newSubscription);
+                    render("Application/subscription_complete.html");
+                }
+
+            } else {
+                renderArgs.put("subscription", newSubscription);
+                renderArgs.put("randomId", randomId);
+                render("Application/subscription.html");
+            }
         }
     }
 
