@@ -10,12 +10,12 @@
 <tr>
 	<td colspan="2"></td>
 	<td class="subtext"><span id="score_${_item.hnid}">
-			${item.getPointStr}
+			${_item.getPointStr()}
 			</span> by <a href="http://news.ycombinator.com/user?id=${_item.user}"
 		target="_blank">${_item.user}</a> ${new Date(_item.date.getTime()).since()} | <a
 		href="http://news.ycombinator.com/item?id=${_item.hnid}"
 		target="_blank">
-			${item.getCommentStr()}
+			${_item.getCommentStr()}
 	</a></td>
 </tr>
 <tr style="height: 5px"></tr>
