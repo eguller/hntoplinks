@@ -43,6 +43,15 @@ public class ItemCache {
         return cacheUnit.getAll();
     }
 
+    public List<Item> getItems(CacheUnit unit, int size){
+        ItemCacheUnit cacheUnit = cacheMap.get(unit);
+        if(size > cacheUnit.getAll().size()){
+            return cacheUnit.getAll();
+        } else {
+            return cacheUnit.getAll().subList(0, size);
+        }
+    }
+
 
     public void cleanupExpired() {
         for (ItemCacheUnit icu : cacheMap.values()) {

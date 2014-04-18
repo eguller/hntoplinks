@@ -1,11 +1,9 @@
 package jobs;
 
 import cache.CacheUnit;
-import cache.ItemCache;
 import models.Item;
 import models.Subscription;
 import org.apache.commons.mail.EmailException;
-import play.db.jpa.JPA;
 import play.db.jpa.JPAPlugin;
 
 import java.util.Calendar;
@@ -17,6 +15,7 @@ import java.util.List;
  * Time: 11:27 PM
  */
 public class AnnuallyMailList extends EmailList{
+    private static final int ITEM_SIZE = 200;
     int year;
     AnnuallyMailList(){
         year = Calendar.getInstance().get(Calendar.YEAR);
@@ -24,8 +23,8 @@ public class AnnuallyMailList extends EmailList{
     @Override
     public void send() {
         List<Subscription> subscriptionList = Subscription.annualSubscribers(year);
-        List<Item> itemList = ItemCache.getInstance().get(CacheUnit.year);
-        if(!(itemList.size() < ItemCache.ITEM_PER_PAGE)) {
+        List<Item> itemList = getItems();
+        if(itemList.size() > 0) {
             sendEmail(subscriptionList, itemList, subject());
         }
     }
@@ -33,6 +32,16 @@ public class AnnuallyMailList extends EmailList{
     @Override
     public String subject() {
         return String.format("Best of %d", year);
+    }
+
+    @Override
+    public int postCount() {
+        return ITEM_SIZE;
+    }
+
+    @Override
+    public CacheUnit cacheUnit() {
+        return CacheUnit.year;
     }
 
     @Override

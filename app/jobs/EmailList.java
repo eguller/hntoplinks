@@ -1,5 +1,7 @@
 package jobs;
 
+import cache.CacheUnit;
+import cache.ItemCache;
 import models.Item;
 import models.Subscription;
 import org.apache.commons.mail.EmailException;
@@ -21,6 +23,13 @@ public abstract class EmailList {
     public abstract void send();
 
     public abstract String subject();
+
+    public abstract int postCount();
+    public abstract CacheUnit cacheUnit();
+
+    public List<Item> getItems(){
+        return ItemCache.getInstance().getItems(cacheUnit(), postCount());
+    }
 
     public abstract void sendEmail(List<Subscription> subscriptions, List<Item> itemList, String subject) throws EmailException;
 

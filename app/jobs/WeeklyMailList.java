@@ -18,6 +18,7 @@ import java.util.List;
  * Time: 11:26 PM
  */
 public class WeeklyMailList extends EmailList{
+    private static final int ITEM_SIZE = 50;
     int week;
     public WeeklyMailList(){
         week = Calendar.getInstance().get(Calendar.WEEK_OF_YEAR);
@@ -25,7 +26,7 @@ public class WeeklyMailList extends EmailList{
     @Override
     public void send() {
         List<Subscription> subscriptionList = Subscription.weeklySubscribers(week);
-        List<Item> itemList = ItemCache.getInstance().get(CacheUnit.week);
+        List<Item> itemList = getItems();
         if(!(itemList.size() < ItemCache.ITEM_PER_PAGE)) {
             sendEmail(subscriptionList, itemList, subject());
         }
@@ -40,6 +41,16 @@ public class WeeklyMailList extends EmailList{
         calendar.add(Calendar.DATE, -7);
         String fromDate = dateFormat.format(calendar.getTime());
         return String.format("%s - %s Weekly Top Links", fromDate, toDate);
+    }
+
+    @Override
+    public int postCount() {
+        return ITEM_SIZE;
+    }
+
+    @Override
+    public CacheUnit cacheUnit() {
+        return CacheUnit.week;
     }
 
     @Override

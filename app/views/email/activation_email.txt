@@ -1,9 +1,9 @@
 Hello,
 Please click
-${activationurl}
+${subscription.getActivationUrl()}
 to verify your email address. Once you have been verified, you will start to receive Hacker News Top Links emails periodically.
 
 If you think, you did not register, please click
-${applicationBaseUrl}/unsubscribe/${subscriptionid}
+${subscription.getUnSubsribeUrl()}
 
 Best wishes, hntoplinks.com

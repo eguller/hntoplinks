@@ -5,7 +5,6 @@ import cache.ItemCache;
 import models.Item;
 import models.Subscription;
 import org.apache.commons.mail.EmailException;
-import play.db.jpa.JPA;
 import play.db.jpa.JPAPlugin;
 
 import java.text.DateFormat;
@@ -19,6 +18,7 @@ import java.util.List;
  * Time: 11:26 PM
  */
 public class MonthlyMailList extends EmailList{
+    private static final int ITEM_SIZE = 100;
     int month;
     public MonthlyMailList(){
         this.month = Calendar.getInstance().get(Calendar.MONTH);
@@ -26,7 +26,7 @@ public class MonthlyMailList extends EmailList{
     @Override
     public void send() {
         List<Subscription> subscriptionList = Subscription.monthlySubscribers(month);
-        List<Item> itemList = ItemCache.getInstance().get(CacheUnit.month);
+        List<Item> itemList = getItems();
         if(!(itemList.size() < ItemCache.ITEM_PER_PAGE)) {
             sendEmail(subscriptionList, itemList, subject());
         }
@@ -39,6 +39,16 @@ public class MonthlyMailList extends EmailList{
         DateFormat lastMonth = new SimpleDateFormat("MMMM yyyy");
         String lmString = lastMonth.format(calendar.getTime());
         return lmString + " - Best of Last Month";
+    }
+
+    @Override
+    public int postCount() {
+        return ITEM_SIZE;
+    }
+
+    @Override
+    public CacheUnit cacheUnit() {
+        return CacheUnit.month;
     }
 
     @Override
