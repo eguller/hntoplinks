@@ -149,6 +149,7 @@ public class Application extends HnController {
                 } finally {
                     newSubscription.save();
                     IPCache.getInstance().addIp(request.remoteAddress);
+                    Cache.delete(randomId);
                     renderArgs.put("subscription", newSubscription);
                     render("Application/subscription_complete.html");
                 }
