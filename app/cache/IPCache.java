@@ -19,7 +19,6 @@ public class IPCache {
 
     public void addIp(String ip){
         ipMap.put(ip, System.currentTimeMillis());
-        Logger.info("Ip: %s, Time: %d", ip, System.currentTimeMillis());
     }
 
     public boolean checkRequired(String ip){
