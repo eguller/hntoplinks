@@ -11,6 +11,7 @@ import org.apache.commons.mail.EmailException;
 import play.cache.Cache;
 import play.libs.Codec;
 import play.libs.Images;
+import play.mvc.Http;
 import utils.EmailUtil;
 
 import java.util.Calendar;
@@ -75,13 +76,13 @@ public class Application extends HnController {
 
     public static void viewSubscription() {
         String randomId = Codec.UUID();
-        String ip = request.remoteAddress;
+        String ip = getClientIp();
         boolean captchaRequired = IPCache.getInstance().checkRequired(ip);
 
         Subscription subscription = new Subscription();
         renderArgs.put("subscription", subscription);
         renderArgs.put("randomId", randomId);
-        if(captchaRequired) {
+        if (captchaRequired) {
             renderArgs.put("captchaRequired", true);
         } else {
             Cache.set(randomId, new RequestData(), "10mn");
@@ -89,7 +90,7 @@ public class Application extends HnController {
         render("Application/subscription.html");
     }
 
-    public static void captcha(String randomId){
+    public static void captcha(String randomId) {
         Images.Captcha captcha = Images.captcha();
         String code = captcha.getText("#000000");
         Cache.set(randomId, new RequestData(code), "10mn");
@@ -113,17 +114,17 @@ public class Application extends HnController {
         validation.email(newSubscription.getEmail());
         validation.isTrue(newSubscription.isDaily() || newSubscription.isWeekly() || newSubscription.isMonthly() || newSubscription.isAnnually()).message("validation.isTrue.timeperiod");
 
-        if(randomId == null){
+        if (randomId == null) {
             renderArgs.put("message", "Form data manually edited. Please open subscription page again.");
             render("Application/message.html");
         } else {
             RequestData requestData = (RequestData) Cache.get(randomId);
-            if(requestData != null) {
+            if (requestData != null) {
                 if (requestData.isCaptchaRequired()) {
                     renderArgs.put("captchaRequired", true);
                     if (captchaText == null || captchaText.trim().length() == 0) {
                         validation.addError("captchaText", "Code field cannot be empty.");
-                    } else if(!requestData.getCaptchaText().equalsIgnoreCase(captchaText)){
+                    } else if (!requestData.getCaptchaText().equalsIgnoreCase(captchaText)) {
                         validation.addError("captchaText", "Your input does not match with code.");
                     }
                 }
@@ -148,7 +149,7 @@ public class Application extends HnController {
                     e.printStackTrace();
                 } finally {
                     newSubscription.save();
-                    IPCache.getInstance().addIp(request.remoteAddress);
+                    IPCache.getInstance().addIp(getClientIp());
                     Cache.delete(randomId);
                     renderArgs.put("subscription", newSubscription);
                     render("Application/subscription_complete.html");
@@ -207,6 +208,23 @@ public class Application extends HnController {
 
     public static void about() {
         render("Application/about.html");
+    }
+
+    public static String getClientIp() {
+        Http.Header xForwardedForHeader = request.headers.get("x-forwarded-for");
+        if (xForwardedForHeader != null) {
+            List<String> values = xForwardedForHeader.values;
+            String lastValue = values.get(values.size() - 1);
+            if (lastValue == null || lastValue.trim().length() == 0) {
+                return request.remoteAddress;
+            } else {
+                String[] lastValArr = lastValue.split(",");
+                return lastValArr[lastValArr.length - 1].trim();
+            }
+        } else {
+            return request.remoteAddress;
+        }
+
     }
 
 }
