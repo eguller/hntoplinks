@@ -1,7 +1,6 @@
 package jobs;
 
 import cache.CacheUnit;
-import cache.ItemCache;
 import models.Item;
 import models.Subscription;
 import org.apache.commons.mail.EmailException;
@@ -27,7 +26,7 @@ public class WeeklyMailList extends EmailList{
     public void send() {
         List<Subscription> subscriptionList = Subscription.weeklySubscribers(week);
         List<Item> itemList = getItems();
-        if(!(itemList.size() < ItemCache.ITEM_PER_PAGE)) {
+        if(itemList.size() > 0) {
             sendEmail(subscriptionList, itemList, subject());
         }
     }
