@@ -40,6 +40,7 @@ GET     /subscription/activate/{subscriptionid}               Application.activa
 #captcha
 GET     /captcha                                             Application.captcha
 
+
 # Ignore favicon requests
 GET     /favicon.ico                            404
 

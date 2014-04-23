@@ -45,6 +45,7 @@
                         <input type="text" name="newSubscription.email" value="${subscription.email}"
                                style="width: 160px;"/>
                         <input type="hidden" name="randomId" value="${randomId}" />
+                        <input type="hidden" name="timeZoneOffSet" value="" />
                     </td>
                 </tr>
                 #{if captchaRequired}
@@ -59,7 +60,7 @@
                 #{/if}
                 <tr>
                     <td colspan="2" class="cright">
-                        <input type="submit" value="Submit">
+                        <input type="button" value="Submit" onclick="submitSubscriptionForm();">
                     </td>
                 </tr>
                 #{ifErrors}

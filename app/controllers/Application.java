@@ -13,6 +13,7 @@ import play.libs.Codec;
 import play.libs.Images;
 import play.mvc.Http;
 import utils.EmailUtil;
+import utils.TimeUtil;
 
 import java.util.Calendar;
 import java.util.List;
@@ -108,7 +109,7 @@ public class Application extends HnController {
         }
     }
 
-    public static void doSubscribe(Subscription newSubscription, String randomId, String captchaText) {
+    public static void doSubscribe(Subscription newSubscription, String randomId, String captchaText, int timeZoneOffSet) {
         newSubscription.fixEmailFormat();
         validation.required(newSubscription.getEmail()).message("validation.required.email");
         validation.email(newSubscription.getEmail());
@@ -225,6 +226,10 @@ public class Application extends HnController {
             return request.remoteAddress;
         }
 
+    }
+
+    public static void timeZone(){
+        TimeUtil.findTimeZoneFromOffset(600);
     }
 
 }

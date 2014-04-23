@@ -6,9 +6,11 @@ import play.db.jpa.Model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * User: eguller
@@ -18,6 +20,8 @@ import java.util.List;
 @Entity
 @Table(name = "SUBSCRIPTION")
 public class Subscription extends Model {
+    @Transient
+    private static final int SEND_HOUR = 7;
     @Column(name = "EMAIL", nullable = false, unique = true)
     String email = "";
     @Column(name = "DAILY")
@@ -44,6 +48,17 @@ public class Subscription extends Model {
     int month = Calendar.getInstance().get(Calendar.MONTH);
     @Column(name = "SENTYEAR", nullable = false)
     int year = Calendar.getInstance().get(Calendar.YEAR);
+
+    @Column(name="TIMEZONE", nullable = false)
+    String timeZone;
+    @Column(name="NEXT_SEND_DATE")
+    Date nextSendDay;
+    @Column(name="NEXT_SEND_WEEK")
+    Date nextSendWeek;
+    @Column(name="NEXT_SEND_MONTH")
+    Date nextSendMonth;
+    @Column(name="NEXT_SEND_YEAR")
+    Date nextSendYear;
 
     public String getEmail() {
         return email;
@@ -230,5 +245,64 @@ public class Subscription extends Model {
         sb.append("monthly: ").append(monthly).append("\n");
         sb.append("annually").append(annually).append("\n");
         return sb.toString();
+    }
+
+    public void updateSendDates(){
+        updateNextSendDay();
+        updateNextSendWeek();
+        updateNextSendMonth();
+        updateNextSendYear();
+    }
+
+    public void updateNextSendDay(){
+        TimeZone timeZone = TimeZone.getTimeZone(this.timeZone);
+        Calendar calendar = Calendar.getInstance(timeZone);
+        if(nextSendDay != null) {
+            calendar.setTime(nextSendDay);
+
+        }
+        calendar.add(Calendar.DAY_OF_YEAR, 1);
+        setHour(calendar);
+        nextSendDay = calendar.getTime();
+    }
+
+    public void updateNextSendWeek(){
+        TimeZone timeZone = TimeZone.getTimeZone(this.timeZone);
+        Calendar calendar = Calendar.getInstance(timeZone);
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int week = calendar.get(Calendar.WEEK_OF_YEAR);
+        calendar.clear();
+        calendar.set(Calendar.HOUR, SEND_HOUR);
+        calendar.set(Calendar.MINUTE,0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        calendar.set(Calendar.MONTH, month);
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.WEEK_OF_YEAR, week);
+        calendar.add(Calendar.WEEK_OF_YEAR, 1);
+        nextSendWeek = calendar.getTime();
+    }
+
+    public void updateNextSendMonth(){
+
+    }
+    public void updateNextSendYear(){
+        TimeZone timeZone = TimeZone.getTimeZone(this.timeZone);
+        Calendar calendar = Calendar.getInstance(timeZone);
+        calendar.set(Calendar.HOUR, SEND_HOUR);
+        calendar.set(Calendar.MINUTE,0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        calendar.set(Calendar.MONTH, 1);
+        calendar.set(Calendar.DAY_OF_YEAR, 1);
+        calendar.set(Calendar.YEAR, year);
+    }
+
+    private static void setHour(Calendar calendar){
+        calendar.set(Calendar.HOUR, SEND_HOUR);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
     }
 }
