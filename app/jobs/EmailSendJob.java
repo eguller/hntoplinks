@@ -4,7 +4,7 @@ import play.db.jpa.NoTransaction;
 import play.jobs.Job;
 import play.jobs.On;
 
-import java.util.*;
+import java.util.List;
 
 /**
  * User: eguller
@@ -13,7 +13,7 @@ import java.util.*;
  */
 
 @On("0 0 1 ? * *")
-//@Every("1h")
+//@Every("1mn")
 public class EmailSendJob extends Job {
     int sentEmailCount = 0;
 

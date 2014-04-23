@@ -48,6 +48,7 @@ public abstract class EmailList {
         Map<String, Object> values = new HashMap<String, Object>();
         values.put("items", itemList);
         values.put("subject", subject);
+        values.put("subscriber", subscription);
         return template.render(values);
     }
 
