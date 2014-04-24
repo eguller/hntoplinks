@@ -7,10 +7,13 @@ import models.Subscription;
 
 import org.apache.commons.mail.EmailException;
 
+import play.Logger;
 import play.db.jpa.JPAPlugin;
 import play.templates.Template;
 import play.templates.TemplateLoader;
+import sun.reflect.generics.tree.FormalTypeParameter;
 import utils.EmailUtil;
+import utils.FormatUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -45,17 +48,26 @@ public abstract class EmailList {
     }
     
     protected void sendEmail(List<Subscription> subscriptions, List<Item> itemList){
-        for(Subscription subscription : subscriptions){
+    	Logger.info("Sending %d items to %d subscribers", subscriptions.size() , itemList.size());
+        int success = 0;
+        int failure = 0;
+        long start = System.currentTimeMillis();
+    	for(Subscription subscription : subscriptions){
             try {
                 sendEmail(subscription, itemList, subject(subscription));
                 JPAPlugin.startTx(false);
                 updateNextSendDate(subscription);
                 subscription.save();
                 JPAPlugin.closeTx(false);
-            } catch (EmailException e) {
+                success ++;
+            } catch (Exception e) {
                 e.printStackTrace();
+                failure ++;
             }
         }
+    	long diff = System.currentTimeMillis() - start;
+    	String secs = FormatUtil.millis2Seconds(diff);
+    	Logger.info("Sending email completed in %s. Success: %d, Failure: %d, ", secs, success, failure);
     }
 
 
