@@ -18,9 +18,8 @@ import java.util.List;
  */
 public class MonthlyMailList extends EmailList{
     private static final int ITEM_SIZE = 100;
-    int month;
     public MonthlyMailList(){
-        this.month = Calendar.getInstance().get(Calendar.MONTH);
+
     }
     @Override
     public void send() {

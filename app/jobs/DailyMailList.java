@@ -18,9 +18,8 @@ import java.util.List;
  */
 public class DailyMailList extends EmailList{
     private static final int ITEM_SIZE = 30;
-    int today;
     public DailyMailList(){
-        today =  Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
+
     }
     @Override
     public void send() {

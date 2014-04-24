@@ -18,9 +18,8 @@ import java.util.List;
  */
 public class WeeklyMailList extends EmailList{
     private static final int ITEM_SIZE = 50;
-    int week;
     public WeeklyMailList(){
-        week = Calendar.getInstance().get(Calendar.WEEK_OF_YEAR);
+        
     }
     @Override
     public void send() {
