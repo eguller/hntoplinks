@@ -49,7 +49,7 @@ public abstract class EmailList {
             try {
                 sendEmail(subscription, itemList, subject(subscription));
                 JPAPlugin.startTx(false);
-                subscription.updateNextSendWeek();
+                updateNextSendDate(subscription);
                 subscription.save();
                 JPAPlugin.closeTx(false);
             } catch (EmailException e) {
