@@ -48,7 +48,7 @@ public abstract class EmailList {
     }
     
     protected void sendEmail(List<Subscription> subscriptions, List<Item> itemList){
-    	Logger.info("Sending %d items to %d subscribers", subscriptions.size() , itemList.size());
+    	Logger.info("Sending %d items to %d subscribers", itemList.size(), subscriptions.size());
         int success = 0;
         int failure = 0;
         long start = System.currentTimeMillis();
@@ -67,7 +67,7 @@ public abstract class EmailList {
         }
     	long diff = System.currentTimeMillis() - start;
     	String secs = FormatUtil.millis2Seconds(diff);
-    	Logger.info("Sending email completed in %s. Success: %d, Failure: %d, ", secs, success, failure);
+    	Logger.info("Sending email completed in %ssecs. Success: %d, Failure: %d, ", secs, success, failure);
     }
 
 

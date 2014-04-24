@@ -59,6 +59,7 @@ public class FutureCalculator {
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
+        calendar.set(Calendar.AM_PM, Calendar.AM);
     }
     
     public static void main(String[] args){
