@@ -20,7 +20,8 @@ public class ItemCache {
         cacheMap.put(CacheUnit.week, new ItemCacheUnit(7));
         cacheMap.put(CacheUnit.month, new ItemCacheUnit(30));
         cacheMap.put(CacheUnit.year, new ItemCacheUnit(365));
-        cacheMap.put(CacheUnit.all, new ItemCacheUnit(Integer.MAX_VALUE));
+        int allTimeDays  = (Calendar.getInstance().get(Calendar.YEAR) - 2007) * 366;
+        cacheMap.put(CacheUnit.all, new ItemCacheUnit(allTimeDays));
     }
 
     public static ItemCache getInstance() {
