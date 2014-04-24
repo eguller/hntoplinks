@@ -24,18 +24,19 @@ public class MonthlyMailList extends EmailList{
     }
     @Override
     public void send() {
-        List<Subscription> subscriptionList = Subscription.monthlySubscribers(month);
+        List<Subscription> subscriptionList = Subscription.monthlySubscribers();
         List<Item> itemList = getItems();
         if(itemList.size() > 0) {
-            sendEmail(subscriptionList, itemList, subject());
+            sendEmail(subscriptionList, itemList);
         }
     }
 
     @Override
-    public String subject() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, -15);
+    public String subject(Subscription subscription) {
+        Calendar calendar = subscription.getSendMonthInOwnTimeZone();
+        calendar.add(Calendar.DAY_OF_YEAR, -15);
         DateFormat lastMonth = new SimpleDateFormat("MMMM yyyy");
+        lastMonth.setTimeZone(subscription.getTimZoneObj());
         String lmString = lastMonth.format(calendar.getTime());
         return lmString + " - Best of Last Month";
     }
@@ -50,18 +51,8 @@ public class MonthlyMailList extends EmailList{
         return CacheUnit.month;
     }
 
-    @Override
-    public void sendEmail(List<Subscription> subscriptions, List<Item> itemList, String subject){
-        for(Subscription subscription : subscriptions){
-            try {
-                sendEmail(subscription, itemList, subject);
-                JPAPlugin.startTx(false);
-                subscription.setMonth(month);
-                subscription.save();
-                JPAPlugin.closeTx(false);
-            } catch (EmailException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+	@Override
+	public void updateNextSendDate(Subscription subscription) {
+		subscription.updateNextSendMonth();
+	}
 }

@@ -1,6 +1,7 @@
 package jobs;
 
 import play.db.jpa.NoTransaction;
+import play.jobs.Every;
 import play.jobs.Job;
 import play.jobs.On;
 
@@ -12,8 +13,7 @@ import java.util.List;
  * Time: 7:03 AM
  */
 
-@On("0 0 1 ? * *")
-//@Every("1mn")
+@Every("10mn")
 public class EmailSendJob extends Job {
     int sentEmailCount = 0;
 

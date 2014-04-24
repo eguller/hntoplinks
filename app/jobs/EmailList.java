@@ -4,7 +4,10 @@ import cache.CacheUnit;
 import cache.ItemCache;
 import models.Item;
 import models.Subscription;
+
 import org.apache.commons.mail.EmailException;
+
+import play.db.jpa.JPAPlugin;
 import play.templates.Template;
 import play.templates.TemplateLoader;
 import utils.EmailUtil;
@@ -22,16 +25,15 @@ public abstract class EmailList {
 
     public abstract void send();
 
-    public abstract String subject();
+    public abstract String subject(Subscription subscriotion);
 
     public abstract int postCount();
     public abstract CacheUnit cacheUnit();
+    public abstract void updateNextSendDate(Subscription subscription);
 
     public List<Item> getItems(){
         return ItemCache.getInstance().getItems(cacheUnit(), postCount());
     }
-
-    public abstract void sendEmail(List<Subscription> subscriptions, List<Item> itemList, String subject) throws EmailException;
 
     protected void sendEmail(Subscription subscription, List<Item> itemList, String subject) throws EmailException {
         String htmlContent = createHtml(subscription, itemList, subject);
@@ -40,6 +42,20 @@ public abstract class EmailList {
         headers.put("List-Unsubscribe", subscription.getUnSubsribeUrl());
         EmailUtil.sendEmail(htmlContent, textContent, subscription.getEmail(), subject, headers);
 
+    }
+    
+    protected void sendEmail(List<Subscription> subscriptions, List<Item> itemList){
+        for(Subscription subscription : subscriptions){
+            try {
+                sendEmail(subscription, itemList, subject(subscription));
+                JPAPlugin.startTx(false);
+                subscription.updateNextSendWeek();
+                subscription.save();
+                JPAPlugin.closeTx(false);
+            } catch (EmailException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 

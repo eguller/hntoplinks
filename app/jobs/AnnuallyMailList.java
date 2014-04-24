@@ -16,21 +16,22 @@ import java.util.List;
  */
 public class AnnuallyMailList extends EmailList{
     private static final int ITEM_SIZE = 200;
-    int year;
     AnnuallyMailList(){
-        year = Calendar.getInstance().get(Calendar.YEAR);
     }
     @Override
     public void send() {
-        List<Subscription> subscriptionList = Subscription.annualSubscribers(year);
+        List<Subscription> subscriptionList = Subscription.annualSubscribers();
         List<Item> itemList = getItems();
         if(itemList.size() > 0) {
-            sendEmail(subscriptionList, itemList, subject());
+            sendEmail(subscriptionList, itemList);
         }
     }
 
     @Override
-    public String subject() {
+    public String subject(Subscription subscription) {
+    	Calendar calendar = subscription.getSendYearInOwnTimeZone();
+    	calendar.add(Calendar.YEAR, -1);
+    	int year = calendar.get(Calendar.YEAR);
         return String.format("Best of %d", year);
     }
 
@@ -44,18 +45,8 @@ public class AnnuallyMailList extends EmailList{
         return CacheUnit.year;
     }
 
-    @Override
-    public void sendEmail(List<Subscription> subscriptions, List<Item> itemList, String subject) {
-        for(Subscription subscription : subscriptions){
-            try {
-                sendEmail(subscription, itemList, subject);
-                JPAPlugin.startTx(false);
-                subscription.setYear(year);
-                subscription.save();
-                JPAPlugin.closeTx(false);
-            } catch (EmailException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+	@Override
+	public void updateNextSendDate(Subscription subscription) {
+		subscription.updateNextSendYear();
+	}
 }

@@ -24,18 +24,19 @@ public class DailyMailList extends EmailList{
     }
     @Override
     public void send() {
-        List<Subscription> subscriptionList = Subscription.dailySubscribers(today);
+        List<Subscription> subscriptionList = Subscription.dailySubscribers();
         List<Item> itemList = getItems();
         if(itemList.size() > 0) {
-            sendEmail(subscriptionList, itemList, subject());
+            sendEmail(subscriptionList, itemList);
         }
     }
 
     @Override
-    public String subject() {
-        Calendar calendar = Calendar.getInstance();
+    public String subject(Subscription subscription) {
+        Calendar calendar = subscription.getSendDayInOwnTimeZone();
         calendar.add(Calendar.DATE, -1);
         DateFormat yesterday = new SimpleDateFormat("EEEE, dd MMMM");
+        yesterday.setTimeZone(subscription.getTimZoneObj());
         String timePrefix =  yesterday.format(calendar.getTime());
         return timePrefix + " - Daily Top Links";
     }
@@ -51,17 +52,7 @@ public class DailyMailList extends EmailList{
     }
 
     @Override
-    public void sendEmail(List<Subscription> subscriptions, List<Item> itemList, String subject) {
-        for(Subscription subscription : subscriptions){
-            try {
-                sendEmail(subscription, itemList, subject);
-                JPAPlugin.startTx(false);
-                subscription.setDay(today);
-                subscription.save();
-                JPAPlugin.closeTx(false);
-            } catch (EmailException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+	public void updateNextSendDate(Subscription subscription) {
+		subscription.updateNextSendDay();
+	}
 }

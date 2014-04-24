@@ -24,17 +24,18 @@ public class WeeklyMailList extends EmailList{
     }
     @Override
     public void send() {
-        List<Subscription> subscriptionList = Subscription.weeklySubscribers(week);
+        List<Subscription> subscriptionList = Subscription.weeklySubscribers();
         List<Item> itemList = getItems();
         if(itemList.size() > 0) {
-            sendEmail(subscriptionList, itemList, subject());
+            sendEmail(subscriptionList, itemList);
         }
     }
 
     @Override
-    public String subject() {
+    public String subject(Subscription subscription) {
         DateFormat dateFormat = new SimpleDateFormat("dd MMMM");
-        Calendar calendar = Calendar.getInstance();
+        dateFormat.setTimeZone(subscription.getTimZoneObj());
+        Calendar calendar = subscription.getSendWeekInOwnTimeZone();
         calendar.add(Calendar.DATE, -1);
         String toDate = dateFormat.format(calendar.getTime());
         calendar.add(Calendar.DATE, -7);
@@ -52,18 +53,8 @@ public class WeeklyMailList extends EmailList{
         return CacheUnit.week;
     }
 
-    @Override
-    public void sendEmail(List<Subscription> subscriptions, List<Item> itemList, String subject){
-        for(Subscription subscription : subscriptions){
-            try {
-                sendEmail(subscription, itemList, subject);
-                JPAPlugin.startTx(false);
-                subscription.setWeek(week);
-                subscription.save();
-                JPAPlugin.closeTx(false);
-            } catch (EmailException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+	@Override
+	public void updateNextSendDate(Subscription subscription) {
+		subscription.updateNextSendWeek();
+	}
 }

@@ -3,11 +3,15 @@ package controllers;
 import cache.CacheUnit;
 import cache.IPCache;
 import cache.ItemCache;
+
 import com.hntoplinks.controller.HnController;
+
 import models.Item;
 import models.RequestData;
 import models.Subscription;
+
 import org.apache.commons.mail.EmailException;
+
 import play.cache.Cache;
 import play.libs.Codec;
 import play.libs.Images;
@@ -17,6 +21,7 @@ import utils.TimeUtil;
 
 import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 
 public class Application extends HnController {
 
@@ -114,7 +119,7 @@ public class Application extends HnController {
         validation.required(newSubscription.getEmail()).message("validation.required.email");
         validation.email(newSubscription.getEmail());
         validation.isTrue(newSubscription.isDaily() || newSubscription.isWeekly() || newSubscription.isMonthly() || newSubscription.isAnnually()).message("validation.isTrue.timeperiod");
-
+        
         if (randomId == null) {
             renderArgs.put("message", "Form data manually edited. Please open subscription page again.");
             render("Application/message.html");
@@ -141,7 +146,13 @@ public class Application extends HnController {
                 newSubscription.setSubscriptionDate(Calendar.getInstance().getTime());
                 newSubscription.setSubsUUID(Codec.UUID().toLowerCase());
                 newSubscription.setActivationDate(null);
-
+                String timeZoneId = TimeUtil.getTimeZoneId(timeZoneOffSet);
+                newSubscription.setTimeZone(timeZoneId);
+                newSubscription.updateNextSendDay();
+                newSubscription.updateNextSendWeek();
+                newSubscription.updateNextSendMonth();
+                newSubscription.updateNextSendYear();
+                
                 try {
                     EmailUtil.sendActivationEmail(newSubscription, newSubscription.getEmail());
                     newSubscription.setActivated(false);
@@ -227,9 +238,4 @@ public class Application extends HnController {
         }
 
     }
-
-    public static void timeZone(){
-        TimeUtil.findTimeZoneFromOffset(600);
-    }
-
 }
