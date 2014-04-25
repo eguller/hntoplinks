@@ -234,6 +234,22 @@ public class Subscription extends Model {
 		return nextSendYear;
 	}
 	
+	public void setNextSendDay(Date nextSendDay) {
+		this.nextSendDay = nextSendDay;
+	}
+
+	public void setNextSendWeek(Date nextSendWeek) {
+		this.nextSendWeek = nextSendWeek;
+	}
+
+	public void setNextSendMonth(Date nextSendMonth) {
+		this.nextSendMonth = nextSendMonth;
+	}
+
+	public void setNextSendYear(Date nextSendYear) {
+		this.nextSendYear = nextSendYear;
+	}
+
 	public Calendar getSendDayInOwnTimeZone(){
 		Calendar calendar = Calendar.getInstance(getTimZoneObj());
 		calendar.setTime(nextSendDay);

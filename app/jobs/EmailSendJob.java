@@ -21,7 +21,6 @@ public class EmailSendJob extends Job {
     int sentEmailCount = 0;
 
     @Override
-    @NoTransaction
     public void doJob() {
         List<EmailList> lists = EmailListFactory.getAllLists();
         for(EmailList list : lists){

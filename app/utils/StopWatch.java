@@ -4,8 +4,8 @@ import java.util.concurrent.TimeUnit;
 
 public class StopWatch {
 	long start;
-	long diff;
-	long stop;
+	long diff = -1;
+	long stop = -1;
 	private StopWatch(){}
 	public static StopWatch start(){
 		StopWatch sw = new StopWatch();
@@ -45,5 +45,29 @@ public class StopWatch {
 	
 	public double minutesDbl(){
 		return 0.0; 
+	}
+	
+	public String milisTxt(){
+		return null;
+	}
+	
+	public String secondsTxt(){
+		return null;
+	}
+	
+	public String minutesTxt(){
+		return null;
+	}
+	
+	public String millisDblTxt(){
+		return null;
+	}
+	
+	public String secondsDblTxt(){
+		return null;
+	}
+	
+	public String minutesDblTxt(){
+		return null;
 	}
 }
