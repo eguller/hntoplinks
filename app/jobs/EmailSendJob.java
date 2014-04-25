@@ -7,6 +7,9 @@ import play.jobs.On;
 
 import java.util.List;
 
+import email.EmailList;
+import email.EmailListFactory;
+
 /**
  * User: eguller
  * Date: 3/31/14

@@ -1,4 +1,4 @@
-package jobs;
+package email;
 
 import cache.CacheUnit;
 import cache.ItemCache;
