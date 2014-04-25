@@ -67,7 +67,7 @@ public abstract class EmailList {
         }
     	long diff = System.currentTimeMillis() - start;
     	String secs = FormatUtil.millis2Seconds(diff);
-    	Logger.info("Sending email completed in %ssecs. Success: %d, Failure: %d, ", secs, success, failure);
+    	Logger.info("Sending email completed in %ssec. Success: %d, Failure: %d, ", secs, success, failure);
     }
 
 
