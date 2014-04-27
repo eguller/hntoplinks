@@ -3,8 +3,7 @@ package email;
 import cache.CacheUnit;
 import models.Item;
 import models.Subscription;
-import org.apache.commons.mail.EmailException;
-import play.db.jpa.JPAPlugin;
+import play.db.jpa.JPA;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -52,8 +51,12 @@ public class DailyMailList extends EmailList {
 		return CacheUnit.today;
 	}
 
-	@Override
-	public void updateNextSendDate(Subscription subscription) {
-		subscription.updateNextSendDay();
-	}
+    @Override
+    public void updateNextSendDate(Subscription subscription) {
+        JPA.em().createQuery("update Subscription set nextSendDay = :nextSendDay where id = :id")
+                .setParameter("nextSendDay", subscription.calculateNextSendDay())
+                .setParameter("id", subscription.getId())
+                .executeUpdate();
+
+    }
 }

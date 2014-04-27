@@ -8,7 +8,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -278,21 +277,23 @@ public class Subscription extends Model {
 		return TimeZone.getTimeZone(timeZone);
 	}
 
-	public void updateNextSendDay() {
-		this.nextSendDay = new FutureCalculator(timeZone).getNextDay();
+
+	public Date calculateNextSendDay() {
+		return  new FutureCalculator(timeZone).getNextDay();
 	}
 
-	public void updateNextSendWeek() {
-		this.nextSendWeek = new FutureCalculator(timeZone).getNextWeek();
+	public Date calculateNextSendWeek() {
+		return  new FutureCalculator(timeZone).getNextWeek();
 	}
 
-	public void updateNextSendMonth() {
-		this.nextSendMonth = new FutureCalculator(timeZone).getNextMonth();
+	public Date calculateNextSendMonth() {
+		return new FutureCalculator(timeZone).getNextMonth();
 	}
 
-	public void updateNextSendYear() {
-		this.nextSendYear = new FutureCalculator(timeZone).getNextYear();
+	public Date calculateNextSendYear() {
+		return new FutureCalculator(timeZone).getNextYear();
 	}
+
 
 	@Override
 	public String toString() {

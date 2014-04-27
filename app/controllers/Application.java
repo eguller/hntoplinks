@@ -21,7 +21,6 @@ import utils.TimeUtil;
 
 import java.util.Calendar;
 import java.util.List;
-import java.util.TimeZone;
 
 public class Application extends HnController {
 
@@ -148,10 +147,10 @@ public class Application extends HnController {
                 newSubscription.setActivationDate(null);
                 String timeZoneId = TimeUtil.getTimeZoneId(timeZoneOffSet);
                 newSubscription.setTimeZone(timeZoneId);
-                newSubscription.updateNextSendDay();
-                newSubscription.updateNextSendWeek();
-                newSubscription.updateNextSendMonth();
-                newSubscription.updateNextSendYear();
+                newSubscription.calculateNextSendDay();
+                newSubscription.calculateNextSendWeek();
+                newSubscription.calculateNextSendMonth();
+                newSubscription.calculateNextSendYear();
                 
                 try {
                     EmailUtil.sendActivationEmail(newSubscription, newSubscription.getEmail());
