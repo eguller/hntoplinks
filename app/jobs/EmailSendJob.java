@@ -14,7 +14,7 @@ import java.util.List;
  * Time: 7:03 AM
  */
 
-@Every("30s")
+@Every("1h")
 public class EmailSendJob extends Job {
     int sentEmailCount = 0;
 
