@@ -1,30 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="google-site-verification" content="WKJOe5IW0VLyH8Fiot8242DCluzN-qpVA27nXMRXXKI" />
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="shortcut icon" href="@{'/public/images/favicon.ico'}">
-<link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css" />
-<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
-<script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
+    <meta name="google-site-verification" content="WKJOe5IW0VLyH8Fiot8242DCluzN-qpVA27nXMRXXKI"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="@{'/public/images/favicon.ico'}">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 
-<title>Hacker News Top Links</title>
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+
+    <script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+
+    <title>Hacker News Top Links</title>
 </head>
 <body>
-	<div data-role="page">
-		<div data-role="header" data-position="fixed">
-		#{menu_mobile activeTab:activeTab/}
-		</div>
-		<!-- /header -->
-		<div data-role="content">
-			#{doLayout /}
-		</div>
-		<!-- /content -->
-		<div data-role="footer" style="text-align: center;">
-			#{footer_mobile /}
-		</div>
-	</div>	
-	<script type="text/javascript">
+<div data-role="page">
+    <div class="row">
+        #{menu_mobile activeTab:activeTab/}
+    </div>
+    <!-- /header -->
+    <div class="row">
+        #{doLayout /}
+    </div>
+    <!-- /content -->
+    <div class="row">
+        #{footer_mobile /}
+    </div>
+</div>
+<script type="text/javascript">
 		var _gaq = _gaq || [];
 		_gaq.push([ '_setAccount', 'UA-7030369-6' ]);
 		_gaq.push([ '_trackPageview' ]);
@@ -39,7 +46,8 @@
 			var s = document.getElementsByTagName('script')[0];
 			s.parentNode.insertBefore(ga, s);
 		})();
-	</script>
+
+</script>
 
 </body>
 </html>
