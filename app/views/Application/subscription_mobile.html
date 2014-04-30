@@ -1,0 +1,46 @@
+#{extends 'mobile.html' /}
+#{form @Application.doSubscribe(newSubscription), id:"subscribe", method:"POST"}
+<fieldset data-role="controlgroup">
+    <label for="newSubscription.daily">Daily Top Links</label>
+    <input type="checkbox" name="newSubscription.daily" id="newSubscription.daily"
+    ${subscription.daily ? "checked" : ""}/>
+    <input type="hidden" name="newSubscription.daily" value="false"/>
+
+    <label for="newSubscription.weekly">Weekly Top Links</label>
+    <input type="checkbox" name="newSubscription.weekly" id="newSubscription.weekly"
+    ${subscription.weekly ? "checked" : ""}/>
+    <input type="hidden" name="newSubscription.weekly" value="false"/>
+
+    <label for="newSubscription.monthly">Monthly Top Links</label>
+    <input type="checkbox" name="newSubscription.monthly" id="newSubscription.monthly"
+    ${subscription.monthly ? "checked" : ""}/>
+    <input type="hidden" name="newSubscription.monthly" value="false"/>
+
+    <label for="newSubscription.annually">Annually Top Links</label>
+    <input type="checkbox" name="newSubscription.annually" id="newSubscription.annually"
+    ${subscription.annually ? "checked" : ""}/>
+    <input type="hidden" name="newSubscription.annually" value="false"/>
+</fieldset>
+<label for="newSubscription.email" class="ui-hidden-accessible">Email</label>
+<input type="text" name="newSubscription.email" id="newSubscription.email" value="${subscription.email}"
+       placeholder="Email"/>
+<input type="hidden" name="randomId" value="${randomId}"/>
+<input type="hidden" name="timeZoneOffSet" value=""/>
+#{if captchaRequired}
+<label for="captchaText" class="ui-hidden-accessible">Email</label>
+<input type="text" name="captchaText" id="captchaText" placeholder="Text shown below" value=""/>
+<img src="@{Application.captcha(randomId)}"/>
+#{/if}
+<button class="ui-shadow ui-btn ui-corner-all" type="submit" id="submitSubscription"
+        onclick="submitSubscriptionForm();">Submit
+</button>
+#{/form}
+#{ifErrors}
+
+<ul class="error">
+    #{errors}
+    <li>${error}</li>
+    #{/errors}
+</ul>
+
+#{/ifErrors}

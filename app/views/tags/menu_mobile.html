@@ -1,25 +1,38 @@
-<nav class="navbar navbar-default" role="navigation">
-    <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse"
-                    data-target="#bs-example-navbar-collapse-1">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="/"><img src="/public/images/y81.gif"/></a>
-        </div>
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav">
-                <li class="active"><a href="/">Today</a></li>
-                <li><a href="/week">Week</a></li>
-                <li><a href="/month">Month</a></li>
-                <li><a href="/year">Year</a></li>
-                <li><a href="/all">All</a></li>
-                <li><a href="subscribe">Subscribe</a></li>
-            </ul>
-        </div>
-    </div>
-</nav>
+<div data-role="navbar">
+    <ul>
+        #{if _activeTab == cache.CacheUnit.today}
+        <li><a href="/" class="ui-btn-active ui-state-persist" data-transition="slide">Today</a></li>
+        #{/if}
+        #{else}
+        <li><a href="/" data-transition="slide">Today</a></li>
+        #{/else}
+
+        #{if _activeTab == cache.CacheUnit.week}
+        <li><a href="/week" class="ui-btn-active ui-state-persist" data-transition="slide">Week</a></li>
+        #{/if}
+        #{else}
+        <li><a href="/week" data-transition="slide">Week</a></li>
+        #{/else}
+
+        #{if _activeTab == cache.CacheUnit.month}
+        <li><a href="/month" class="ui-btn-active ui-state-persist" data-transition="slide">Month</a></li>
+        #{/if}
+        #{else}
+        <li><a href="/month" data-transition="slide">Month</a></li>
+        #{/else}
+
+        #{if _activeTab == cache.CacheUnit.year}
+        <li><a href="/year" class="ui-btn-active ui-state-persist" data-transition="slide">Year</a></li>
+        #{/if}
+        #{else}
+        <li><a href="/year" data-transition="slide">Year</a></li>
+        #{/else}
+
+        #{if _activeTab == cache.CacheUnit.all}
+        <li><a href="/all" class="ui-btn-active ui-state-persist" data-transition="slide">All</a></li>
+        #{/if}
+        #{else}
+        <li><a href="/all" data-transition="slide">All</a></li>
+        #{/else}
+    </ul>
+</div>
