@@ -167,6 +167,30 @@ public class Subscription extends Model {
 		this.save();
 	}
 
+    public static long getSubscriberCount(){
+        return Subscription.count();
+    }
+
+    public static long getActiveSubscriberCount(){
+        return Subscription.count("activated = ? ", true);
+    }
+
+    public static long getDailySubscriberCount(){
+        return Subscription.count("daily = ?" , true);
+    }
+
+    public static long getWeeklySubscriberCount(){
+        return Subscription.count("weekly = ?", true);
+    }
+
+    public static long getMonthlySubscriberCount(){
+       return Subscription.count("monthly = ?", true);
+    }
+
+    public static long getAnnuallySubscriberCount(){
+       return Subscription.count("annually = ?", true);
+    }
+
 	public static List<Subscription> dailySubscribers() {
 		return Subscription.find("daily = ? and activated = ? and nextSendDay < ? ",
 				true, true, Calendar.getInstance().getTime()).fetch();

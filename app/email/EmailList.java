@@ -4,6 +4,7 @@ import cache.CacheUnit;
 import cache.ItemCache;
 import jobs.SingleEmailSendJob;
 import models.Item;
+import models.StatisticsMgr;
 import models.Subscription;
 import play.Logger;
 import utils.FormatUtil;
@@ -41,6 +42,7 @@ public abstract class EmailList implements NextSendDateUpdater {
             boolean result = false;
             try {
                 result = new SingleEmailSendJob(subscription, itemList, subject(subscription), this).now().get();
+                StatisticsMgr.instance().updateLastEmailSentTime();
                 if (result) {
                     success++;
                 } else {

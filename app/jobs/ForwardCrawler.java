@@ -2,6 +2,7 @@ package jobs;
 
 import cache.ItemCache;
 import models.Item;
+import models.StatisticsMgr;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -81,7 +82,7 @@ public class ForwardCrawler extends Job {
                     url = "https://news.ycombinator.com/best";
                     moreLinkCount = 0;
                 }
-
+                StatisticsMgr.instance().updateLastHnUpdateTime();
                 Logger.info("Last update : %s", Calendar.getInstance().getTime().toString());
 
             } catch (Exception e) {

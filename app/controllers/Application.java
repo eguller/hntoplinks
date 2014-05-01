@@ -6,9 +6,7 @@ import cache.ItemCache;
 
 import com.hntoplinks.controller.HnController;
 
-import models.Item;
-import models.RequestData;
-import models.Subscription;
+import models.*;
 
 import org.apache.commons.mail.EmailException;
 
@@ -160,6 +158,7 @@ public class Application extends HnController {
                     e.printStackTrace();
                 } finally {
                     newSubscription.save();
+                    updateStatistics(newSubscription);
                     IPCache.getInstance().addIp(getClientIp());
                     Cache.delete(randomId);
                     renderArgs.put("subscription", newSubscription);
@@ -188,6 +187,7 @@ public class Application extends HnController {
 
     public static void unsubscribe(String subscriptionid) {
         Subscription.deleteSubscription(subscriptionid);
+        StatisticsMgr.instance().incrementUnsubscribeCount();
         String message = "You have unsubscribed. Bye...";
         renderArgs.put("message", message);
         render("Application/message.html");
@@ -204,6 +204,7 @@ public class Application extends HnController {
                 subscription.setActivated(true);
                 subscription.setActivationDate(Calendar.getInstance().getTime());
                 subscription.save();
+                StatisticsMgr.instance().incrementActiveSubscriberCount();
                 renderArgs.put("message", "Congratulations! <br/> Your subscription has been activated. <br/> You will receive periodic e-mail from now on.");
                 render("Application/message.html");
             } else {
@@ -221,7 +222,13 @@ public class Application extends HnController {
         render("Application/about.html");
     }
 
-    public static String getClientIp() {
+    public static void statistics(){
+        List<Statistic> statisticList = StatisticsMgr.instance().getSnapshot();
+        renderArgs.put("statistics", statisticList);
+        render("Application/statistics.html");
+    }
+
+    private static String getClientIp() {
         Http.Header xForwardedForHeader = request.headers.get("x-forwarded-for");
         if (xForwardedForHeader != null) {
             List<String> values = xForwardedForHeader.values;
@@ -236,5 +243,21 @@ public class Application extends HnController {
             return request.remoteAddress;
         }
 
+    }
+
+    private static void updateStatistics(Subscription subscription){
+        StatisticsMgr.instance().incrementSubscriberCount();
+        if(subscription.isDaily()){
+            StatisticsMgr.instance().incrementDailySubscribeCount();
+        }
+        if(subscription.isWeekly()){
+            StatisticsMgr.instance().incrementWeeklySubscriberCount();
+        }
+        if(subscription.isMonthly()){
+            StatisticsMgr.instance().incrementMonthlySubscriberCount();
+        }
+        if(subscription.isAnnually()){
+            StatisticsMgr.instance().incrementAnnuallySubscriberCount();
+        }
     }
 }

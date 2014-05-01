@@ -2,6 +2,7 @@ package jobs;
 
 import email.NextSendDateUpdater;
 import models.Item;
+import models.StatisticsMgr;
 import models.Subscription;
 import org.apache.commons.mail.EmailException;
 import play.Logger;
@@ -39,8 +40,16 @@ public class SingleEmailSendJob extends Job<Boolean> {
             nextSendDateUpdater.updateNextSendDate(subscription);
         } catch (EmailException e) {
             Logger.error(e, "Sending email to %s failed.", subscription.getEmail());
+            StatisticsMgr.instance().incrementFailedMailCount();
             return false;
+        } catch (Exception ex){
+            //maybe email is sent but there is another error. to prevent same email again and again
+            //return true even if it is error.
+            Logger.error(ex, "Exception occured while sending email to %s", subscription.getEmail());
+            StatisticsMgr.instance().incrementFailedMailCount();
+            return true;
         }
+        StatisticsMgr.instance().incrementSuccessMailCount();
         return true;
     }
 
