@@ -22,13 +22,13 @@
     <input type="hidden" name="newSubscription.annually" value="false"/>
 </fieldset>
 <label for="newSubscription.email" class="ui-hidden-accessible">Email</label>
-<input type="text" name="newSubscription.email" id="newSubscription.email" value="${subscription.email}"
-       placeholder="Email"/>
+<input type="email" name="newSubscription.email" id="newSubscription.email" value="${subscription.email}"
+       placeholder="Email" data-clear-btn="true"/>
 <input type="hidden" name="randomId" value="${randomId}"/>
 <input type="hidden" name="timeZoneOffSet" value=""/>
 #{if captchaRequired}
 <label for="captchaText" class="ui-hidden-accessible">Email</label>
-<input type="text" name="captchaText" id="captchaText" placeholder="Text shown below" value=""/>
+<input type="text" name="captchaText" id="captchaText" placeholder="Text shown below" value="" data-clear-btn="true"/>
 <img src="@{Application.captcha(randomId)}"/>
 #{/if}
 <button class="ui-shadow ui-btn ui-corner-all" type="submit" id="submitSubscription"
