@@ -1,9 +1,8 @@
-<li>
-	<a href="${_item.url}" target="_blank">
-		<span style="font-size: 14px;">${((_page - 1) * 30) + _index}. ${_item.title}</span>
-		<br>
+<li data-icon="comment" data-iconpos="top">
+	<a href="${_item.url}" target="_blank" >
+		<span style="font-size: 13px;white-space:normal;">${((_page - 1) * 30) + _index}. ${_item.title}</span>
 		#{if _item.comhead}
-			<span style="font-size: 11px;"> (${_item.comhead}) </span> 
+			<span style="font-size: 10px;"> (${_item.comhead}) </span>
 		#{/if}
 		<br><span style="font-size: 9px;">
 
@@ -25,7 +24,7 @@
 			#{/else}			
 		</span>
 	</a>
-	<a href="https://news.ycombinator.com/item?id=${_item.hnid}" target="blank">
-		Comments
+	<a href="https://news.ycombinator.com/item?id=${_item.hnid}" target="_blank">
+        Comments
 	</a>
 </li>
