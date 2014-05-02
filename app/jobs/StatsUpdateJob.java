@@ -25,6 +25,8 @@ public class StatsUpdateJob extends Job{
                 Statistic statisticFromDb = statisticsMap.get(statistic.getKey());
                 if(statisticFromDb == null){
                     statisticFromDb = new Statistic(statistic.getKey(), statistic.getValue());
+                } else {
+                    statisticFromDb.setValue(statistic.getValue());
                 }
                 statisticFromDb.save();
             }
