@@ -179,6 +179,7 @@ public class Application extends HnController {
             renderArgs.put("message", String.format("Subscription for id %s was not found", subscription.getSubsUUID()));
             render("Application/message.html");
         } else {
+            StatisticsMgr.instance().modifySubscription(subscriptionFromDB, subscription);
             subscriptionFromDB.update(subscription);
             renderArgs.put("message", "Your subscription was updated.");
             render("Application/message.html");
@@ -186,8 +187,9 @@ public class Application extends HnController {
     }
 
     public static void unsubscribe(String subscriptionid) {
+        Subscription subscription = Subscription.findBySubscriptionId(subscriptionid);
         Subscription.deleteSubscription(subscriptionid);
-        StatisticsMgr.instance().incrementUnsubscribeCount();
+        StatisticsMgr.instance().incrementUnsubscribeCount(subscription);
         String message = "You have unsubscribed. Bye...";
         renderArgs.put("message", message);
         render("Application/message.html");

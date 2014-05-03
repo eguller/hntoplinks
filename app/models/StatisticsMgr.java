@@ -69,8 +69,23 @@ public class StatisticsMgr {
         subscriberCount.incrementAndGet();
     }
 
-    public void incrementUnsubscribeCount(){
+    public void incrementUnsubscribeCount(Subscription subscription){
         unsubscribeCount.incrementAndGet();
+        subscriberCount.decrementAndGet();
+        if(subscription != null){
+            if(subscription.isDaily()){
+                dailySubscriberCount.decrementAndGet();
+            }
+            if(subscription.isWeekly()){
+                weeklySubscriberCount.decrementAndGet();
+            }
+            if(subscription.isMonthly()){
+                monthlySubscriberCount.decrementAndGet();
+            }
+            if(subscription.isAnnually()){
+                monthlySubscriberCount.decrementAndGet();
+            }
+        }
     }
 
     public void incrementActiveSubscriberCount(){
@@ -117,6 +132,39 @@ public class StatisticsMgr {
     public static StatisticsMgr instance(){
         return LazyStatisticsMgr.INSTANCE;
     }
+
+    public void modifySubscription(Subscription subscriptionFromDB, Subscription subscription) {
+        if(subscriptionFromDB != null && subscription != null){
+            if(subscriptionFromDB.isDaily() && !subscription.isDaily()){
+                dailySubscriberCount.decrementAndGet();
+            }
+            if(!subscriptionFromDB.isDaily() && subscription.isDaily()){
+                dailySubscriberCount.incrementAndGet();
+            }
+
+            if(subscriptionFromDB.isWeekly() && !subscription.isWeekly()){
+                weeklySubscriberCount.decrementAndGet();
+            }
+            if(!subscriptionFromDB.isWeekly() && subscription.isWeekly()){
+                weeklySubscriberCount.incrementAndGet();
+            }
+
+            if(subscriptionFromDB.isMonthly() && !subscription.isMonthly()){
+                monthlySubscriberCount.decrementAndGet();
+            }
+            if(!subscriptionFromDB.isMonthly() && subscription.isMonthly()){
+                monthlySubscriberCount.incrementAndGet();
+            }
+
+            if(subscriptionFromDB.isAnnually() && !subscription.isAnnually()){
+                annuallySubscriberCount.decrementAndGet();
+            }
+            if(!subscriptionFromDB.isAnnually() && subscription.isAnnually()){
+                annuallySubscriberCount.incrementAndGet();
+            }
+        }
+    }
+
     private static class LazyStatisticsMgr{
         public static final StatisticsMgr INSTANCE = new StatisticsMgr();
     }
