@@ -145,10 +145,10 @@ public class Application extends HnController {
                 newSubscription.setActivationDate(null);
                 String timeZoneId = TimeUtil.getTimeZoneId(timeZoneOffSet);
                 newSubscription.setTimeZone(timeZoneId);
-                newSubscription.calculateNextSendDay();
-                newSubscription.calculateNextSendWeek();
-                newSubscription.calculateNextSendMonth();
-                newSubscription.calculateNextSendYear();
+                newSubscription.setNextSendDay(newSubscription.calculateNextSendDay());
+                newSubscription.setNextSendWeek(newSubscription.calculateNextSendWeek());
+                newSubscription.setNextSendMonth(newSubscription.calculateNextSendMonth());
+                newSubscription.setNextSendYear(newSubscription.calculateNextSendYear());
                 
                 try {
                     EmailUtil.sendActivationEmail(newSubscription, newSubscription.getEmail());
