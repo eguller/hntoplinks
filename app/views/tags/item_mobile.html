@@ -6,10 +6,7 @@
 		#{/if}
 		<br><span style="font-size: 9px;">
 
-		by ${_item.user} ${new Date(_item.date.getTime()).since()} 			
-		
-		</span>
-		<span class="ui-li-count ui-btn-up-c ui-btn-corner-all">
+		by ${_item.user} ${new Date(_item.date.getTime()).since()} |
 			#{if _item.points > -1}
 				${_item.points}
 				#{if _item.points > 1}
