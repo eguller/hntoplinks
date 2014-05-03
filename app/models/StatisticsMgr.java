@@ -83,7 +83,7 @@ public class StatisticsMgr {
                 monthlySubscriberCount.decrementAndGet();
             }
             if(subscription.isAnnually()){
-                monthlySubscriberCount.decrementAndGet();
+                annuallySubscriberCount.decrementAndGet();
             }
         }
     }
