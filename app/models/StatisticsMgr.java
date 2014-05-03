@@ -70,10 +70,10 @@ public class StatisticsMgr {
     }
 
     public void incrementUnsubscribeCount(Subscription subscription){
-        unsubscribeCount.incrementAndGet();
-        subscriberCount.decrementAndGet();
-        activeSubscriberCount.decrementAndGet();
         if(subscription != null){
+            unsubscribeCount.incrementAndGet();
+            subscriberCount.decrementAndGet();
+            activeSubscriberCount.decrementAndGet();
             if(subscription.isDaily()){
                 dailySubscriberCount.decrementAndGet();
             }
