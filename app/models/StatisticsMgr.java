@@ -1,6 +1,7 @@
 package models;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -60,12 +61,20 @@ public class StatisticsMgr {
         }
         statistic = statisticsMap.get(StatKey.LAST_EMAIL_SENT);
         if(statistic != null){
-            lastEmailSent = Long.parseLong(statistic.getValue());
+            try {
+                lastEmailSent = dateFormat.get().parse(statistic.getValue()).getTime();
+            } catch (ParseException e) {
+                lastEmailSent = 0;
+            }
         }
 
         statistic = statisticsMap.get(StatKey.LAST_HN_UPDATE);
         if(statistic != null){
-            lastHnUpdate = Long.parseLong(statistic.getValue());
+            try {
+                lastHnUpdate = dateFormat.get().parse(statistic.getValue()).getTime();
+            } catch (ParseException e) {
+                lastHnUpdate = 0;
+            }
         }
 
         loaded = true;
