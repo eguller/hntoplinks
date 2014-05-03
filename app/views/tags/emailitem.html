@@ -2,7 +2,7 @@
 <tr>
     <td align=right valign="top">${_index}.</td>
     <td width="5px;"></td>
-    <td>
+    <td style="text-align: left;">
         <a href="${_item.url}" target="_blank">${_item.title}</a>
         #{if _item.comhead}
             <span style="font-size: 8pt;"> (${_item.comhead}) </span>
@@ -11,7 +11,7 @@
 </tr>
 <tr>
     <td colspan="2"></td>
-    <td style="font-size: 7pt;">
+    <td style="font-size: 7pt; text-align: left;">
         <span id="score_${_item.hnid}">
             ${_item.getPointStr()}
         </span> by
