@@ -58,6 +58,16 @@ public class StatisticsMgr {
         if(statistic != null){
             failureEmailCount.set(Long.parseLong(statistic.getValue()));
         }
+        statistic = statisticsMap.get(StatKey.LAST_EMAIL_SENT);
+        if(statistic != null){
+            lastEmailSent = Long.parseLong(statistic.getValue());
+        }
+
+        statistic = statisticsMap.get(StatKey.LAST_HN_UPDATE);
+        if(statistic != null){
+            lastHnUpdate = Long.parseLong(statistic.getValue());
+        }
+
         loaded = true;
     }
 
