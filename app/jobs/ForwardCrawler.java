@@ -100,12 +100,12 @@ public class ForwardCrawler extends Job {
     private static List<String> extractPosts(String content) {
         List<String> postList = null;
         String mainTable = extractSubStr(content,
-                "<table border=0 cellpadding=0 cellspacing=0>", "</table>");
+                "<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\">", "</table>");
         if(mainTable == null){
             return Collections.EMPTY_LIST;
         }
         postList = Arrays.asList(mainTable
-                .split("<tr><td align=right valign=top class=\"title\">"));
+                .split("<tr><td align=\"right\" valign=\"top\" class=\"title\">"));
         if (postList!= null && postList.size() > 0 && postList.get(0).length() == 0) {
             return postList.subList(1, postList.size());
         } else {
