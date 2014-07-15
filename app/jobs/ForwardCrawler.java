@@ -200,7 +200,7 @@ public class ForwardCrawler extends Job {
                 String pointStr = null;
                 try {
                     pointStr = extractSubStrRegex(subText,
-                            "<span id=score_\\d+?>", " points*");
+                            "<span id=\"score_\\d+?\">", " points*");
                     points = Integer.parseInt(pointStr);
                 } catch (NumberFormatException e) {
                     Logger.error("Points format error: ", pointStr);
