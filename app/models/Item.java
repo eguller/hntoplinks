@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Entity
 public class Item extends Model implements Cloneable{
@@ -15,6 +16,8 @@ public class Item extends Model implements Cloneable{
 	private static final long WEEK = 7 * DAY;
 	private static final long MONTH = 30 * DAY;
 	private static final long YEAR = DAY * 365;
+
+
 
     public String getUrl() {
         return url;
@@ -129,6 +132,18 @@ public class Item extends Model implements Cloneable{
 		this.points = points;
 		this.lastUpdate = Calendar.getInstance().getTime();
 	}
+
+    public Item(JSonItem jSonItem) {
+        this(jSonItem.getTitle(),
+            jSonItem.getUrl(),
+            jSonItem.getDomainName(),
+            jSonItem.getBy(),
+            new Date(TimeUnit.SECONDS.toMillis(jSonItem.getTime())),
+            jSonItem.getId(),
+            jSonItem.getScore(),
+            jSonItem.getKids().size()
+            );
+    }
 	
 	public static Item getByHnId(long hnid){
 		return Item.find("byHnid", hnid).first();
@@ -198,9 +213,8 @@ public class Item extends Model implements Cloneable{
         if (o == null || getClass() != o.getClass()) return false;
         Item item = (Item) o;
 
-        if (hnid != item.hnid) return false;
+        return hnid == item.hnid;
 
-        return true;
     }
 
     @Override

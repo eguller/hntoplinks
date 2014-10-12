@@ -1,6 +1,5 @@
 package utils;
 
-import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -14,7 +13,6 @@ public class TimeUtil {
         } else if (offSet > 11){
             offSet = 11;
         }
-        String timeZoneId = String.format("Etc/GMT%+d", offSet);
-        return timeZoneId;
+        return String.format("Etc/GMT%+d", offSet);
     }
 }

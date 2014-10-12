@@ -8,7 +8,7 @@ import java.text.DecimalFormat;
  * Time: 6:06 AM
  */
 public class FormatUtil {
-    private static final ThreadLocal<DecimalFormat> decimalFormatThreadLocal = new ThreadLocal() {
+    private static final ThreadLocal<DecimalFormat> decimalFormatThreadLocal = new ThreadLocal<DecimalFormat>() {
         @Override
         public DecimalFormat initialValue() {
           return new DecimalFormat(".000");

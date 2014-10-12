@@ -16,7 +16,6 @@ import java.util.List;
 
 @Every("1h")
 public class EmailSendJob extends Job {
-    int sentEmailCount = 0;
 
     @Override
     @NoTransaction

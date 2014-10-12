@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Time: 10:22 PM
  */
 public class ConfigCache {
-    private static ConcurrentHashMap<String, ConfigCacheItem> configCache = new ConcurrentHashMap<String, ConfigCacheItem>();
+    private static final ConcurrentHashMap<String, ConfigCacheItem> configCache = new ConcurrentHashMap<String, ConfigCacheItem>();
 
     public static ConfigCache instance(){
         return ConfigCacheLoader.INSTANCE;

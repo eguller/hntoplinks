@@ -28,11 +28,7 @@ public class IPCache {
         } else {
             long diff = System.currentTimeMillis() - time;
             long diffMin = TimeUnit.MILLISECONDS.toMinutes(diff);
-            if(diffMin < CACHE_EXPIRE_MIN){
-                return true;
-            } else {
-                return false;
-            }
+            return diffMin < CACHE_EXPIRE_MIN;
         }
     }
 
