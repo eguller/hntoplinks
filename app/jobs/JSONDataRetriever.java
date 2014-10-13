@@ -4,6 +4,7 @@ import cache.ItemCache;
 import com.google.gson.Gson;
 import models.Item;
 import models.JSonItem;
+import models.StatisticsMgr;
 import play.Logger;
 import play.jobs.Every;
 import play.jobs.Job;
@@ -59,6 +60,7 @@ public class JSONDataRetriever extends Job{
             }
         }
         ItemCache.getInstance().updateCache(newItemList);
+        StatisticsMgr.instance().updateLastHnUpdateTime();
         Logger.info("Last update : %s. New Item: %d, Updated Item: %d, Failed Item: %d", Calendar.getInstance().getTime().toString(), stat.getNewItem(), stat.getUpdatedItem(), stat.getFailedItem());
     }
 
