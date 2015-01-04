@@ -243,6 +243,7 @@ public class Application extends HnController {
         List<Statistic> statisticList = StatisticsMgr.instance().getSnapshot();
         renderArgs.put("statistics", statisticList);
         renderArgs.put("title", "Statistics - Hacker News Top Links");
+        renderArgs.put("title", "About - Hacker News Top Links");
         render("Application/statistics.html");
     }
 
