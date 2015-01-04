@@ -30,6 +30,7 @@ public class Application extends HnController {
         List<Item> items = ItemCache.getInstance().get(CacheUnit.today, page);
         renderArgs.put("items", items);
         renderArgs.put("page", page);
+        renderArgs.put("title", "Today - Hacker News Top Links");
         render("Application/index.html");
     }
 
@@ -41,6 +42,7 @@ public class Application extends HnController {
         List<Item> items = ItemCache.getInstance().get(CacheUnit.week, page);
         renderArgs.put("items", items);
         renderArgs.put("page", page);
+        renderArgs.put("title", "Week - Hacker News Top Links");
         render("Application/index.html");
     }
 
@@ -53,6 +55,7 @@ public class Application extends HnController {
         renderArgs.put("items", items);
         renderArgs.put("page", page);
         render("Application/index.html");
+        renderArgs.put("title", "Month - Hacker News Top Links");
     }
 
     public static void year(Integer page) {
@@ -63,6 +66,7 @@ public class Application extends HnController {
         List<Item> items = ItemCache.getInstance().get(CacheUnit.year, page);
         renderArgs.put("items", items);
         renderArgs.put("page", page);
+        renderArgs.put("title", "Year - Hacker News Top Links");
         render("Application/index.html");
     }
 
@@ -74,6 +78,7 @@ public class Application extends HnController {
         List<Item> items = ItemCache.getInstance().get(CacheUnit.all, page);
         renderArgs.put("items", items);
         renderArgs.put("page", page);
+        renderArgs.put("title", "All Time - Hacker News Top Links");
         render("Application/index.html");
     }
 
@@ -90,6 +95,7 @@ public class Application extends HnController {
         } else {
             Cache.set(randomId, new RequestData(), "10mn");
         }
+        renderArgs.put("title", "Subscribe - Hacker News Top Links");
         render("Application/subscription.html");
     }
 
@@ -104,9 +110,11 @@ public class Application extends HnController {
         Subscription existingSubscription = Subscription.findBySubscriptionId(subscriptionid);
         if (existingSubscription == null) {
             renderArgs.put("message", String.format("Subscription for id %s was not found", subscriptionid));
+            renderArgs.put("title", "Subscription not found - Hacker News Top Links");
             render("Application/message.html");
         } else {
             renderArgs.put("existingSubscription", existingSubscription);
+            renderArgs.put("title", "Modify subscription - Hacker News Top Links");
             render("Application/modify_subscription.html");
         }
     }
@@ -116,7 +124,7 @@ public class Application extends HnController {
         validation.required(newSubscription.getEmail()).message("validation.required.email");
         validation.email(newSubscription.getEmail());
         validation.isTrue(newSubscription.isDaily() || newSubscription.isWeekly() || newSubscription.isMonthly() || newSubscription.isAnnually()).message("validation.isTrue.timeperiod");
-        
+        renderArgs.put("title", "Subscribe - Hacker News Top Links");
         if (randomId == null) {
             renderArgs.put("message", "Form data manually edited. Please open subscription page again.");
             render("Application/message.html");
@@ -161,6 +169,7 @@ public class Application extends HnController {
                     updateStatistics(newSubscription);
                     IPCache.getInstance().addIp(getClientIp());
                     Cache.delete(randomId);
+                    renderArgs.put("title", "Subscription Completed - Hacker News Top Links");
                     renderArgs.put("subscription", newSubscription);
                     render("Application/subscription_complete.html");
                 }
@@ -177,11 +186,13 @@ public class Application extends HnController {
         Subscription subscriptionFromDB = Subscription.findBySubscriptionId(subscription.getSubsUUID());
         if (subscriptionFromDB == null) {
             renderArgs.put("message", String.format("Subscription for id %s was not found", subscription.getSubsUUID()));
+            renderArgs.put("title", "Subscription not found - Hacker News Top Links");
             render("Application/message.html");
         } else {
             StatisticsMgr.instance().modifySubscription(subscriptionFromDB, subscription);
             subscriptionFromDB.update(subscription);
             renderArgs.put("message", "Your subscription was updated.");
+            renderArgs.put("title", "Subscription updated - Hacker News Top Links");
             render("Application/message.html");
         }
     }
@@ -192,6 +203,7 @@ public class Application extends HnController {
         StatisticsMgr.instance().incrementUnsubscribeCount(subscription);
         String message = "You have unsubscribed. Bye...";
         renderArgs.put("message", message);
+        renderArgs.put("title", "Unsubscribe - Hacker News Top Links");
         render("Application/message.html");
     }
 
@@ -200,6 +212,7 @@ public class Application extends HnController {
         Subscription subscription = Subscription.findBySubscriptionId(subscriptionid);
         if (subscription == null) {
             renderArgs.put("message", String.format("Error!</br> Subscription id %s does not exist in our system.", subscriptionid));
+            renderArgs.put("title", "Subscription not found  - Hacker News Top Links");
             render("Application/message.html");
         } else {
             if (!subscription.isActivated()) {
@@ -208,9 +221,11 @@ public class Application extends HnController {
                 subscription.save();
                 StatisticsMgr.instance().incrementActiveSubscriberCount();
                 renderArgs.put("message", "Congratulations! <br/> Your subscription has been activated. <br/> You will receive periodic e-mail from now on.");
+                renderArgs.put("title", "Subscription Activated - Hacker News Top Links");
                 render("Application/message.html");
             } else {
                 renderArgs.put("message", "Your subscription has already been activated.");
+                renderArgs.put("title", "Subscription already active - Hacker News Top Links");
                 render("Application/message.html");
             }
         }
@@ -227,6 +242,7 @@ public class Application extends HnController {
     public static void statistics(){
         List<Statistic> statisticList = StatisticsMgr.instance().getSnapshot();
         renderArgs.put("statistics", statisticList);
+        renderArgs.put("title", "Statistics - Hacker News Top Links");
         render("Application/statistics.html");
     }
 
