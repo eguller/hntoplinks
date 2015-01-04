@@ -111,18 +111,7 @@ public class Item extends Model implements Cloneable{
 	public Date lastUpdate;
 	
 	public Item(String title, String url, String comhead, String user, Date date, long hnid, int points, int comment){
-		if(url == null || date == null || hnid < 0 || points < 0){
-			throw new IllegalArgumentException(
-			new StringBuilder("url: ").append(url)
-			.append(", title: ").append(title)
-			.append(", comhead: ").append(comhead)
-			.append(", user: ").append(user)
-			.append(", date: ").append(date)
-			.append(", hnid: ").append(hnid)
-			.append(", points: ")
-			.append(points).toString());
-		}
-		this.url = url;
+		this.url = (url == null || url.length() == 0) ? String.format("https://news.ycombinator.com/item?id=%d", hnid)  : url;
 		this.comhead = comhead;
 		this.hnid = hnid;
 		this.date = date;
