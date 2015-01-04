@@ -54,8 +54,8 @@ public class Application extends HnController {
         List<Item> items = ItemCache.getInstance().get(CacheUnit.month, page);
         renderArgs.put("items", items);
         renderArgs.put("page", page);
-        render("Application/index.html");
         renderArgs.put("title", "Month - Hacker News Top Links");
+        render("Application/index.html");
     }
 
     public static void year(Integer page) {
