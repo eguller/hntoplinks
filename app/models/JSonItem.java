@@ -1,5 +1,7 @@
 package models;
 
+import play.Logger;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -131,6 +133,10 @@ public class JSonItem {
 
     public String getDomainName(){
         try {
+            if(url == null){
+                Logger.error("Url is null %d", id);
+                return "";
+            }
             URI uri = new URI(url);
             String domain = uri.getHost();
             if(domain != null) {
