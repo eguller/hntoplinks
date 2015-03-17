@@ -42,6 +42,9 @@ public class JSONDataRetriever extends Job{
         for(Long id : topItemIds){
             try {
                 JSonItem jSonItem = deserializeItem(id);
+                if(jSonItem == null){
+                    Logger.error("Json item could not be desrialized %d", id);
+                }
                 Item item = new Item(jSonItem);
                 Item itemFromDb = Item.getByHnId(jSonItem.getId());
                 if(itemFromDb == null){
