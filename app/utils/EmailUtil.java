@@ -1,5 +1,6 @@
 package utils;
 
+import cache.ConfigCache;
 import com.microtripit.mandrillapp.lutung.MandrillApi;
 import com.microtripit.mandrillapp.lutung.model.MandrillApiError;
 import com.microtripit.mandrillapp.lutung.view.MandrillMessage;
@@ -44,7 +45,7 @@ public class EmailUtil {
     }
 
     private static void sendMandrillAppMail(String htmlContent, String textContent, String to, String subject, Map<String, String> headers) {
-        String apiKey = System.getProperty("mandrillapi.key");
+        String apiKey = ConfigCache.instance().getValue("mandrillapi.key");
         MandrillApi mandrillApi = new MandrillApi(apiKey);
         MandrillMessage message = new MandrillMessage();
         message.setSubject(subject);
