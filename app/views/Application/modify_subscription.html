@@ -14,19 +14,33 @@
                 </tr>
                 <tr>
                     <td class="cright">Daily Top Links</td>
-                    <td class="cleft"><input type="checkbox" name="subscription.daily" ${existingSubscription.daily ? "checked" : ""}/></td>
+                    <td class="cleft">
+                        <input type="checkbox" name="subscription.daily" ${existingSubscription.daily ? "checked" : ""}/>
+                        <input type="hidden" name="subscription.daily" value="false" />
+
+                    </td>
                 </tr>
                 <tr>
                     <td class="cright">Wekly Top Links</td>
-                    <td class="cleft"><input type="checkbox" name="subscription.weekly" ${existingSubscription.weekly ? "checked" : ""}/></td>
+                    <td class="cleft">
+                        <input type="checkbox" name="subscription.weekly"  ${existingSubscription.weekly ? "checked" : ""}/>
+                        <input type="hidden" name="subscription.weekly" value="false" />
+
+                    </td>
                 </tr>
                 <tr>
                     <td class="cright">Monthly Top Links</td>
-                    <td class="cleft"><input type="checkbox" name="subscription.monthly" ${existingSubscription.monthly ? "checked" : ""}/></td>
+                    <td class="cleft">
+                        <input type="checkbox" name="subscription.monthly" ${existingSubscription.monthly ? "checked" : ""}/>
+                        <input type="hidden" name="subscription.monthly" value="false" />
+                    </td>
                 </tr>
                 <tr>
                     <td class="cright">Annually Top Links</td>
-                    <td class="cleft"><input type="checkbox" name="subscription.annually" ${existingSubscription.annually ? "checked" : ""}/></td>
+                    <td class="cleft">
+                        <input type="checkbox" name="subscription.annually" ${existingSubscription.annually ? "checked" : ""}/>
+                        <input type="hidden" name="subscription.annually" value="false" />
+                    </td>
                 </tr>
                 <tr>
                     <td class="cright">Email</td>
