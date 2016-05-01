@@ -12,6 +12,7 @@ update subscription set activated = true, activation_date = subscription_date wh
 
 
 ## Heroku
-###
+### Deploy to Heroku
+git push heroku master
 
 
