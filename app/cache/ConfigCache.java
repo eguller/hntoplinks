@@ -27,10 +27,6 @@ public class ConfigCache {
         }
     }
 
-    public ConfigCacheItem getItem(String key){
-        return configCache.get(key);
-    }
-
     public void load(){
         List<Configuration> configurationList = Configuration.findAll();
         for(Configuration configuration : configurationList){
