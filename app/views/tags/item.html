@@ -3,7 +3,7 @@
 	<td width="5px;"></td>
 	<td class="title"><a href="${_item.url}" target="_blank">${_item.title}</a>
 	#{if _item.comhead}
-		<span class="comhead"> (${_item.comhead}) </span>
+		<a class="comhead" target="_blank" href="https://news.ycombinator.com/from?site=${_item.comhead}"> (${_item.comhead}) </a>
 	#{/if}
 	</td>
 </tr>
