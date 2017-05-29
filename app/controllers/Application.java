@@ -157,23 +157,15 @@ public class Application extends HnController {
                 newSubscription.setNextSendWeek(newSubscription.calculateNextSendWeek());
                 newSubscription.setNextSendMonth(newSubscription.calculateNextSendMonth());
                 newSubscription.setNextSendYear(newSubscription.calculateNextSendYear());
-                
-                try {
-                    EmailUtil.sendActivationEmail(newSubscription, newSubscription.getEmail());
-                    newSubscription.setActivated(false);
-                } catch (EmailException e) {
-                    newSubscription.setActivated(true);
-                    e.printStackTrace();
-                } finally {
-                    newSubscription.save();
-                    updateStatistics(newSubscription);
-                    IPCache.getInstance().addIp(getClientIp());
-                    Cache.delete(randomId);
-                    renderArgs.put("title", "Subscription Completed - Hacker News Top Links");
-                    renderArgs.put("subscription", newSubscription);
-                    render("Application/subscription_complete.html");
-                }
-
+                newSubscription.setActivated(true);
+                newSubscription.setActivationDate(Calendar.getInstance().getTime());
+                newSubscription.save();
+                updateStatistics(newSubscription);
+                IPCache.getInstance().addIp(getClientIp());
+                Cache.delete(randomId);
+                renderArgs.put("title", "Subscription Completed - Hacker News Top Links");
+                renderArgs.put("subscription", newSubscription);
+                render("Application/subscription_complete.html");
             } else {
                 renderArgs.put("subscription", newSubscription);
                 renderArgs.put("randomId", randomId);

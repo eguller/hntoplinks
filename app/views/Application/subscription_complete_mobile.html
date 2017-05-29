@@ -1,11 +1,3 @@
 #{extends 'mobile.html' /}
-Your subscription completed. <br/>
-Please go to <br/>
-#{if subscription.emailDomainExists()}
-<a href="http://${subscription.emailDomain()}" target="_blank">${subscription.email}</a>
-#{/if}
-#{else}
-${subscription.email}
-#{/else}
-<br/>and activate your subscription.
+Congratulations, you have subscribed to <a href="/">hntoplinks.</a>
 
