@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.long;
 
 /**
  * User: eguller
@@ -22,15 +22,15 @@ public class StatisticsMgr {
             return new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
         }
     };
-    private final AtomicLong subscriberCount = new AtomicLong(0);
-    private final AtomicLong unsubscribeCount = new AtomicLong(0);
-    private final AtomicLong activeSubscriberCount = new AtomicLong(0);
-    private final AtomicLong dailySubscriberCount = new AtomicLong(0);
-    private final AtomicLong weeklySubscriberCount = new AtomicLong(0);
-    private final AtomicLong  monthlySubscriberCount = new AtomicLong(0);
-    private final AtomicLong annuallySubscriberCount = new AtomicLong(0);
-    private final AtomicLong successEmailCount = new AtomicLong(0);
-    private final AtomicLong failureEmailCount = new AtomicLong(0);
+    private final long subscriberCount = new long(0);
+    private final long unsubscribeCount = new long(0);
+    private final long activeSubscriberCount = new long(0);
+    private final long dailySubscriberCount = new long(0);
+    private final long weeklySubscriberCount = new long(0);
+    private final long  monthlySubscriberCount = new long(0);
+    private final long annuallySubscriberCount = new long(0);
+    private final long successEmailCount = new long(0);
+    private final long failureEmailCount = new long(0);
     private  long lastEmailSent = 0;
     private  long lastHnUpdate = 0;
     private boolean loaded = false;

@@ -1,0 +1,11 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/main.html}">
+<div data-role="main" layout:fragment="content-mobile">
+    <ul data-role="listview" data-inset="true">
+        #{list items, as:'storyEntity'}
+            #{item_mobile storyEntity:storyEntity , index: item_index, page:page /}
+        #{/list}
+        #{if items!= null && items.size() == 30 }
+            <li><a href="/${activeTab}/${page+1}" rel="nofollow">More</a>
+        #{/if}
+    </ul>
+</div>

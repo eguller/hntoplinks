@@ -1,0 +1,28 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+	<th:block th:fragment="item">
+		<tr>
+			<td align=right valign=top class="title" th:with="storyIndex=${ (page.currentPage - 1) * page.storyPerPage + storyIndex}" th:text="${storyIndex} + '. '">
+			</td>
+			<td width="5px;"></td>
+			<td class="title"><a th:href="@{${story.url}}" target="_blank" th:text="${story.title}"></a>
+				<th:block th:if="${story.domain != null}">
+					<a class="comhead" target="_blank" th:href="@{https://news.ycombinator.com/from?site=${story.domain}}" th:text="'(' + ${story.domain} + ')'"></a>
+				</th:block>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2"></td>
+			<td class="subtext"><span id="score_${story.hnid}" th:text="${story.score} + ' points'">
+					</span> by <a th:href="@{http://news.ycombinator.com/user?id=${story.user}}"
+				target="_blank" th:text="${story.by}"></a> <th:block th:text="${story.since}"/> | <a
+				th:href="@{http://news.ycombinator.com/storyEntity?id=${story.hnid}}"
+				target="_blank" th:text="${story.commentCount} + ' comments'">
+					${story.getCommentStr()}
+			</a></td>
+		</tr>
+		<tr style="height: 5px"></tr>
+	</th:block>
+</body>
+</html>

@@ -23,8 +23,8 @@
         <tr>
             <td>
                 <table border="0" cellpadding="0" cellspacing="0">
-                    #{list items, as:'item'}
-                        #{emailitem item:item , index: item_index/}
+                    #{list items, as:'storyEntity'}
+                        #{emailitem storyEntity:storyEntity , index: item_index/}
                     #{/list}
                 </table>
             </td>

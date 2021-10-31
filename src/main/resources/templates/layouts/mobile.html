@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta name="google-site-verification" content="WKJOe5IW0VLyH8Fiot8242DCluzN-qpVA27nXMRXXKI"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="@{'/public/images/favicon.ico'}">
+    <link rel="stylesheet" media="all"
+          href="@{'/public/stylesheets/common.css'}">
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.css"/>
+    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.js"></script>
+    <script src="@{'/public/javascripts/common.js'}" type="text/javascript"></script>
+    <title>${title}</title>
+
+</head>
+<body>
+<div data-role="page">
+    <div data-role="header" data-position="fixed">
+        <div th:insert="fragments/menu_mobile.html :: menu-mobile ">
+    </div>
+    <!-- /header -->
+    <div data-role="main" layout:fragment="content-mobile">
+    </div>
+    <!-- /content -->
+    <div data-role="footer" style="text-align: center;" data-position="fixed">
+        <div th:insert="fragments/footer_mobile.html :: footer-mobile">
+    </div>
+</div>
+<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push([ '_setAccount', 'UA-7030369-6' ]);
+		_gaq.push([ '_trackPageview' ]);
+
+		(function() {
+			var ga = document.createElement('script');
+			ga.type = 'text/javascript';
+			ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+					: 'http://www')
+					+ '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0];
+			s.parentNode.insertBefore(ga, s);
+		})();
+
+</script>
+
+</body>
+</html>
