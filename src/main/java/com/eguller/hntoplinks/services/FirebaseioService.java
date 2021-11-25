@@ -25,7 +25,7 @@ public class FirebaseioService {
 
     public List<HnStory> readTopStories(){
         var storyList = new ArrayList<HnStory>();
-        var topStories = restTemplate.getForEntity(firebaseIoBaseUrl + "/topstories.json", List.class);
+        var topStories = restTemplate.getForEntity(firebaseIoBaseUrl + "/beststories.json", List.class);
 
         if(topStories.getStatusCode() == HttpStatus.OK){
             topStories.getBody().forEach(storyId -> {
