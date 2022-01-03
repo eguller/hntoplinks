@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS item
     comhead character varying(4096),
     comment integer,
     postdate timestamp without time zone,
-    hnid bigint,
+    hnid bigint NOT NULL,
     lastupdate timestamp without time zone,
     points integer,
     title character varying(4096),

@@ -32,22 +32,22 @@ public class AppConfig implements WebMvcConfigurer {
     private Sequence sequence;
     @Bean
     public DeviceResolverHandlerInterceptor deviceResolverHandlerInterceptor() {
-        return new DeviceResolverHandlerInterceptor(); 
+        return new DeviceResolverHandlerInterceptor();
     }
 
     @Bean
     public DeviceHandlerMethodArgumentResolver deviceHandlerMethodArgumentResolver() {
-        return new DeviceHandlerMethodArgumentResolver(); 
+        return new DeviceHandlerMethodArgumentResolver();
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(deviceResolverHandlerInterceptor()); 
+        registry.addInterceptor(deviceResolverHandlerInterceptor());
     }
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-        argumentResolvers.add(deviceHandlerMethodArgumentResolver()); 
+        argumentResolvers.add(deviceHandlerMethodArgumentResolver());
     }
 
     @Bean
@@ -67,7 +67,7 @@ public class AppConfig implements WebMvcConfigurer {
     public ApplicationListener<BeforeSaveEvent<Object>> assignId() {
         return event -> {
             Object entity = event.getEntity();
-            if(entity instanceof HnEntity){
+            if(entity instanceof HnEntity && ((HnEntity) entity).getId() == null){
                 ((HnEntity) entity).setId(sequence.getNextId());
             }
         };

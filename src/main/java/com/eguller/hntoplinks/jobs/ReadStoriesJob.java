@@ -4,10 +4,14 @@ package com.eguller.hntoplinks.jobs;
 import com.eguller.hntoplinks.services.FirebaseioService;
 import com.eguller.hntoplinks.services.StoryCacheService;
 import com.eguller.hntoplinks.services.StoryService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.lang.invoke.MethodHandles;
+import java.util.StringJoiner;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -18,14 +22,21 @@ import java.util.stream.Collectors;
  */
 @Component
 public class ReadStoriesJob {
-    @Autowired
-    private FirebaseioService firebaseioService;
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    @Autowired
+    private final FirebaseioService firebaseioService;
+
     private StoryCacheService storyCacheService;
 
-    @Autowired
     private StoryService storyService;
+
+
+    @Autowired
+    public ReadStoriesJob(FirebaseioService firebaseioService, StoryCacheService storyCacheService, StoryService storyService) {
+        this.firebaseioService = firebaseioService;
+        this.storyCacheService = storyCacheService;
+        this.storyService = storyService;
+    }
 
     @Scheduled(fixedDelay = 5, timeUnit = TimeUnit.MINUTES)
     public void doJob() {

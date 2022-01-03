@@ -18,10 +18,14 @@ import java.util.List;
 public class FirebaseioService {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    @Autowired
-    private RestTemplate restTemplate;
-    @Value("${hntoplins.firebaseio-url}")
+    private final RestTemplate restTemplate;
+
+    @Value("${hntoplinks.firebaseio-url}")
     private String firebaseIoBaseUrl;
+
+    public FirebaseioService(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     public List<HnStory> readTopStories(){
         var storyList = new ArrayList<HnStory>();

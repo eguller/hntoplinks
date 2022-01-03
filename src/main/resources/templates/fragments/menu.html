@@ -6,7 +6,7 @@
                 <tr>
                     <td style="width: 18px; padding-right: 4px"><a
                             href="/"><img
-                            src="@{'/public/images/y81.gif'}" width=18 height=18
+                            th:src="@{'/public/images/y81.gif'}" width=18 height=18
                             style="border: 1px #ffffff solid;"/> </a>
                     </td>
                     <td style="line-height: 12pt; height: 10px;">
@@ -50,7 +50,7 @@
 
                             <th:block th:if="${page.activeTab == T(com.eguller.hntoplinks.models.PageTab).all}">
                                 <span class="topsel">
-                                    <a href="/year">all time</a>
+                                    <a href="/all">all time</a>
                                 </span> |
                             </th:block>
                             <th:block th:if="${page.activeTab != T(com.eguller.hntoplinks.models.PageTab).all}">

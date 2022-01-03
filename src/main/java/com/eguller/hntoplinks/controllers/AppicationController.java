@@ -1,5 +1,6 @@
 package com.eguller.hntoplinks.controllers;
 
+import com.eguller.hntoplinks.models.Page;
 import com.eguller.hntoplinks.models.PageTab;
 import com.eguller.hntoplinks.models.Story;
 import com.eguller.hntoplinks.models.StoryPage;
@@ -69,7 +70,7 @@ public class AppicationController {
         storyList = storyList.subList(from, to);
         boolean hasMoreStories = to >= storyList.size() - 1;
         StoryPage storyPage = StoryPage.builder()
-                .title("Today - Hacker News Top Links")
+                .page(Page.builder().title("Today - Hacker News Top Links").build())
                 .activeTab(PageTab.today)
                 .currentPage(page)
                 .storyList(storyList)

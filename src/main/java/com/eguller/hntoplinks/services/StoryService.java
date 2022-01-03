@@ -14,19 +14,29 @@ import java.util.stream.Collectors;
 
 @Service
 public class StoryService {
-    @Autowired
-    private StoryRepository storyRepository;
+    private final StoryRepository storyRepository;
+
+    public StoryService(StoryRepository storyRepository) {
+        this.storyRepository = storyRepository;
+    }
 
     public void saveStories(List<Story> hnStoryList){
-        hnStoryList.forEach(story -> {
-            var itemOpt = storyRepository.findByHnid(story.hnId());
-            itemOpt.or(() -> Optional.of(Story.toStoryEntity(story)))
-                    .ifPresent(storyEntity -> {
-                var newStoryEntity = Story.toStoryEntity(story);
-                newStoryEntity.setId(storyEntity.getId());
-                storyRepository.save(newStoryEntity);
-            });
-        });
+        var storyIds = hnStoryList.stream().map(story -> story.hnId()) .collect(Collectors.toList());
+        var existingStories = storyRepository.findByHnidIn(storyIds);
+        var existingStoriesMap = existingStories.stream()
+                .collect(Collectors.toMap(storyEntity -> storyEntity.getHnid(), storyEntity -> storyEntity));
+
+        hnStoryList.stream()
+                .map(story -> Story.toStoryEntity(story))
+                .map(storyEntity -> {
+                    var existingStory =  existingStoriesMap.get(storyEntity.getHnid());
+                    if(existingStory != null){
+                        storyEntity.setId(existingStory.getId());
+                    }
+                    return storyEntity;
+                })
+                .map(storyEntity -> storyRepository.save(storyEntity))
+                .collect(Collectors.toList());
     }
 
     public List<Story> readDailyTop(){

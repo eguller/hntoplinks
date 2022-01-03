@@ -78,7 +78,7 @@ public class StoryCacheService {
     private List<Story> createNewList(List<Story> originalList, List<Story> storyList){
         List<Story> tmpList = new ArrayList<>(originalList);
         tmpList.addAll(storyList);
-        tmpList.sort(Comparator.comparingInt(Story::score));
+        tmpList.sort((o1, o2) -> o2.score() - o1.score());
         return tmpList.subList(0, Math.min(CACHE_SIZE, Math.max(0, tmpList.size() - 1)));
     }
 }
