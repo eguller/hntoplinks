@@ -12,48 +12,48 @@
                     <td style="line-height: 12pt; height: 10px;">
                         <span class="pagetop">
                             <b><a href="/">Hacker News Top Links</a> </b>
-                            <th:block th:if="${page.activeTab == T(com.eguller.hntoplinks.models.PageTab).today}">
+                            <th:block th:if="${page instanceof T(com.eguller.hntoplinks.models.StoryPage) and page.activeTab == T(com.eguller.hntoplinks.models.PageTab).today}">
                                 <span class="topsel">
                                     <a href="/today">today</a>
                                 </span> |
                             </th:block>
-                            <th:block th:if="${page.activeTab != T(com.eguller.hntoplinks.models.PageTab).today}">
+                            <th:block th:if="${!(page instanceof T(com.eguller.hntoplinks.models.StoryPage)) or page.activeTab != T(com.eguller.hntoplinks.models.PageTab).today}">
                                 <a href="/today">today</a> |
                             </th:block>
 
-                            <th:block th:if="${page.activeTab == T(com.eguller.hntoplinks.models.PageTab).week}">
+                            <th:block th:if="${page instanceof T(com.eguller.hntoplinks.models.StoryPage) and page.activeTab == T(com.eguller.hntoplinks.models.PageTab).week}">
                                 <span class="topsel">
                                     <a href="/week">this week</a>
                                 </span> |
                             </th:block>
-                            <th:block th:if="${page.activeTab != T(com.eguller.hntoplinks.models.PageTab).week}">
+                            <th:block th:if="${!(page instanceof T(com.eguller.hntoplinks.models.StoryPage)) or page.activeTab != T(com.eguller.hntoplinks.models.PageTab).week}">
                                 <a href="/week">this week</a> |
                             </th:block>
 
-                            <th:block th:if="${page.activeTab == T(com.eguller.hntoplinks.models.PageTab).month}">
+                            <th:block th:if="${page instanceof T(com.eguller.hntoplinks.models.StoryPage) and page.activeTab == T(com.eguller.hntoplinks.models.PageTab).month}">
                                 <span class="topsel">
                                     <a href="/month">this month</a>
                                 </span> |
                             </th:block>
-                            <th:block th:if="${page.activeTab != T(com.eguller.hntoplinks.models.PageTab).month}">
+                            <th:block th:if="${!(page instanceof T(com.eguller.hntoplinks.models.StoryPage)) or page.activeTab != T(com.eguller.hntoplinks.models.PageTab).month}">
                                 <a href="/month">this month</a> |
                             </th:block>
 
-                            <th:block th:if="${page.activeTab == T(com.eguller.hntoplinks.models.PageTab).year}">
+                            <th:block th:if="${page instanceof T(com.eguller.hntoplinks.models.StoryPage) and page.activeTab == T(com.eguller.hntoplinks.models.PageTab).year}">
                                 <span class="topsel">
                                     <a href="/year">this year</a>
                                 </span> |
                             </th:block>
-                            <th:block th:if="${page.activeTab != T(com.eguller.hntoplinks.models.PageTab).year}">
+                            <th:block th:if="${!(page instanceof T(com.eguller.hntoplinks.models.StoryPage)) or page.activeTab != T(com.eguller.hntoplinks.models.PageTab).year}">
                                 <a href="/year">this year</a> |
                             </th:block>
 
-                            <th:block th:if="${page.activeTab == T(com.eguller.hntoplinks.models.PageTab).all}">
+                            <th:block th:if="${page instanceof T(com.eguller.hntoplinks.models.StoryPage) and page.activeTab == T(com.eguller.hntoplinks.models.PageTab).all}">
                                 <span class="topsel">
                                     <a href="/all">all time</a>
                                 </span> |
                             </th:block>
-                            <th:block th:if="${page.activeTab != T(com.eguller.hntoplinks.models.PageTab).all}">
+                            <th:block th:if="${!(page instanceof T(com.eguller.hntoplinks.models.StoryPage)) or page.activeTab != T(com.eguller.hntoplinks.models.PageTab).all}">
                                 <a href="/year">all time</a> |
                             </th:block>
                         </span>

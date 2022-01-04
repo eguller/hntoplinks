@@ -2,7 +2,7 @@
 <head></head>
 	<body>
 		<tr th:fragment="footer">
-			<td colspan="2"><img src="@{'/public/images/s.gif'}" height="10"
+			<td colspan="2"><img th:src="@{'/public/images/s.gif'}" height="10"
 				width="0">
 			<table width="100%" cellspacing="0" cellpadding="1">
 					<tbody>
@@ -13,7 +13,10 @@
 				</table>
 				<br>
 				<center>
-					<span class="yclinks"> | <a href="@{/about}">about</a> |
+
+					<span class="yclinks" th:switch="${footerSet}">
+						<th:block th:case="home">| <a href="/">home</a> |</th:block>
+						<th:block th:case="*">| <a href="/about">about</a> |</th:block>
 					</span><br><br>
 
 				</center>

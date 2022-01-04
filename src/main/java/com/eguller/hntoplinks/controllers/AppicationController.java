@@ -1,5 +1,6 @@
 package com.eguller.hntoplinks.controllers;
 
+import com.eguller.hntoplinks.models.AboutPage;
 import com.eguller.hntoplinks.models.Page;
 import com.eguller.hntoplinks.models.PageTab;
 import com.eguller.hntoplinks.models.Story;
@@ -32,6 +33,7 @@ public class AppicationController {
     public String index(Model model){
         return today(model, "1");
     }
+
     @GetMapping("/{page}")
     public String index(Model model, @PathVariable("page") String page){
         return today(model, page);
@@ -49,6 +51,13 @@ public class AppicationController {
         StoryPage storyPage = getStoryPage(PageTab.week, page);
         model.addAttribute("page", storyPage);
         return view("index");
+    }
+
+    @GetMapping("/about")
+    public String about(Model model){
+        AboutPage aboutPage = AboutPage.builder().page(Page.builder().title("About").build()).build();
+        model.addAttribute("page", aboutPage);
+        return view("about");
     }
 
 
