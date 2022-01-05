@@ -2,13 +2,13 @@ package com.eguller.hntoplinks.models;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 
 @Data
-@Builder
-public class StoryPage {
-    private Page page;
+@SuperBuilder
+public class StoryPage extends Page {
     private PageTab activeTab;
     private int currentPage;
     private List<Story> storyList;

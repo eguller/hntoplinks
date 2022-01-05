@@ -36,58 +36,108 @@ public class AppicationController {
     private StoryCacheService storyCacheService;
 
     @GetMapping("/")
-    public String index(Model model){
-        return today(model, "1");
+    public String index(Model model) {
+        return today(model, 1);
     }
 
-    @GetMapping("/{page}")
-    public String index(Model model, @PathVariable("page") String page){
+    @GetMapping("/{page:\\d+}")
+    public String index(Model model, @PathVariable(value = "page") Integer page) {
         return today(model, page);
     }
 
-    @GetMapping("/today/{page}")
-    public String today(Model model, @PathVariable("page") String page){
+    @GetMapping("/today")
+    public String today(Model model) {
+        return today(model, 1);
+    }
+
+    @GetMapping("/today/{page:\\d+}")
+    public String today(Model model, @PathVariable(value = "page") Integer page) {
         StoryPage storyPage = getStoryPage(PageTab.today, page);
         model.addAttribute("page", storyPage);
         return view("index");
     }
 
-    @GetMapping("/week/{page}")
-    public String week(Model model, @PathVariable("page") String page){
+    @GetMapping("/week")
+    public String week(Model model) {
+        return week(model, 1);
+    }
+
+    @GetMapping("/week/{page:\\d+}")
+    public String week(Model model, @PathVariable(value = "page") Integer page) {
         StoryPage storyPage = getStoryPage(PageTab.week, page);
         model.addAttribute("page", storyPage);
         return view("index");
     }
 
+    @GetMapping("/month")
+    public String month(Model model) {
+        return month(model, 1);
+    }
+
+    @GetMapping("/month/{page:\\d+}")
+    public String month(Model model, @PathVariable(value = "page") Integer page) {
+        StoryPage storyPage = getStoryPage(PageTab.month, page);
+        model.addAttribute("page", storyPage);
+        return view("index");
+    }
+
+    @GetMapping("/year")
+    public String year(Model model) {
+        return year(model, 1);
+    }
+
+    @GetMapping("/year/{page:\\d+}")
+    public String year(Model model, @PathVariable(value = "page") Integer page) {
+        StoryPage storyPage = getStoryPage(PageTab.year, page);
+        model.addAttribute("page", storyPage);
+        return view("index");
+    }
+
+    @GetMapping("/all")
+    public String all(Model model) {
+        return all(model, 1);
+    }
+
+    @GetMapping("/all/{page:\\d+}")
+    public String all(Model model, @PathVariable(value = "page") Integer page) {
+        StoryPage storyPage = getStoryPage(PageTab.all, page);
+        model.addAttribute("page", storyPage);
+        return view("index");
+    }
+
     @GetMapping("/about")
-    public String about(Model model){
-        AboutPage aboutPage = AboutPage.builder().page(Page.builder().title("About").build()).build();
+    public String about(Model model) {
+        AboutPage aboutPage = AboutPage.builder().title("About").build();
         model.addAttribute("page", aboutPage);
         return view("about");
     }
 
-
-    private StoryPage getStoryPage(PageTab pageTab, String pageStr){
+    private StoryPage getStoryPage(PageTab pageTab, String pageStr) {
         int page = getPage(pageStr);
+        return getStoryPage(pageTab, page);
+    }
+
+    private StoryPage getStoryPage(PageTab pageTab, Integer page) {
+        var _page = page == null ? 1 : page;
         List<Story> storyList;
-        if(PageTab.today == pageTab){
+        if (PageTab.today == pageTab) {
             storyList = storyCacheService.getDailyTop();
-        } else if (PageTab.week == pageTab){
+        } else if (PageTab.week == pageTab) {
             storyList = storyCacheService.getWeeklTop();
         } else {
             storyList = storyCacheService.getDailyTop();
         }
 
-        int from = Math.min(storyList.size() - 1, (page - 1) * STORY_PER_PAGE);
+        int from = Math.min(storyList.size() - 1, (_page - 1) * STORY_PER_PAGE);
         from = Math.max(0, from);
-        int to = Math.min(storyList.size() - 1, page * STORY_PER_PAGE);
+        int to = Math.min(storyList.size() - 1, _page * STORY_PER_PAGE);
         to = Math.max(0, to);
         var viewList = storyList.subList(from, to);
         boolean hasMoreStories = storyList.size() - 1 > to;
         StoryPage storyPage = StoryPage.builder()
-                .page(Page.builder().title("Today - Hacker News Top Links").build())
-                .activeTab(PageTab.today)
-                .currentPage(page)
+                .title(pageTab.getTitleText())
+                .activeTab(pageTab)
+                .currentPage(_page)
                 .storyList(viewList)
                 .hasMoreStories(hasMoreStories)
                 .storyPerPage(STORY_PER_PAGE)
@@ -95,27 +145,27 @@ public class AppicationController {
         return storyPage;
     }
 
-    private String view(String view){
+    private String view(String view) {
         Device device = DeviceUtils.getCurrentDevice(httpServletRequest);
-        if(device.isNormal()){
+        if (device.isNormal()) {
             return view;
         } else {
             return view + "_mobile";
         }
     }
 
-    public int getPage(String pageStr){
-        try{
+    public int getPage(String pageStr) {
+        try {
             int page = Integer.parseInt(pageStr);
-            if(page < 1){
+            if (page < 1) {
                 return 1;
-            } else if(page > MAX_PAGES){
+            } else if (page > MAX_PAGES) {
                 return MAX_PAGES;
             } else {
                 return page;
             }
 
-        } catch (Exception ex){
+        } catch (Exception ex) {
             logger.error("Page could not be parse. pageStr={}", pageStr);
         }
         return 1;
