@@ -6,6 +6,9 @@ import com.eguller.hntoplinks.models.PageTab;
 import com.eguller.hntoplinks.models.Story;
 import com.eguller.hntoplinks.models.StoryPage;
 import com.eguller.hntoplinks.services.StoryCacheService;
+import lombok.val;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mobile.device.Device;
 import org.springframework.mobile.device.DeviceUtils;
@@ -16,12 +19,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.context.annotation.RequestScope;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 
 
 @Controller
 @RequestScope
 public class AppicationController {
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
     private static final int MAX_PAGES = 10;
     private static final int STORY_PER_PAGE = 30;
     @Autowired
@@ -40,14 +46,14 @@ public class AppicationController {
     }
 
     @GetMapping("/today/{page}")
-    public String today(Model model, String page){
+    public String today(Model model, @PathVariable("page") String page){
         StoryPage storyPage = getStoryPage(PageTab.today, page);
         model.addAttribute("page", storyPage);
         return view("index");
     }
 
     @GetMapping("/week/{page}")
-    public String week(Model model, String page){
+    public String week(Model model, @PathVariable("page") String page){
         StoryPage storyPage = getStoryPage(PageTab.week, page);
         model.addAttribute("page", storyPage);
         return view("index");
@@ -76,13 +82,13 @@ public class AppicationController {
         from = Math.max(0, from);
         int to = Math.min(storyList.size() - 1, page * STORY_PER_PAGE);
         to = Math.max(0, to);
-        storyList = storyList.subList(from, to);
-        boolean hasMoreStories = to >= storyList.size() - 1;
+        var viewList = storyList.subList(from, to);
+        boolean hasMoreStories = storyList.size() - 1 > to;
         StoryPage storyPage = StoryPage.builder()
                 .page(Page.builder().title("Today - Hacker News Top Links").build())
                 .activeTab(PageTab.today)
                 .currentPage(page)
-                .storyList(storyList)
+                .storyList(viewList)
                 .hasMoreStories(hasMoreStories)
                 .storyPerPage(STORY_PER_PAGE)
                 .build();
@@ -110,7 +116,7 @@ public class AppicationController {
             }
 
         } catch (Exception ex){
-
+            logger.error("Page could not be parse. pageStr={}", pageStr);
         }
         return 1;
     }
