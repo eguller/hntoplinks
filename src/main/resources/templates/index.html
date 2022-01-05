@@ -18,7 +18,7 @@
 					<tr style="height:10px"></tr>
 					<tr><td colspan="2"></td>
 						<td th:with="nextPage=${page.currentPage + 1}" class="title">
-							<a th:href="@{/${page.activeTab}/${nextPage}}" rel="nofollow">More</a>
+							<a th:href="@{/{activeTab}/{nextPage}(activeTab=${page.activeTab}, nextPage=${page.currentPage +  1})}" rel="nofollow">More</a>
 						</td>
 					</tr>
 				</th:block>

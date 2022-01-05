@@ -17,7 +17,7 @@
 			<td class="subtext"><span id="score_${story.hnid}" th:text="${story.score} + ' points'">
 					</span> by <a th:href="@{http://news.ycombinator.com/user(id=${story.by})}"
 				target="_blank" th:text="${story.by}"></a> <th:block th:text="${story.since}"/> | <a
-				th:href="@{http://news.ycombinator.com/storyEntity(id=${story.hnId})}"
+				th:href="@{https://news.ycombinator.com/item(id=${story.hnId})}"
 				target="_blank" th:text="${story.commentCount} + ' comments'">
 					${story.getCommentStr()}
 			</a></td>
