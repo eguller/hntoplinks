@@ -7,6 +7,7 @@ import com.eguller.hntoplinks.services.StoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +31,9 @@ public class ReadStoriesJob {
 
     private StoryService storyService;
 
+    @Value("${hntoplinks.read-stories-job.active}")
+    private boolean jobActive;
+
 
     @Autowired
     public ReadStoriesJob(FirebaseioService firebaseioService, StoryCacheService storyCacheService, StoryService storyService) {
@@ -40,6 +44,10 @@ public class ReadStoriesJob {
 
     @Scheduled(fixedDelay = 5, timeUnit = TimeUnit.MINUTES)
     public void doJob() {
+        logger.info("Read stories job is not active");
+        if(!jobActive){
+            return;
+        }
         var hnStoryList = firebaseioService.readTopStories();
         var storyList = hnStoryList.stream().map(hnStory -> hnStory.toStory()).collect(Collectors.toList());
         storyService.saveStories(storyList);

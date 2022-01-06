@@ -18,6 +18,12 @@ repositories {
 	mavenCentral()
 }
 
+bootJar {
+	mainClass = 'com.eguller.hntoplinks.Application'
+	archiveName = 'hntoplinks.jar'
+
+}
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
