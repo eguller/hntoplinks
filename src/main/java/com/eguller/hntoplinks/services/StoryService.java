@@ -3,12 +3,10 @@ package com.eguller.hntoplinks.services;
 import com.eguller.hntoplinks.entities.StoryEntity;
 import com.eguller.hntoplinks.models.Story;
 import com.eguller.hntoplinks.repository.StoryRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
