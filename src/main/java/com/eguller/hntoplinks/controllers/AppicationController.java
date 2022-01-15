@@ -124,8 +124,12 @@ public class AppicationController {
             storyList = storyCacheService.getDailyTop();
         } else if (PageTab.week == pageTab) {
             storyList = storyCacheService.getWeeklTop();
+        } else if (PageTab.month == pageTab) {
+            storyList = storyCacheService.getMonthlyTop();
+        } else if (PageTab.year == pageTab) {
+            storyList = storyCacheService.getAnnuallyTop();
         } else {
-            storyList = storyCacheService.getDailyTop();
+            storyList = storyCacheService.getAllTimeTop();
         }
 
         int from = Math.min(storyList.size() - 1, (_page - 1) * STORY_PER_PAGE);

@@ -4,8 +4,9 @@ import com.eguller.hntoplinks.entities.StoryEntity;
 import com.eguller.hntoplinks.util.DateUtils;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
-public record Story (
+public record Story(
         Long id,
         long hnId,
         int commentCount,
@@ -15,12 +16,13 @@ public record Story (
         String by,
         int score,
         LocalDateTime createDate
-){
-    public static StoryEntity toStoryEntity(Story story){
+) {
+    public static StoryEntity toStoryEntity(Story story) {
         var storyEntity = new StoryEntity();
         storyEntity.setId(story.id());
         storyEntity.setHnid(story.hnId());
         storyEntity.setComment(story.commentCount());
+        storyEntity.setDate(story.createDate());
         storyEntity.setPoints(story.score());
         storyEntity.setUrl(story.url());
         storyEntity.setComhead(story.domain());
@@ -31,7 +33,7 @@ public record Story (
         return storyEntity;
     }
 
-    public static Story entityToStory(StoryEntity storyEntity){
+    public static Story entityToStory(StoryEntity storyEntity) {
         var story = new Story(
                 storyEntity.getId(),
                 storyEntity.getHnid(),
@@ -46,7 +48,20 @@ public record Story (
         return story;
     }
 
-    public String getSince(){
+    public String getSince() {
         return DateUtils.since(createDate);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Story story = (Story) o;
+        return hnId == story.hnId;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(hnId);
     }
 }
