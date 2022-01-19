@@ -30,8 +30,8 @@ jobs:
           stack: "container"
           usedocker: true
         env:
-          DATABASE_HOST: ${{secrets.DATABASE_HOST}}
-          DATABASE_NAME: ${{secrets.DATABASE_NAME}}
-          DATABASE_USERNAME: ${{secrets.DATABASE_USERNAME}}
-          DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
+          HD_DATABASE_HOST: ${{secrets.DATABASE_HOST}}
+          HD_DATABASE_NAME: ${{secrets.DATABASE_NAME}}
+          HD_DATABASE_USERNAME: ${{secrets.DATABASE_USERNAME}}
+          HD_DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
 
