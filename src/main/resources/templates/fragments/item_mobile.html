@@ -6,7 +6,7 @@
         <a th:href="@{${story.url}}" target="_blank">
             <span style="font-size: 13px;white-space:normal;"
                   th:with="storyIndex=${ (page.currentPage - 1) * page.storyPerPage + storyIndex}" th:text="${storyIndex} + '. ' + ${story.title}">Story title</span>
-            <th:block th:if="${story.domain != null}">
+            <th:block th:if="${story.hasDomain()}">
                 <span style="font-size: 10px;" th:text="'(' + ${story.domain} + ')'"> Domain </span>
             </th:block>
             <br>

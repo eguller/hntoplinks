@@ -2,6 +2,7 @@ package com.eguller.hntoplinks.models;
 
 import com.eguller.hntoplinks.entities.StoryEntity;
 import com.eguller.hntoplinks.util.DateUtils;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -50,6 +51,10 @@ public record Story(
 
     public String getSince() {
         return DateUtils.since(createDate);
+    }
+
+    public boolean hasDomain(){
+        return StringUtils.hasText(domain);
     }
 
     @Override

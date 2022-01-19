@@ -7,7 +7,7 @@
 			</td>
 			<td width="5px;"></td>
 			<td class="title"><a th:href="@{${story.url}}" target="_blank" th:text="${story.title}"></a>
-				<th:block th:if="${story.domain != null}">
+				<th:block th:if="${story.hasDomain()}">
 					<a class="comhead" target="_blank" th:href="@{https://news.ycombinator.com/from(site=${story.domain})}" th:text="'(' + ${story.domain} + ')'"></a>
 				</th:block>
 			</td>
