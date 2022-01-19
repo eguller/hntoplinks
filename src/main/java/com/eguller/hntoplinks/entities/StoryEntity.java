@@ -6,6 +6,7 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDateTime;
 
+
 @Table("item")
 public class StoryEntity implements HnEntity {
     @Id
@@ -30,6 +31,7 @@ public class StoryEntity implements HnEntity {
     private String title;
     @Column("lastupdate")
     private LocalDateTime lastUpdate;
+
 
     public StoryEntity(){
 

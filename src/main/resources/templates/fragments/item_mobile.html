@@ -1,27 +1,22 @@
-<li data-icon="comment" data-iconpos="top">
-	<a href="${_item.url}" target="_blank" >
-		<span style="font-size: 13px;white-space:normal;">${((_page - 1) * 30) + _index}. ${_item.title}</span>
-		#{if _item.comhead}
-			<span style="font-size: 10px;"> (${_item.comhead}) </span>
-		#{/if}
-		<br><span style="font-size: 9px;">
+<html xmlns:th="http://www.thymeleaf.org">
 
-		by ${_item.user} ${new Date(_item.date.getTime()).since()} |
-			#{if _item.points > -1}
-				${_item.points}
-				#{if _item.points > 1}
-					points
-				#{/if}
-				#{else}
-					point
-				#{/else}
-			#{/if}
-			#{else}
-				0 point
-			#{/else}			
-		</span>
-	</a>
-	<a href="https://news.ycombinator.com/storyEntity?id=${_item.hnid}" target="_blank">
-        Comments
-	</a>
-</li>
+<body>
+<th:block th:fragment="item_mobile">
+    <li data-icon="comment" data-iconpos="top">
+        <a th:href="@{${story.url}}" target="_blank">
+            <span style="font-size: 13px;white-space:normal;"
+                  th:with="storyIndex=${ (page.currentPage - 1) * page.storyPerPage + storyIndex}" th:text="${storyIndex} + '. ' + ${story.title}">Story title</span>
+            <th:block th:if="${story.domain != null}">
+                <span style="font-size: 10px;" th:text="'(' + ${story.domain} + ')'"> Domain </span>
+            </th:block>
+            <br>
+            <span style="font-size: 9px;">
+        		by <th:block th:text="${story.by}"/> <th:block th:text="${story.since}" /> | <th:block th:text="${story.score} + ' points'" />
+		    </span>
+        </a>
+        <a th:href="@{https://news.ycombinator.com/item(id=${story.hnId})}" target="_blank">
+            Comments
+        </a>
+    </li>
+</th:block>
+</body>

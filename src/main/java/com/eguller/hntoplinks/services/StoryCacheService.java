@@ -10,62 +10,59 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.ApplicationScope;
 
 import java.lang.invoke.MethodHandles;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Service
 @ApplicationScope
 public class StoryCacheService {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-
     private static final int CACHE_SIZE = 300;
-    private static final Comparator<Story> STORY_COMPARATOR = (story1, story2) -> story2.score() - story1.score();
 
-    private SortedSet<Story> dailyCache = Collections.synchronizedSortedSet(new TreeSet<>(STORY_COMPARATOR));
-    private SortedSet<Story> weeklyCache = Collections.synchronizedSortedSet(new TreeSet<>(STORY_COMPARATOR));
-    private SortedSet<Story> monthlyCache = Collections.synchronizedSortedSet(new TreeSet<>(STORY_COMPARATOR));
-    private SortedSet<Story> annuallyCache = Collections.synchronizedSortedSet(new TreeSet<>(STORY_COMPARATOR));
-    private SortedSet<Story> allTimeCache = Collections.synchronizedSortedSet(new TreeSet<>(STORY_COMPARATOR));
+    private Cache dailyCache = new Cache(CACHE_SIZE, (story) -> story.createDate().isAfter(LocalDateTime.now().minusDays(1)));
+    private Cache weeklyCache = new Cache(CACHE_SIZE, (story) -> story.createDate().isAfter(LocalDateTime.now().minusWeeks(1)));
+    private Cache monthlyCache = new Cache(CACHE_SIZE, (story) -> story.createDate().isAfter(LocalDateTime.now().minusMonths(1)));
+    private Cache annuallyCache = new Cache(CACHE_SIZE, (story) -> story.createDate().isAfter(LocalDateTime.now().minusYears(1)));
+    private Cache allTimeCache = new Cache(CACHE_SIZE, (story) -> true);
 
     @Autowired
     private StoryService storyService;
 
     public List<Story> getDailyTop() {
-        return new ArrayList<>(dailyCache);
+        return dailyCache.getCache();
     }
 
     public List<Story> getWeeklTop() {
-        return new ArrayList<>(weeklyCache);
+        return weeklyCache.getCache();
     }
 
     public List<Story> getMonthlyTop() {
-        return new ArrayList<>(monthlyCache);
+        return monthlyCache.getCache();
     }
-    
-    public List<Story> getAnnuallyTop() {
-        return new ArrayList<>(annuallyCache);
 
+    public List<Story> getAnnuallyTop() {
+        return annuallyCache.getCache();
     }
 
     public List<Story> getAllTimeTop() {
-        return new ArrayList<>(allTimeCache);
+        return allTimeCache.getCache();
     }
 
-    public void addNewStories(List<Story> storyList) {
-        updateCache(dailyCache, storyList);
-        updateCache(weeklyCache, storyList);
-        updateCache(monthlyCache, storyList);
-        updateCache(annuallyCache, storyList);
-        updateCache(allTimeCache, storyList);
+    public synchronized void addNewStories(List<Story> storyList) {
+        dailyCache.updateCache(storyList);
+        weeklyCache.updateCache(storyList);
+        monthlyCache.updateCache(storyList);
+        annuallyCache.updateCache(storyList);
+        allTimeCache.updateCache(storyList);
     }
 
     @EventListener
-    void loadStoriesOnStartup(ApplicationStartedEvent applicationStartedEvent) {
+    synchronized void loadStoriesOnStartup(ApplicationStartedEvent applicationStartedEvent) {
         var dailyTop = storyService.readDailyTop();
         var weeklyTop = storyService.readWeeklyTop();
         var monthlyTop = storyService.readMonthlyTop();
@@ -73,17 +70,38 @@ public class StoryCacheService {
         var allTimeTop = storyService.readAllTimeTop();
         logger.info("Stories are loaded from db. daily={}, weekly={}, monthly={}, annually={}, allTimeTop={}",
                 dailyTop.size(), weeklyTop.size(), monthlyTop.size(), annuallyTop.size(), allTimeTop.size());
-        updateCache(dailyCache, dailyTop);
-        updateCache(weeklyCache, weeklyTop);
-        updateCache(monthlyCache, monthlyTop);
-        updateCache(annuallyCache, annuallyTop);
-        updateCache(allTimeCache, allTimeTop);
+        dailyCache.updateCache(dailyTop);
+        weeklyCache.updateCache(weeklyTop);
+        monthlyCache.updateCache(monthlyTop);
+        annuallyCache.updateCache(annuallyTop);
+        allTimeCache.updateCache(allTimeTop);
     }
 
-    private void updateCache(SortedSet<Story> originalList, List<Story> storyList) {
-        originalList.addAll(storyList);
-        while (originalList.size() > CACHE_SIZE) {
-            originalList.remove(originalList.last());
+    private static class Cache {
+
+        private static final Comparator<Story> STORY_COMPARATOR = (story1, story2) -> story2.score() - story1.score();
+        private final int cacheSize;
+        private final Predicate<Story> newStoryFilter;
+        private List<Story> cache;
+
+        public Cache(int cacheSize, Predicate<Story> newStoryFilter) {
+            this.cacheSize = cacheSize;
+            this.newStoryFilter = newStoryFilter;
+            this.cache = new ArrayList<>();
         }
+
+        public List<Story> getCache() {
+            return Collections.unmodifiableList(cache);
+        }
+
+        public void updateCache(List<Story> newStories) {
+            var existingCache = new ArrayList<>(cache);
+            var storyMap = existingCache.stream().collect(Collectors.toMap(story -> story.hnId(), story -> story));
+            newStories.stream().filter(newStoryFilter).forEach(story -> storyMap.put(story.hnId(), story));
+            var updatedStories = storyMap.values().stream().toList();
+            var sortedStories = updatedStories.stream().sorted(STORY_COMPARATOR).toList();
+            this.cache = sortedStories.subList(0, Math.min(updatedStories.size(), cacheSize));
+        }
+
     }
 }

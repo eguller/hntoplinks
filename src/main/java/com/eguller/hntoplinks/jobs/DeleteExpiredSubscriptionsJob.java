@@ -5,12 +5,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-@Component
+import java.util.concurrent.TimeUnit;
+
+
 public class DeleteExpiredSubscriptionsJob {
 	@Autowired
 	private SubscriptionService subscriptionService;
 
-	@Scheduled(cron = "0 0 1 ? * *")
+	@Scheduled(fixedDelay = 1, timeUnit = TimeUnit.HOURS)
 	public void doJob(){
 		subscriptionService.deleteExpiredInactiveSubscriptions();
 	}

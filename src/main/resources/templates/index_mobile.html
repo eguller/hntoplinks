@@ -1,11 +1,15 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/mobile.html}">
 <div data-role="main" layout:fragment="content-mobile">
     <ul data-role="listview" data-inset="true">
+        <th:block th:each="story,iterStat : ${page.storyList}">
+            <th:block
+                    th:insert="fragments/item_mobile.html :: item_mobile(story=${story}, page=${page}, storyIndex=${iterStat.count})"/>
+        </th:block>
         #{list items, as:'storyEntity'}
-            #{item_mobile storyEntity:storyEntity , index: item_index, page:page /}
+        #{item_mobile storyEntity:storyEntity , index: item_index, page:page /}
         #{/list}
         #{if items!= null && items.size() == 30 }
-            <li><a href="/${activeTab}/${page+1}" rel="nofollow">More</a>
-        #{/if}
+        <li><a href="/${activeTab}/${page+1}" rel="nofollow">More</a>
+            #{/if}
     </ul>
 </div>

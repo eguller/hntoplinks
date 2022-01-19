@@ -1,0 +1,24 @@
+on:
+  push:
+    branches:
+      - master
+      - feature/migrate-to-spring
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: "hntoplinks" #Must be unique in Heroku
+          heroku_email: "enginguller@gmail.com"
+          stack: "container"
+          usedocker: true
+        env:
+          DATABASE_HOST: ${{secrets.DATABASE_HOST}}
+          DATABASE_NAME: ${{secrets.DATABASE_NAME}}
+          DATABASE_USERNAME: ${{secrets.DATABASE_USERNAME}}
+          DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
+

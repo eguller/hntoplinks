@@ -41,6 +41,7 @@ public class ReadStoriesJob {
     @Scheduled(fixedDelay = 5, timeUnit = TimeUnit.MINUTES)
     public void doJob() {
         var hnStoryList = firebaseioService.readTopStories();
+        logger.info("Stories read from firebase. numberOfStories={}", hnStoryList.size());
         var storyList = hnStoryList.stream().map(hnStory -> hnStory.toStory()).collect(Collectors.toList());
         storyService.saveStories(storyList);
         storyCacheService.addNewStories(storyList);
