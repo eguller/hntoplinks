@@ -21,16 +21,15 @@ public record Story(
     public static StoryEntity toStoryEntity(Story story) {
         var storyEntity = new StoryEntity();
         storyEntity.setId(story.id());
-        storyEntity.setHnid(story.hnId());
-        storyEntity.setComment(story.commentCount());
-        storyEntity.setDate(story.createDate());
-        storyEntity.setPoints(story.score());
         storyEntity.setUrl(story.url());
         storyEntity.setComhead(story.domain());
-        storyEntity.setLastUpdate(LocalDateTime.now());
-        storyEntity.setUrl(story.url());
+        storyEntity.setHnid(story.hnId());
         storyEntity.setPoints(story.score());
+        storyEntity.setDate(story.createDate());
         storyEntity.setUser(story.by());
+        storyEntity.setComment(story.commentCount());
+        storyEntity.setTitle(story.title());
+        storyEntity.setLastUpdate(LocalDateTime.now());
         return storyEntity;
     }
 
