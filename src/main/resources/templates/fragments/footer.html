@@ -2,7 +2,7 @@
 <head></head>
 	<body>
 		<tr th:fragment="footer">
-			<td colspan="2"><img th:src="@{'/public/images/s.gif'}" height="10"
+			<td colspan="2"><img th:src="@{{images}/s.gif(images=${@environment.getProperty('hntoplinks.images')})}" height="10"
 				width="0">
 			<table width="100%" cellspacing="0" cellpadding="1">
 					<tbody>
