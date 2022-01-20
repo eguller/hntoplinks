@@ -2,8 +2,6 @@ on:
   push:
     branches:
       - master
-      - feature/migrate-to-spring
-
 jobs:
   build:
     runs-on: ubuntu-latest

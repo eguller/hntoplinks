@@ -6,7 +6,7 @@
                 <tr>
                     <td style="width: 18px; padding-right: 4px"><a
                             href="/"><img
-                            th:src="@{'/public/images/y81.gif'}" width=18 height=18
+                            th:src="@{{images}/y81.gif(images=${@environment.getProperty('hntoplinks.images')})}" width=18 height=18
                             style="border: 1px #ffffff solid;"/> </a>
                     </td>
                     <td style="line-height: 12pt; height: 10px;">
