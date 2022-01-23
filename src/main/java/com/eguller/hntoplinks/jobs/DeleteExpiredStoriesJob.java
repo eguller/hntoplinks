@@ -24,6 +24,7 @@ public class DeleteExpiredStoriesJob {
         var lastWeek = LocalDateTime.now().minusWeeks(1);
         var lastMonth = LocalDateTime.now().minusMonths(1);
         var lastYear = LocalDateTime.now().minusYears(1);
+        logger.info("Deleting expired stories. yesterday={}, lastWeek={}, lastMonth={}, lastYear={}", yesterday, lastWeek, lastMonth, lastYear);
         int numberOfDeletedRecords = storyRepository.deleteExpiredStories(yesterday, lastWeek, lastMonth, lastYear);
         logger.info("Expired stories have been deleted. deletedStories={}", numberOfDeletedRecords);
     }

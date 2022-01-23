@@ -25,13 +25,13 @@ public interface StoryRepository extends CrudRepository<StoryEntity, Long> {
             delete
             from item
             where item.id not in (
-                (select id from item where item.postdate < :yesterday order by points desc limit 500)
+                (select id from item where item.postdate > :yesterday order by points desc limit 500)
                 union all
-                (select id from item where item.postdate < :lastWeek order by points desc limit 500)
+                (select id from item where item.postdate > :lastWeek order by points desc limit 500)
                 union all
-                (select id from item where item.postdate < :lastMonth order by points desc limit 500)
+                (select id from item where item.postdate > :lastMonth order by points desc limit 500)
                 union all
-                (select id from item where item.postdate < :lastYear order by points desc limit 500)
+                (select id from item where item.postdate > :lastYear order by points desc limit 500)
                 union all
                 (select id from item order by points desc limit 500)
             )
