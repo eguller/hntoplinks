@@ -134,7 +134,7 @@ public class AppicationController {
 
         int from = Math.min(storyList.size() - 1, (_page - 1) * STORY_PER_PAGE);
         from = Math.max(0, from);
-        int to = Math.min(storyList.size() - 1, _page * STORY_PER_PAGE);
+        int to = Math.min(storyList.size(), _page * STORY_PER_PAGE);
         to = Math.max(0, to);
         var viewList = storyList.subList(from, to);
         boolean hasMoreStories = storyList.size() - 1 > to;

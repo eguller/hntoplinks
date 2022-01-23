@@ -74,6 +74,10 @@ public class HnStory {
         return url;
     }
 
+    public String getInternalUrl(){
+        return "https://news.ycombinator.com/item?id=" + getId();
+    }
+
     public List<Long> getKids() {
         return kids;
     }
@@ -129,7 +133,7 @@ public class HnStory {
                 this.getId(),
                 this.getKids().size(),
                 this.getTitle(),
-                this.getUrl(),
+                this.getUrl() == null ? getInternalUrl() : getUrl(),
                 this.getDomainName(),
                 this.getBy(),
                 this.getScore(),

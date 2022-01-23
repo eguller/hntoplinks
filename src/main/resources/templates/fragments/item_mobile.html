@@ -3,7 +3,7 @@
 <body>
 <th:block th:fragment="item_mobile">
     <li data-icon="comment" data-iconpos="top">
-        <a th:href="@{${story.url}}" target="_blank">
+        <a th:href="@{${story.url}}">
             <span style="font-size: 13px;white-space:normal;"
                   th:with="storyIndex=${ (page.currentPage - 1) * page.storyPerPage + storyIndex}" th:text="${storyIndex} + '. ' + ${story.title}">Story title</span>
             <th:block th:if="${story.hasDomain()}">
@@ -14,7 +14,7 @@
         		by <th:block th:text="${story.by}"/> <th:block th:text="${story.since}" /> | <th:block th:text="${story.score} + ' points'" />
 		    </span>
         </a>
-        <a th:href="@{https://news.ycombinator.com/item(id=${story.hnId})}" target="_blank">
+        <a th:href="@{https://news.ycombinator.com/item(id=${story.hnId})}">
             Comments
         </a>
     </li>
