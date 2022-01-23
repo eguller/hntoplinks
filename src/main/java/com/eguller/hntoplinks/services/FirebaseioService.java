@@ -3,7 +3,6 @@ package com.eguller.hntoplinks.services;
 import com.eguller.hntoplinks.models.HnStory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -27,19 +26,27 @@ public class FirebaseioService {
         this.restTemplate = restTemplate;
     }
 
-    public List<HnStory> readTopStories(){
-        var storyList = new ArrayList<HnStory>();
-        var topStories = restTemplate.getForEntity(firebaseIoBaseUrl + "/beststories.json", List.class);
+    public List<HnStory> readBestStories() {
+        return readStories("beststories.json");
+    }
 
-        if(topStories.getStatusCode() == HttpStatus.OK){
+    public List<HnStory> readTopStories() {
+        return readStories("topstories.json");
+    }
+
+    private List<HnStory> readStories(String endpoint) {
+        String _endpoint = endpoint.startsWith("/") ? endpoint : "/" + endpoint;
+        var storyList = new ArrayList<HnStory>();
+        var topStories = restTemplate.getForEntity(firebaseIoBaseUrl + _endpoint, List.class);
+
+        if (topStories.getStatusCode() == HttpStatus.OK) {
             topStories.getBody().forEach(storyId -> {
                 try {
                     var story = restTemplate.getForEntity(firebaseIoBaseUrl + "/item/" + storyId.toString() + ".json", HnStory.class);
                     storyList.add(story.getBody());
-                } catch(HttpClientErrorException ex){
+                } catch (HttpClientErrorException ex) {
                     logger.error("Story cannot be read. story={}, status={}", storyId, ex.getStatusCode());
-                }
-                catch (Exception ex){
+                } catch (Exception ex) {
                     logger.error("Story cannot be read. story={}", storyId, ex);
                 }
             });
