@@ -3,8 +3,11 @@ package com.eguller.hntoplinks.controllers;
 import com.eguller.hntoplinks.models.AboutPage;
 import com.eguller.hntoplinks.models.Page;
 import com.eguller.hntoplinks.models.PageTab;
+import com.eguller.hntoplinks.models.Statistics;
+import com.eguller.hntoplinks.models.StatsPage;
 import com.eguller.hntoplinks.models.Story;
 import com.eguller.hntoplinks.models.StoryPage;
+import com.eguller.hntoplinks.services.StatisticsService;
 import com.eguller.hntoplinks.services.StoryCacheService;
 import lombok.val;
 import org.slf4j.Logger;
@@ -34,6 +37,9 @@ public class AppicationController {
     private HttpServletRequest httpServletRequest;
     @Autowired
     private StoryCacheService storyCacheService;
+
+    @Autowired
+    private StatisticsService statisticsService;
 
     @GetMapping("/")
     public String index(Model model) {
@@ -110,6 +116,14 @@ public class AppicationController {
         AboutPage aboutPage = AboutPage.builder().title("About").build();
         model.addAttribute("page", aboutPage);
         return view("about");
+    }
+
+    @GetMapping("/stats")
+    public String stats(Model model){
+        Statistics statistics = statisticsService.readStatistics();
+        StatsPage statsPage = StatsPage.builder().statistics(statistics).build();
+        model.addAttribute("page", statsPage);
+        return view("statistics");
     }
 
     private StoryPage getStoryPage(PageTab pageTab, String pageStr) {

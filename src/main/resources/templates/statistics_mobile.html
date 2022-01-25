@@ -1,0 +1,61 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/mobile.html}">
+
+<table class="ui-responsive table-stroke" layout:fragment="content">
+    <thead>
+    <tr>
+        <th class="statright">Statistic</th>
+        <th class="statleft">Value</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td class="statright">Subscribers</td>
+        <td class="statleft" th:text="${page.statistics.subscriberCount}">10</td>
+    </tr>
+    <tr>
+        <td class="statright">Active Subscribers</td>
+        <td class="statleft" th:text="${page.statistics.activeSubscriberCount}">9</td>
+    </tr>
+    <tr>
+        <td class="statright">Daily Subscribers</td>
+        <td class="statleft" th:text="${page.statistics.dailySubscriberCount}">9</td>
+    </tr>
+    <tr>
+        <td class="statright">Weekly Subscribers</td>
+        <td class="statleft" th:text="${page.statistics.weeklySubscriberCount}">9</td>
+    </tr>
+    <tr>
+        <td class="statright">Monthly Subscribers</td>
+        <td class="statleft" th:text="${page.statistics.monthlySubscriberCount}">9</td>
+    </tr>
+    <tr>
+        <td class="statright">Daily Subscribers</td>
+        <td class="statleft" th:text="${page.statistics.weeklySubscriberCount}">9</td>
+    </tr>
+    <tr>
+        <td class="statright">Annually Subscribers</td>
+        <td class="statleft" th:text="${page.statistics.annuallySubscriberCount}">9</td>
+    </tr>
+    <tr>
+        <td class="statright">Unsubscribers</td>
+        <td class="statleft" th:text="${page.statistics.unsubscribeCount}">9</td>
+    </tr>
+    <tr>
+        <td class="statright">Success Email</td>
+        <td class="statleft" th:text="${page.statistics.successEmailCount}">9</td>
+    </tr>
+    <tr>
+        <td class="statright">Failure Email</td>
+        <td class="statleft" th:text="${page.statistics.failureEmailCount}">9</td>
+    </tr>
+    <tr>
+        <td class="statright">Last Email Sent</td>
+        <td class="statleft" th:text="${page.statistics.lastEmailSent}">9</td>
+    </tr>
+    <tr>
+        <td class="statright">Last Hn Update</td>
+        <td class="statleft" th:text="${page.statistics.lastHnUpdate}">9</td>
+    </tr>
+    </tbody>
+</table>
+</html>

@@ -3,6 +3,7 @@ package com.eguller.hntoplinks.jobs;
 
 import com.eguller.hntoplinks.models.HnStory;
 import com.eguller.hntoplinks.services.FirebaseioService;
+import com.eguller.hntoplinks.services.StatisticsService;
 import com.eguller.hntoplinks.services.StoryCacheService;
 import com.eguller.hntoplinks.services.StoryService;
 import org.slf4j.Logger;
@@ -31,11 +32,14 @@ public class ReadStoriesJob {
 
     private StoryService storyService;
 
+    private StatisticsService statisticsService;
+
     @Autowired
-    public ReadStoriesJob(FirebaseioService firebaseioService, StoryCacheService storyCacheService, StoryService storyService) {
+    public ReadStoriesJob(FirebaseioService firebaseioService, StoryCacheService storyCacheService, StoryService storyService, StatisticsService statisticsService) {
         this.firebaseioService = firebaseioService;
         this.storyCacheService = storyCacheService;
         this.storyService = storyService;
+        this.statisticsService = statisticsService;
     }
 
     @Scheduled(fixedDelay = 5, timeUnit = TimeUnit.MINUTES)
@@ -44,6 +48,7 @@ public class ReadStoriesJob {
         saveStories(topStories);
         var bestStories = firebaseioService.readBestStories();
         saveStories(bestStories);
+        statisticsService.updateLastHnUpdate();
     }
 
     private void saveStories(List<HnStory> hnStoryList) {

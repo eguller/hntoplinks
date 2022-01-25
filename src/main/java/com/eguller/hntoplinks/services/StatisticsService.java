@@ -7,62 +7,74 @@ import com.eguller.hntoplinks.repository.SubscriptionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.annotation.ApplicationScope;
 
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Service
+@ApplicationScope
 public class StatisticsService {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
-    @Autowired
+
+    @Value("${hntoplinks.stats-cache-expiry}")
+    private long statsCacheExpiry;
+
     private StatisticRepository statisticRepository;
-    @Autowired
-    private SubscriptionRepository subscriptionRepository;
+
+    private Statistics statistics = null;
+    private LocalDateTime lastStatisticsLoaded = LocalDateTime.MIN;
+
+    public StatisticsService(StatisticRepository statisticRepository){
+        this.statisticRepository = statisticRepository;
+    }
 
     public Statistics readStatistics() {
-        Statistics.Builder builder = new Statistics.Builder();
+        if(lastStatisticsLoaded.isAfter(LocalDateTime.now().minusSeconds(statsCacheExpiry)) && statistics!= null){
+            return statistics;
+        }
+
+        var builder = Statistics.builder();
         statisticRepository.findAll().forEach(statisticEntity -> {
             if (StatKey.SUBSCRIBERS.name().equals(statisticEntity.getStatKey())) {
-                builder.setSubscriberCount(Long.parseLong(statisticEntity.getStatValue()));
+                builder.subscriberCount(Long.parseLong(statisticEntity.getStatValue()));
             } else if (StatKey.ACTIVE_SUBSCRIBER.name().equals(statisticEntity.getStatKey())) {
-                builder.setActiveSubscriberCount(Long.parseLong(statisticEntity.getStatValue()));
+                builder.activeSubscriberCount(Long.parseLong(statisticEntity.getStatValue()));
             } else if (StatKey.DAILY_SUBSCRIBER.name().equals(statisticEntity.getStatKey())) {
-                builder.setDailySubscriberCount(Long.parseLong(statisticEntity.getStatValue()));
+                builder.dailySubscriberCount(Long.parseLong(statisticEntity.getStatValue()));
             } else if (StatKey.WEEKLY_SUBSCRIBER.name().equals(statisticEntity.getStatKey())) {
-                builder.setWeeklySubscriberCount(Long.parseLong(statisticEntity.getStatValue()));
+                builder.weeklySubscriberCount(Long.parseLong(statisticEntity.getStatValue()));
             } else if (StatKey.MONTHLY_SUBSCRIBER.name().equals(statisticEntity.getStatKey())) {
-                builder.setMonthlySubscriberCount(Long.parseLong(statisticEntity.getStatValue()));
+                builder.monthlySubscriberCount(Long.parseLong(statisticEntity.getStatValue()));
             } else if (StatKey.ANNUALLY_SUBSCRIBER.name().equals(statisticEntity.getStatKey())) {
-                builder.setAnnuallySubscriberCount(Long.parseLong(statisticEntity.getStatValue()));
+                builder.annuallySubscriberCount(Long.parseLong(statisticEntity.getStatValue()));
             } else if (StatKey.UNSUBSCRIBES.name().equals(statisticEntity.getStatKey())) {
-                builder.setUnsubscribeCount(Long.parseLong(statisticEntity.getStatValue()));
+                builder.unsubscribeCount(Long.parseLong(statisticEntity.getStatValue()));
             } else if (StatKey.SUCCESS_EMAIL_COUNT.name().equals(statisticEntity.getStatKey())) {
-                builder.setSuccessEmailCount(Long.parseLong(statisticEntity.getStatValue()));
+                builder.successEmailCount(Long.parseLong(statisticEntity.getStatValue()));
             } else if (StatKey.FAILURE_EMAIL_COUNT.name().equals(statisticEntity.getStatKey())) {
-                builder.setFailureEmailCount(Long.parseLong(statisticEntity.getStatValue()));
+                builder.failureEmailCount(Long.parseLong(statisticEntity.getStatValue()));
             } else if (StatKey.LAST_EMAIL_SENT.name().equals(statisticEntity.getStatKey())) {
                 LocalDateTime emailSentTime = LocalDateTime.parse(statisticEntity.getStatValue(), DATE_TIME_FORMATTER);
-                builder.setLastEmailSent(emailSentTime);
+                builder.lastEmailSent(emailSentTime);
             } else if (StatKey.LAST_HN_UPDATE.name().equals(statisticEntity.getStatKey())) {
                 LocalDateTime lastHnUpdateTime = LocalDateTime.parse(statisticEntity.getStatValue(), DATE_TIME_FORMATTER);
-                builder.setLastEmailSent(lastHnUpdateTime);
+                builder.lastHnUpdate(lastHnUpdateTime);
             } else {
                 logger.warn("Unknown stat key {}", statisticEntity.getStatKey());
             }
         });
-        long dailysSubscribersCount = subscriptionRepository.countByDailyIsTrue();
-        long weeklySubscribersCount = subscriptionRepository.countByWeeklyIsTrue();
-        long monthlySubscribersCount = subscriptionRepository.countByMonthlyIsTrue();
-        long annuallySubscribersCount = subscriptionRepository.countByAnnuallyIsTrue();
 
-        builder.setDailySubscriberCount(dailysSubscribersCount);
-        builder.setWeeklySubscriberCount(weeklySubscribersCount);
-        builder.setMonthlySubscriberCount(monthlySubscribersCount);
-        builder.setAnnuallySubscriberCount(annuallySubscribersCount);
-        Statistics statistics = builder.createStatistics();
+        statistics = builder.build();
+        lastStatisticsLoaded = LocalDateTime.now();
         return statistics;
+    }
+
+    public void updateLastHnUpdate(){
+        statisticRepository.updateStatistic(StatKey.LAST_HN_UPDATE, DATE_TIME_FORMATTER.format(LocalDateTime.now()));
     }
 }

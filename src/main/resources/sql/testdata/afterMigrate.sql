@@ -32,3 +32,15 @@ insert into item (id, comhead, comment, postdate, hnid, lastupdate, points, titl
 insert into item (id, comhead, comment, postdate, hnid, lastupdate, points, title, posturl, hnuser) values(nextval('hibernate_sequence'), 'hntoplinks.com', '42', DATEADD(HOUR, -4, CURRENT_DATE()), 32, DATEADD(HOUR, 1, CURRENT_DATE()), 932, ' Test - 32', 'https://hntoplinks.com/32', 'eguller');
 insert into item (id, comhead, comment, postdate, hnid, lastupdate, points, title, posturl, hnuser) values(nextval('hibernate_sequence'), 'hntoplinks.com', '43', DATEADD(HOUR, -9, CURRENT_DATE()), 33, DATEADD(HOUR, 1, CURRENT_DATE()), 903, ' Test - 33', 'https://hntoplinks.com/33', 'eguller');
 insert into item (id, comhead, comment, postdate, hnid, lastupdate, points, title, posturl, hnuser) values(nextval('hibernate_sequence'), 'hntoplinks.com', '44', DATEADD(HOUR, -12, CURRENT_DATE()), 34, DATEADD(HOUR, 1, CURRENT_DATE()), 266, ' Test - 34', 'https://hntoplinks.com/34', 'eguller');
+insert into statistic (id, stat_key, stat_value) values (nextval('hibernate_sequence'), 'ACTIVE_SUBSCRIBER', '509');
+insert into statistic (id, stat_key, stat_value) values (nextval('hibernate_sequence'), 'MONTHLY_SUBSCRIBER', '135');
+insert into statistic (id, stat_key, stat_value) values (nextval('hibernate_sequence'), 'ANNUALLY_SUBSCRIBER','110');
+insert into statistic (id, stat_key, stat_value) values (nextval('hibernate_sequence'), 'UNSUBSCRIBES','185');
+insert into statistic (id, stat_key, stat_value) values (nextval('hibernate_sequence'), 'SUCCESS_EMAIL_COUNT','327537');
+insert into statistic (id, stat_key, stat_value) values (nextval('hibernate_sequence'), 'LAST_EMAIL_SENT', '15.03.2021 18:48:01');
+insert into statistic (id, stat_key, stat_value) values (nextval('hibernate_sequence'), 'LAST_HN_UPDATE','15.03.2021 19:08:51');
+insert into statistic (id, stat_key, stat_value) values (nextval('hibernate_sequence'), 'SUBSCRIBERS','509');
+insert into statistic (id, stat_key, stat_value) values (nextval('hibernate_sequence'), 'WEEKLY_SUBSCRIBER','428');
+insert into statistic (id, stat_key, stat_value) values (nextval('hibernate_sequence'), 'FAILURE_EMAIL_COUNT','2496');
+insert into statistic (id, stat_key, stat_value) values (nextval('hibernate_sequence'), 'DAILY_SUBSCRIBER','169');
+
