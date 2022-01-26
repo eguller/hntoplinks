@@ -13,19 +13,19 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 public class DeleteExpiredStoriesJob {
-    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    @Autowired
-    private StoryRepository storyRepository;
+  private static final Logger          logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+  @Autowired
+  private              StoryRepository storyRepository;
 
-    @Scheduled(fixedDelay = 10, timeUnit = TimeUnit.MINUTES)
-    public void deleteExpiredStories() {
+  @Scheduled(fixedDelay = 10, timeUnit = TimeUnit.MINUTES)
+  public void deleteExpiredStories() {
 
-        var yesterday  = LocalDateTime.now().minusDays(1);
-        var lastWeek = LocalDateTime.now().minusWeeks(1);
-        var lastMonth = LocalDateTime.now().minusMonths(1);
-        var lastYear = LocalDateTime.now().minusYears(1);
-        logger.info("Deleting expired stories. yesterday={}, lastWeek={}, lastMonth={}, lastYear={}", yesterday, lastWeek, lastMonth, lastYear);
-        int numberOfDeletedRecords = storyRepository.deleteExpiredStories(yesterday, lastWeek, lastMonth, lastYear);
-        logger.info("Expired stories have been deleted. deletedStories={}", numberOfDeletedRecords);
-    }
+    var yesterday = LocalDateTime.now().minusDays(1);
+    var lastWeek = LocalDateTime.now().minusWeeks(1);
+    var lastMonth = LocalDateTime.now().minusMonths(1);
+    var lastYear = LocalDateTime.now().minusYears(1);
+    logger.info("Deleting expired stories. yesterday={}, lastWeek={}, lastMonth={}, lastYear={}", yesterday, lastWeek, lastMonth, lastYear);
+    int numberOfDeletedRecords = storyRepository.deleteExpiredStories(yesterday, lastWeek, lastMonth, lastYear);
+    logger.info("Expired stories have been deleted. deletedStories={}", numberOfDeletedRecords);
+  }
 }

@@ -9,12 +9,12 @@ import java.util.List;
  * Time: 11:51 PM
  */
 public class EmailListFactory {
-    public static List<EmailList> getAllLists(){
-        List<EmailList> lists = new ArrayList<EmailList>();
-        lists.add(new DailyMailList());
-        lists.add(new WeeklyMailList());
-        lists.add(new MonthlyMailList());
-        lists.add(new AnnuallyMailList());
-        return lists;
-    }
+  public static List<EmailList> getAllLists() {
+    List<EmailList> lists = new ArrayList<EmailList>();
+    lists.add(new DailyMailList());
+    lists.add(new WeeklyMailList());
+    lists.add(new MonthlyMailList());
+    lists.add(new AnnuallyMailList());
+    return lists;
+  }
 }

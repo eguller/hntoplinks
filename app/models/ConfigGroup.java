@@ -6,5 +6,5 @@ package models;
  * Time: 6:54 AM
  */
 public enum ConfigGroup {
-    EMAIL_CONFIG;
+  EMAIL_CONFIG;
 }

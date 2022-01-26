@@ -52,7 +52,7 @@ public record Story(
         return DateUtils.since(createDate);
     }
 
-    public boolean hasDomain(){
+    public boolean hasDomain() {
         return StringUtils.hasText(domain);
     }
 

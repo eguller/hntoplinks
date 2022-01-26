@@ -13,160 +13,160 @@ import java.util.List;
  * Time: 4:31 PM
  */
 public class JSonItem {
-    private long id;
-    private boolean deleted = false;
-    private String type;
-    private String by;
-    private long time;
-    private String text;
-    private boolean dead;
-    private long parent;
-    private List<Long> kids = new ArrayList<Long>();
-    private String url;
-    private int score;
-    private List<Long> parts = new ArrayList<Long>();
-    private String title;
+  private long       id;
+  private boolean    deleted = false;
+  private String     type;
+  private String     by;
+  private long       time;
+  private String     text;
+  private boolean    dead;
+  private long       parent;
+  private List<Long> kids    = new ArrayList<Long>();
+  private String     url;
+  private int        score;
+  private List<Long> parts   = new ArrayList<Long>();
+  private String     title;
 
-    public void setId(long id) {
-        this.id = id;
-    }
+  public String getTitle() {
+    return title;
+  }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
+  public void setTitle(String title) {
+    this.title = title;
+  }
 
-    public void setType(String type) {
-        this.type = type;
-    }
+  public String getText() {
+    return text;
+  }
 
-    public void setBy(String by) {
-        this.by = by;
-    }
+  public void setText(String text) {
+    this.text = text;
+  }
 
-    public void setTime(long time) {
-        this.time = time;
-    }
+  public long getId() {
+    return id;
+  }
 
-    public void setText(String text) {
-        this.text = text;
-    }
+  public void setId(long id) {
+    this.id = id;
+  }
 
-    public void setDead(boolean dead) {
-        this.dead = dead;
-    }
+  public boolean isDeleted() {
+    return deleted;
+  }
 
-    public void setParent(long parent) {
-        this.parent = parent;
-    }
+  public void setDeleted(boolean deleted) {
+    this.deleted = deleted;
+  }
 
-    public void setKids(List<Long> kids) {
-        this.kids = kids;
-    }
+  public String getType() {
+    return type;
+  }
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
+  public void setType(String type) {
+    this.type = type;
+  }
 
-    public void setScore(int score) {
-        this.score = score;
-    }
+  public String getBy() {
+    return by;
+  }
 
-    public void setParts(List<Long> parts) {
-        this.parts = parts;
-    }
+  public void setBy(String by) {
+    this.by = by;
+  }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+  public long getTime() {
+    return time;
+  }
 
-    public String getTitle(){
-        return title;
-    }
+  public void setTime(long time) {
+    this.time = time;
+  }
 
-    public String getText() {
-        return text;
-    }
+  public boolean isDead() {
+    return dead;
+  }
 
-    public long getId() {
-        return id;
-    }
+  public void setDead(boolean dead) {
+    this.dead = dead;
+  }
 
-    public boolean isDeleted() {
-        return deleted;
-    }
+  public long getParent() {
+    return parent;
+  }
 
-    public String getType() {
-        return type;
-    }
+  public void setParent(long parent) {
+    this.parent = parent;
+  }
 
-    public String getBy() {
-        return by;
-    }
+  public List<Long> getKids() {
+    return kids;
+  }
 
-    public long getTime() {
-        return time;
-    }
+  public void setKids(List<Long> kids) {
+    this.kids = kids;
+  }
 
-    public boolean isDead() {
-        return dead;
-    }
+  public String getUrl() {
+    return url;
+  }
 
-    public long getParent() {
-        return parent;
-    }
+  public void setUrl(String url) {
+    this.url = url;
+  }
 
-    public List<Long> getKids() {
-        return kids;
-    }
+  public int getScore() {
+    return score;
+  }
 
-    public String getUrl() {
-        return url;
-    }
+  public void setScore(int score) {
+    this.score = score;
+  }
 
-    public int getScore() {
-        return score;
-    }
+  public List<Long> getParts() {
+    return parts;
+  }
 
-    public List<Long> getParts() {
-        return parts;
-    }
+  public void setParts(List<Long> parts) {
+    this.parts = parts;
+  }
 
-    public String getDomainName(){
-        try {
-            if(url == null){
-                Logger.error("Url is null %d", id);
-                return "";
-            }
-            URI uri = new URI(url);
-            String domain = uri.getHost();
-            if(domain != null) {
-                return domain.startsWith("www.") ? domain.substring(4) : domain;
-            } else {
-                return extractDomainName();
-            }
-        } catch (URISyntaxException e) {
-            return extractDomainName();
-        }
+  public String getDomainName() {
+    try {
+      if (url == null) {
+        Logger.error("Url is null %d", id);
+        return "";
+      }
+      URI uri = new URI(url);
+      String domain = uri.getHost();
+      if (domain != null) {
+        return domain.startsWith("www.") ? domain.substring(4) : domain;
+      } else {
+        return extractDomainName();
+      }
+    } catch (URISyntaxException e) {
+      return extractDomainName();
     }
+  }
 
-    private String extractDomainName() {
-        String tmpUrl = url;
-        if(tmpUrl.startsWith("http://")){
-            tmpUrl = tmpUrl.substring("http://".length());
-        }
-        if(tmpUrl.startsWith("https://")){
-            tmpUrl = tmpUrl.substring("https://".length());
-        }
-        if(tmpUrl.startsWith("www.")){
-            tmpUrl = tmpUrl.substring("www.".length());
-        }
-        int urlPathSeperator = tmpUrl.indexOf("/");
-        if(urlPathSeperator > -1){
-            return tmpUrl.substring(0 , urlPathSeperator);
-        } else {
-            return tmpUrl;
-        }
+  private String extractDomainName() {
+    String tmpUrl = url;
+    if (tmpUrl.startsWith("http://")) {
+      tmpUrl = tmpUrl.substring("http://".length());
     }
+    if (tmpUrl.startsWith("https://")) {
+      tmpUrl = tmpUrl.substring("https://".length());
+    }
+    if (tmpUrl.startsWith("www.")) {
+      tmpUrl = tmpUrl.substring("www.".length());
+    }
+    int urlPathSeperator = tmpUrl.indexOf("/");
+    if (urlPathSeperator > -1) {
+      return tmpUrl.substring(0, urlPathSeperator);
+    } else {
+      return tmpUrl;
+    }
+  }
 
 
 }

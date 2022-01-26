@@ -12,16 +12,16 @@ import java.time.temporal.ChronoUnit;
 
 @Service
 public class SubscriptionService {
-    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    private static final int EXPIRE_IN_DAYS = 7;
-    @Autowired
-    private SubscriptionRepository subscriptionRepository;
+  private static final Logger                 logger         = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+  private static final int                    EXPIRE_IN_DAYS = 7;
+  @Autowired
+  private              SubscriptionRepository subscriptionRepository;
 
-    public void deleteExpiredInactiveSubscriptions(){
-        LocalDate expiryDate = LocalDate.now().minus(EXPIRE_IN_DAYS, ChronoUnit.DAYS);
-        int deleted = subscriptionRepository.deleteBySubscriptionDateBeforeAndActivatedIsFalse(expiryDate);
-        if(deleted > 0){
-            logger.info("{} non-activated subscription was deleted.", deleted);
-        }
+  public void deleteExpiredInactiveSubscriptions() {
+    LocalDate expiryDate = LocalDate.now().minus(EXPIRE_IN_DAYS, ChronoUnit.DAYS);
+    int deleted = subscriptionRepository.deleteBySubscriptionDateBeforeAndActivatedIsFalse(expiryDate);
+    if (deleted > 0) {
+      logger.info("{} non-activated subscription was deleted.", deleted);
     }
+  }
 }

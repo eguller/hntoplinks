@@ -15,21 +15,21 @@ import java.util.Map;
  * Time: 7:12 PM
  */
 @Every("1mn")
-public class StatsUpdateJob extends Job{
-    @Override
-    public void doJob(){
-        if(StatisticsMgr.instance().isLoaded()) {
-            Map<StatKey, Statistic> statisticsMap = Statistic.getAllStatMap();
-            List<Statistic> statisticList = StatisticsMgr.instance().getSnapshot();
-            for(Statistic statistic : statisticList){
-                Statistic statisticFromDb = statisticsMap.get(statistic.getKey());
-                if(statisticFromDb == null){
-                    statisticFromDb = new Statistic(statistic.getKey(), statistic.getValue());
-                } else {
-                    statisticFromDb.setValue(statistic.getValue());
-                }
-                statisticFromDb.save();
-            }
+public class StatsUpdateJob extends Job {
+  @Override
+  public void doJob() {
+    if (StatisticsMgr.instance().isLoaded()) {
+      Map<StatKey, Statistic> statisticsMap = Statistic.getAllStatMap();
+      List<Statistic> statisticList = StatisticsMgr.instance().getSnapshot();
+      for (Statistic statistic : statisticList) {
+        Statistic statisticFromDb = statisticsMap.get(statistic.getKey());
+        if (statisticFromDb == null) {
+          statisticFromDb = new Statistic(statistic.getKey(), statistic.getValue());
+        } else {
+          statisticFromDb.setValue(statistic.getValue());
         }
+        statisticFromDb.save();
+      }
     }
+  }
 }

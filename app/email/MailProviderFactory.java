@@ -6,7 +6,7 @@ package email;
  * Time: 1:15 PM
  */
 public class MailProviderFactory {
-    public static MailProvider getMailProvider(){
-        return new SendGridProvider();
-    }
+  public static MailProvider getMailProvider() {
+    return new SendGridProvider();
+  }
 }

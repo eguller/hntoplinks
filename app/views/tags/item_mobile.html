@@ -1,10 +1,10 @@
 <li data-icon="comment" data-iconpos="top">
-	<a href="${_item.url}" target="_blank" >
-		<span style="font-size: 13px;white-space:normal;">${((_page - 1) * 30) + _index}. ${_item.title}</span>
-		#{if _item.comhead}
-			<span style="font-size: 10px;"> (${_item.comhead}) </span>
-		#{/if}
-		<br><span style="font-size: 9px;">
+  <a href="${_item.url}" target="_blank">
+    <span style="font-size: 13px;white-space:normal;">${((_page - 1) * 30) + _index}. ${_item.title}</span>
+    #{if _item.comhead}
+    <span style="font-size: 10px;"> (${_item.comhead}) </span>
+    #{/if}
+    <br><span style="font-size: 9px;">
 
 		by ${_item.user} ${new Date(_item.date.getTime()).since()} |
 			#{if _item.points > -1}
@@ -18,10 +18,10 @@
 			#{/if}
 			#{else}
 				0 point
-			#{/else}			
+			#{/else}
 		</span>
-	</a>
-	<a href="https://news.ycombinator.com/storyEntity?id=${_item.hnid}" target="_blank">
-        Comments
-	</a>
+  </a>
+  <a href="https://news.ycombinator.com/storyEntity?id=${_item.hnid}" target="_blank">
+    Comments
+  </a>
 </li>

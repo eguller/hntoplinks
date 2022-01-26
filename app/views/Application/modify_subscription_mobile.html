@@ -1,36 +1,36 @@
 #{extends 'mobile.html' /}
 #{form @Application.modifySubscription(subscription), id:"subscribe", method:"POST"}
-<input type="hidden" name="subscription.subsUUID" value="${existingSubscription.subsUUID}">
+<input name="subscription.subsUUID" type="hidden" value="${existingSubscription.subsUUID}">
 <label id="existingSubscription.email" style="text-align: center;">${existingSubscription.email}</label>
 <fieldset data-role="controlgroup">
-    <label for="subscription.daily">Daily Top Links</label>
-    <input type="checkbox" name="subscription.daily" id="subscription.daily"
-    ${existingSubscription.daily ? "checked" : ""}/>
-    <input type="hidden" name="newSubscription.daily" value="false"/>
+  <label for="subscription.daily">Daily Top Links</label>
+  <input ${existingSubscription.daily ? id="subscription.daily"
+         name="subscription.daily" type="checkbox" "checked" : ""}/>
+  <input name="newSubscription.daily" type="hidden" value="false"/>
 
-    <label for="subscription.weekly">Weekly Top Links</label>
-    <input type="checkbox" name="subscription.weekly" id="subscription.weekly"
-    ${existingSubscription.weekly ? "checked" : ""}/>
-    <input type="hidden" name="subscription.weekly" value="false"/>
+  <label for="subscription.weekly">Weekly Top Links</label>
+  <input ${existingSubscription.weekly ? id="subscription.weekly"
+         name="subscription.weekly" type="checkbox" "checked" : ""}/>
+  <input name="subscription.weekly" type="hidden" value="false"/>
 
-    <label for="subscription.monthly">Monthly Top Links</label>
-    <input type="checkbox" name="subscription.monthly" id="subscription.monthly"
-    ${existingSubscription.monthly ? "checked" : ""}/>
-    <input type="hidden" name="newSubscription.monthly" value="false"/>
+  <label for="subscription.monthly">Monthly Top Links</label>
+  <input ${existingSubscription.monthly ? id="subscription.monthly"
+         name="subscription.monthly" type="checkbox" "checked" : ""}/>
+  <input name="newSubscription.monthly" type="hidden" value="false"/>
 
-    <label for="subscription.annually">Annually Top Links</label>
-    <input type="checkbox" name="subscription.annually" id="subscription.annually"
-    ${existingSubscription.annually ? "checked" : ""}/>
-    <input type="hidden" name="subscription.annually" value="false"/>
+  <label for="subscription.annually">Annually Top Links</label>
+  <input ${existingSubscription.annually ? id="subscription.annually"
+         name="subscription.annually" type="checkbox" "checked" : ""}/>
+  <input name="subscription.annually" type="hidden" value="false"/>
 </fieldset>
 <button class="ui-shadow ui-btn ui-corner-all" type="submit">Submit</button>
 #{/form}
 #{ifErrors}
 
 <ul class="error">
-    #{errors}
-    <li>${error}</li>
-    #{/errors}
+  #{errors}
+  <li>${error}</li>
+  #{/errors}
 </ul>
 
 #{/ifErrors}

@@ -8,5 +8,5 @@ import java.util.Map;
  * Time: 1:02 PM
  */
 public interface MailProvider {
-    public void sendEmail(String htmlContent, String textContent, String to, String subject, Map<String, String> headers);
+  public void sendEmail(String htmlContent, String textContent, String to, String subject, Map<String, String> headers);
 }

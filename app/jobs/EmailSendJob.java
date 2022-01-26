@@ -17,12 +17,12 @@ import java.util.List;
 @Every("1h")
 public class EmailSendJob extends Job {
 
-    @Override
-    @NoTransaction
-    public void doJob() {
-        List<EmailList> lists = EmailListFactory.getAllLists();
-        for(EmailList list : lists){
-            list.send();
-        }
+  @Override
+  @NoTransaction
+  public void doJob() {
+    List<EmailList> lists = EmailListFactory.getAllLists();
+    for (EmailList list : lists) {
+      list.send();
     }
+  }
 }

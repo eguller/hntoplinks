@@ -14,58 +14,58 @@ import java.util.Map;
  * Time: 6:38 AM
  */
 @Entity
-public class Configuration extends Model{
-    @Column(name = "CGROUP")
-    String group;
-    @Column(name= "CKEY")
-    String key;
-    @Column(name="CVALUE")
-    String value;
-    @Column(name="OVERRIDE_PLAY_CONFIG")
-    boolean overridePlayConfig;
+public class Configuration extends Model {
+  @Column(name = "CGROUP")
+  String  group;
+  @Column(name = "CKEY")
+  String  key;
+  @Column(name = "CVALUE")
+  String  value;
+  @Column(name = "OVERRIDE_PLAY_CONFIG")
+  boolean overridePlayConfig;
 
-    public String getGroup() {
-        return group;
+  public static Map<String, String> getConfigurationByGroup(ConfigGroup configGroup) {
+    List<Configuration> configurationList = Configuration.find("byGroup", configGroup.name()).fetch();
+    Map<String, String> configMap = new HashMap<String, String>();
+    for (Configuration configuration : configurationList) {
+      configMap.put(configuration.getKey(), configuration.getValue());
     }
+    return configMap;
+  }
 
-    public void setGroup(String group) {
-        this.group = group;
-    }
+  public static int getConfigurationGroupSize(ConfigGroup configGroup) {
+    return Configuration.find("byGroup", configGroup.name()).fetch().size();
+  }
 
-    public String getKey() {
-        return key;
-    }
+  public String getGroup() {
+    return group;
+  }
 
-    public void setKey(String key) {
-        this.key = key;
-    }
+  public void setGroup(String group) {
+    this.group = group;
+  }
 
-    public String getValue() {
-        return value;
-    }
+  public String getKey() {
+    return key;
+  }
 
-    public void setValue(String value) {
-        this.value = value;
-    }
+  public void setKey(String key) {
+    this.key = key;
+  }
 
-    public boolean isOverridePlayConfig() {
-        return overridePlayConfig;
-    }
+  public String getValue() {
+    return value;
+  }
 
-    public void setOverridePlayConfig(boolean overridePlayConfig) {
-        this.overridePlayConfig = overridePlayConfig;
-    }
+  public void setValue(String value) {
+    this.value = value;
+  }
 
-    public static Map<String, String> getConfigurationByGroup(ConfigGroup configGroup){
-        List<Configuration> configurationList = Configuration.find("byGroup", configGroup.name()).fetch();
-        Map<String, String> configMap = new HashMap<String, String>();
-        for(Configuration configuration : configurationList){
-            configMap.put(configuration.getKey(), configuration.getValue());
-        }
-        return configMap;
-    }
+  public boolean isOverridePlayConfig() {
+    return overridePlayConfig;
+  }
 
-    public static int getConfigurationGroupSize(ConfigGroup configGroup){
-        return Configuration.find("byGroup", configGroup.name()).fetch().size();
-    }
+  public void setOverridePlayConfig(boolean overridePlayConfig) {
+    this.overridePlayConfig = overridePlayConfig;
+  }
 }

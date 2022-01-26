@@ -1,10 +1,10 @@
 # Application dependencies
 
 require:
-    - play 1.2.6.2
-    - postgresql -> postgresql 9.1-901.jdbc4
-    - org.jsoup -> jsoup 1.7.2
-    - com.google.code.gson -> gson 2.3
-    - com.mandrillapp.wrapper.lutung -> lutung 0.0.5
-    - commons-logging -> commons-logging 1.1.1
-    - com.sendgrid -> sendgrid-java 2.2.1
+  - play 1.2.6.2
+  - postgresql -> postgresql 9.1-901.jdbc4
+  - org.jsoup -> jsoup 1.7.2
+  - com.google.code.gson -> gson 2.3
+  - com.mandrillapp.wrapper.lutung -> lutung 0.0.5
+  - commons-logging -> commons-logging 1.1.1
+  - com.sendgrid -> sendgrid-java 2.2.1

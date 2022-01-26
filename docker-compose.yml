@@ -15,7 +15,7 @@ services:
   db:
     image: postgres:13.5
     ports:
-     - "15432:5432"
+      - "15432:5432"
     environment:
       - POSTGRES_PASSWORD=sa
       - POSTGRES_USER=sa

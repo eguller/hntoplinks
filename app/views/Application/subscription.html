@@ -1,83 +1,83 @@
 #{extends 'main.html' /}
-<table border=0 cellpadding=0 cellspacing=0 width="85%" bgcolor=#f6f6ef>
-    <tr>
-        #{menu activeTab:'subscribe'/}
-    </tr>
-    <tr style="height: 10px"></tr>
-    <tr>
-        <td colspan="2">
-            #{form @Application.doSubscribe(newSubscription), id:"subscribe", method:"POST"}
-            <table border=0 cellpadding=0 cellspacing=0 style="margin-left: 30%;">
-                <tr>
-                    <td colspan="2" class="head">Subscribe Hacker News Top Links</td>
-                </tr>
-                <tr>
-                    <td class="cright">Daily Top Links</td>
-                    <td class="cleft"><input type="checkbox" name="newSubscription.daily"
-                        ${subscription.daily ? "checked" : ""}/>
-                        <input type="hidden" name="newSubscription.daily" value="false" />
-                    </td>
-                </tr>
-                <tr>
-                    <td class="cright">Weekly Top Links</td>
-                    <td class="cleft"><input type="checkbox" name="newSubscription.weekly"
-                        ${subscription.weekly ? "checked" : ""}/>
-                        <input type="hidden" name="newSubscription.weekly" value="false" />
-                    </td>
-                </tr>
-                <tr>
-                    <td class="cright">Monthly Top Links</td>
-                    <td class="cleft"><input type="checkbox" name="newSubscription.monthly"
-                        ${subscription.monthly ? "checked" : ""}/>
-                        <input type="hidden" name="newSubscription.monthly" value="false" />
-                    </td>
-                </tr>
-                <tr>
-                    <td class="cright">Annually Top Links</td>
-                    <td class="cleft"><input type="checkbox" name="newSubscription.annually"
-                        ${subscription.annually ? "checked" : ""}/>
-                        <input type="hidden" name="newSubscription.annually" value="false" />
-                    </td>
-                </tr>
-                <tr>
-                    <td class="cright">Email</td>
-                    <td class="cleft">
-                        <input type="text" name="newSubscription.email" value="${subscription.email}"
-                               style="width: 160px;"/>
-                        <input type="hidden" name="randomId" value="${randomId}" />
-                        <input type="hidden" name="timeZoneOffSet" value="" />
-                    </td>
-                </tr>
-                #{if captchaRequired}
-                <tr>
-                    <td class="cright">Code</td>
-                    <td class="cleft"><img src="@{Application.captcha(randomId)}" /></td>
-                </tr>
-                <tr>
-                    <td class="cright">Type Code</td>
-                    <td class="cleft"><input type="text" name="captchaText" style="width: 160px;" /></td>
-                </tr>
-                #{/if}
-                <tr>
-                    <td colspan="2" class="cright">
-                        <input type="button" value="Submit" onclick="submitSubscriptionForm();">
-                    </td>
-                </tr>
-                #{ifErrors}
-                <tr>
-                    <td colspan="2">
-                        <ul class="error">
-                            #{errors}
-                            <li>${error}</li>
-                            #{/errors}
-                        </ul>
-                    </td>
-                </tr>
-                #{/ifErrors}
-            </table>
-            #{/form}
-        </td>
-    </tr>
+<table bgcolor=#f6f6ef border=0 cellpadding=0 cellspacing=0 width="85%">
+  <tr>
+    #{menu activeTab:'subscribe'/}
+  </tr>
+  <tr style="height: 10px"></tr>
+  <tr>
+    <td colspan="2">
+      #{form @Application.doSubscribe(newSubscription), id:"subscribe", method:"POST"}
+      <table border=0 cellpadding=0 cellspacing=0 style="margin-left: 30%;">
+        <tr>
+          <td class="head" colspan="2">Subscribe Hacker News Top Links</td>
+        </tr>
+        <tr>
+          <td class="cright">Daily Top Links</td>
+          <td class="cleft"><input ${subscription.daily ?
+                                   name="newSubscription.daily" type="checkbox" "checked" : ""}/>
+            <input name="newSubscription.daily" type="hidden" value="false"/>
+          </td>
+        </tr>
+        <tr>
+          <td class="cright">Weekly Top Links</td>
+          <td class="cleft"><input ${subscription.weekly ?
+                                   name="newSubscription.weekly" type="checkbox" "checked" : ""}/>
+            <input name="newSubscription.weekly" type="hidden" value="false"/>
+          </td>
+        </tr>
+        <tr>
+          <td class="cright">Monthly Top Links</td>
+          <td class="cleft"><input ${subscription.monthly ?
+                                   name="newSubscription.monthly" type="checkbox" "checked" : ""}/>
+            <input name="newSubscription.monthly" type="hidden" value="false"/>
+          </td>
+        </tr>
+        <tr>
+          <td class="cright">Annually Top Links</td>
+          <td class="cleft"><input ${subscription.annually ?
+                                   name="newSubscription.annually" type="checkbox" "checked" : ""}/>
+            <input name="newSubscription.annually" type="hidden" value="false"/>
+          </td>
+        </tr>
+        <tr>
+          <td class="cright">Email</td>
+          <td class="cleft">
+            <input name="newSubscription.email" style="width: 160px;" type="text"
+                   value="${subscription.email}"/>
+            <input name="randomId" type="hidden" value="${randomId}"/>
+            <input name="timeZoneOffSet" type="hidden" value=""/>
+          </td>
+        </tr>
+        #{if captchaRequired}
+        <tr>
+          <td class="cright">Code</td>
+          <td class="cleft"><img src="@{Application.captcha(randomId)}"/></td>
+        </tr>
+        <tr>
+          <td class="cright">Type Code</td>
+          <td class="cleft"><input name="captchaText" style="width: 160px;" type="text"/></td>
+        </tr>
+        #{/if}
+        <tr>
+          <td class="cright" colspan="2">
+            <input onclick="submitSubscriptionForm();" type="button" value="Submit">
+          </td>
+        </tr>
+        #{ifErrors}
+        <tr>
+          <td colspan="2">
+            <ul class="error">
+              #{errors}
+              <li>${error}</li>
+              #{/errors}
+            </ul>
+          </td>
+        </tr>
+        #{/ifErrors}
+      </table>
+      #{/form}
+    </td>
+  </tr>
 
-    #{footer /}
+  #{footer /}
 </table>

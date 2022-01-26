@@ -8,5 +8,5 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
 public class StatsPage extends Page {
-    private final Statistics statistics;
+  private final Statistics statistics;
 }

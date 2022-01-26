@@ -24,37 +24,37 @@ import java.util.stream.Collectors;
  */
 @Component
 public class ReadStoriesJob {
-    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+  private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private final FirebaseioService firebaseioService;
+  private final FirebaseioService firebaseioService;
 
-    private StoryCacheService storyCacheService;
+  private StoryCacheService storyCacheService;
 
-    private StoryService storyService;
+  private StoryService storyService;
 
-    private StatisticsService statisticsService;
+  private StatisticsService statisticsService;
 
-    @Autowired
-    public ReadStoriesJob(FirebaseioService firebaseioService, StoryCacheService storyCacheService, StoryService storyService, StatisticsService statisticsService) {
-        this.firebaseioService = firebaseioService;
-        this.storyCacheService = storyCacheService;
-        this.storyService = storyService;
-        this.statisticsService = statisticsService;
-    }
+  @Autowired
+  public ReadStoriesJob(FirebaseioService firebaseioService, StoryCacheService storyCacheService, StoryService storyService, StatisticsService statisticsService) {
+    this.firebaseioService = firebaseioService;
+    this.storyCacheService = storyCacheService;
+    this.storyService      = storyService;
+    this.statisticsService = statisticsService;
+  }
 
-    @Scheduled(fixedDelay = 5, timeUnit = TimeUnit.MINUTES)
-    public void doJob() {
-        var topStories = firebaseioService.readTopStories();
-        saveStories(topStories);
-        var bestStories = firebaseioService.readBestStories();
-        saveStories(bestStories);
-        statisticsService.updateLastHnUpdate();
-    }
+  @Scheduled(fixedDelay = 5, timeUnit = TimeUnit.MINUTES)
+  public void doJob() {
+    var topStories = firebaseioService.readTopStories();
+    saveStories(topStories);
+    var bestStories = firebaseioService.readBestStories();
+    saveStories(bestStories);
+    statisticsService.updateLastHnUpdate();
+  }
 
-    private void saveStories(List<HnStory> hnStoryList) {
-        logger.info("Stories read from firebase. numberOfStories={}", hnStoryList.size());
-        var storyList = hnStoryList.stream().map(hnStory -> hnStory.toStory()).collect(Collectors.toList());
-        storyService.saveStories(storyList);
-        storyCacheService.addNewStories(storyList);
-    }
+  private void saveStories(List<HnStory> hnStoryList) {
+    logger.info("Stories read from firebase. numberOfStories={}", hnStoryList.size());
+    var storyList = hnStoryList.stream().map(hnStory -> hnStory.toStory()).collect(Collectors.toList());
+    storyService.saveStories(storyList);
+    storyCacheService.addNewStories(storyList);
+  }
 }

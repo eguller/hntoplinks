@@ -3,51 +3,51 @@
 # ~~~~
 
 # Home page
-GET     /                                                     Application.today(page:1)
-GET     /{<[0-9]+>page}                                       Application.today
+GET         /                                              Application.today(page:1)
+GET         /{<[0-9]+>page}                                Application.today
 
-GET     /today/                                               Application.today(page:1)
-GET     /today/{<[0-9]+>page}                                 Application.today
+GET         /today/                                        Application.today(page:1)
+GET         /today/{<[0-9]+>page}                          Application.today
 
-GET     /week                                                 Application.week(page:1)
-GET     /week/{<[0-9]+>page}                                  Application.week
+GET         /week                                          Application.week(page:1)
+GET         /week/{<[0-9]+>page}                           Application.week
 
-GET     /month                                                Application.month(page:1)
-GET     /month/{<[0-9]+>page}                                 Application.month
+GET         /month                                         Application.month(page:1)
+GET         /month/{<[0-9]+>page}                          Application.month
 
-GET     /year                                                 Application.year(page:1)
-GET     /year/{<[0-9]+>page}                                  Application.year
+GET         /year                                          Application.year(page:1)
+GET         /year/{<[0-9]+>page}                           Application.year
 
-GET     /all                                                  Application.all(page:1)
-GET     /all/{<[0-9]+>page}                                   Application.all
-GET     /about                                                Application.about
+GET         /all                                           Application.all(page:1)
+GET         /all/{<[0-9]+>page}                            Application.all
+GET         /about                                         Application.about
 
 
 #subscribe
-GET     /subscribe/?                                          Application.viewSubscription
-POST    /subscribe                                            Application.doSubscribe
+GET         /subscribe/?                                   Application.viewSubscription
+POST        /subscribe                                     Application.doSubscribe
 
 #unsubscribe
-GET     /unsubscribe/{subscriptionid}                         Application.unsubscribe
+GET         /unsubscribe/{subscriptionid}                  Application.unsubscribe
 
 #modify
-GET     /subscription/modify/{subscriptionid}                 Application.viewModifySubscription
-POST    /subscription/modify/?                                Application.modifySubscription
+GET         /subscription/modify/{subscriptionid}          Application.viewModifySubscription
+POST        /subscription/modify/?                         Application.modifySubscription
 
 #activate
-GET     /subscription/activate/{subscriptionid}               Application.activate
+GET         /subscription/activate/{subscriptionid}        Application.activate
 
 #captcha
-GET     /captcha                                             Application.captcha
+GET         /captcha                                       Application.captcha
 
 #statistics
-GET     /stats                                               Application.statistics
+GET         /stats                                         Application.statistics
 
 # Ignore favicon requests
-GET     /favicon.ico                            404
+GET         /favicon.ico                            404
 
 # Map static resources from the /app/public folder to the /public path
-GET     /public/                                staticDir:public
+GET         /public/                                       staticDir:        public
 
 # Catch all
-*       /{controller}/{action}                  {controller}.{action}
+*       /{controller}/{action}                  {          controller}.{        action}

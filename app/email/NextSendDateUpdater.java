@@ -8,5 +8,5 @@ import models.Subscription;
  * Time: 11:50 AM
  */
 public interface NextSendDateUpdater {
-    public abstract void updateNextSendDate(Subscription subscription);
+  public abstract void updateNextSendDate(Subscription subscription);
 }

@@ -1,21 +1,22 @@
 <tr>
-	<td align=right valign=top class="title">${((_page - 1) * 30) + _index}.</td>
-	<td width="5px;"></td>
-	<td class="title"><a href="${_item.url}" target="_blank">${_item.title}</a>
-	#{if _item.comhead}
-		<a class="comhead" target="_blank" href="https://news.ycombinator.com/from?site=${_item.comhead}"> (${_item.comhead}) </a>
-	#{/if}
-	</td>
+  <td align=right class="title" valign=top>${((_page - 1) * 30) + _index}.</td>
+  <td width="5px;"></td>
+  <td class="title"><a href="${_item.url}" target="_blank">${_item.title}</a>
+    #{if _item.comhead}
+    <a class="comhead" href="https://news.ycombinator.com/from?site=${_item.comhead}" target="_blank">
+      (${_item.comhead}) </a>
+    #{/if}
+  </td>
 </tr>
 <tr>
-	<td colspan="2"></td>
-	<td class="subtext"><span id="score_${_item.hnid}">
+  <td colspan="2"></td>
+  <td class="subtext"><span id="score_${_item.hnid}">
 			${_item.getPointStr()}
 			</span> by <a href="http://news.ycombinator.com/user?id=${_item.user}"
-		target="_blank">${_item.user}</a> ${new Date(_item.date.getTime()).since()} | <a
-		href="http://news.ycombinator.com/storyEntity?id=${_item.hnid}"
-		target="_blank">
-			${_item.getCommentStr()}
-	</a></td>
+                    target="_blank">${_item.user}</a> ${new Date(_item.date.getTime()).since()} | <a
+    href="http://news.ycombinator.com/storyEntity?id=${_item.hnid}"
+    target="_blank">
+    ${_item.getCommentStr()}
+  </a></td>
 </tr>
 <tr style="height: 5px"></tr>

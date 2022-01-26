@@ -12,19 +12,19 @@ import java.util.Map;
  * Time: 1:18 PM
  */
 public class PlayEmailProvider implements MailProvider {
-    @Override
-    public void sendEmail(String htmlContent, String textContent, String to, String subject, Map<String, String> headers) {
-        HtmlEmail email = new HtmlEmail();
-        try {
-            email.setFrom("toplinks@hntoplinks.com", "Hacker News Top Links");
-            email.setSubject(subject);
-            email.setHtmlMsg(htmlContent);
-            email.setTextMsg(textContent);
-            email.setHeaders(headers);
-            Mail.send(email);
-            email.addTo(to);
-        } catch (EmailException e) {
-            e.printStackTrace();
-        }
+  @Override
+  public void sendEmail(String htmlContent, String textContent, String to, String subject, Map<String, String> headers) {
+    HtmlEmail email = new HtmlEmail();
+    try {
+      email.setFrom("toplinks@hntoplinks.com", "Hacker News Top Links");
+      email.setSubject(subject);
+      email.setHtmlMsg(htmlContent);
+      email.setTextMsg(textContent);
+      email.setHeaders(headers);
+      Mail.send(email);
+      email.addTo(to);
+    } catch (EmailException e) {
+      e.printStackTrace();
     }
+  }
 }

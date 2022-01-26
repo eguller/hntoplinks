@@ -17,22 +17,22 @@ import java.util.List;
 
 @Every("10mn")
 public class DbTruncate extends Job {
-    private static final int MAX_ITEM_COUNT = 6000;
-    @Override
-    public void doJob() {
-        int diff = (int)(Item.count() - MAX_ITEM_COUNT);
+  private static final int MAX_ITEM_COUNT = 6000;
 
-        if(diff > 0){
-            Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.DATE, -1);
-            List<Item> expiredItems = Item.find("select item from Item item where date < ? order by points asc", cal.getTime()).fetch(diff);
-            for(Item item : expiredItems){
-                item.delete();
-            }
-            Logger.info("Diff is %s, %s elements was deleted", diff, expiredItems.size());
-        }
-        else {
-            Logger.info("Diff is %s deleting elements was skipped", diff);
-        }
+  @Override
+  public void doJob() {
+    int diff = (int) (Item.count() - MAX_ITEM_COUNT);
+
+    if (diff > 0) {
+      Calendar cal = Calendar.getInstance();
+      cal.add(Calendar.DATE, -1);
+      List<Item> expiredItems = Item.find("select item from Item item where date < ? order by points asc", cal.getTime()).fetch(diff);
+      for (Item item : expiredItems) {
+        item.delete();
+      }
+      Logger.info("Diff is %s, %s elements was deleted", diff, expiredItems.size());
+    } else {
+      Logger.info("Diff is %s deleting elements was skipped", diff);
     }
+  }
 }

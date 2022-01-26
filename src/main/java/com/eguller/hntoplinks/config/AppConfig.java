@@ -27,49 +27,50 @@ import java.util.List;
 @Configuration
 @EnableScheduling
 public class AppConfig implements WebMvcConfigurer {
-    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    @Autowired
-    private Sequence sequence;
-    @Bean
-    public DeviceResolverHandlerInterceptor deviceResolverHandlerInterceptor() {
-        return new DeviceResolverHandlerInterceptor();
-    }
+  private static final Logger   logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+  @Autowired
+  private              Sequence sequence;
 
-    @Bean
-    public DeviceHandlerMethodArgumentResolver deviceHandlerMethodArgumentResolver() {
-        return new DeviceHandlerMethodArgumentResolver();
-    }
+  @Bean
+  public DeviceResolverHandlerInterceptor deviceResolverHandlerInterceptor() {
+    return new DeviceResolverHandlerInterceptor();
+  }
 
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(deviceResolverHandlerInterceptor());
-    }
+  @Bean
+  public DeviceHandlerMethodArgumentResolver deviceHandlerMethodArgumentResolver() {
+    return new DeviceHandlerMethodArgumentResolver();
+  }
 
-    @Override
-    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-        argumentResolvers.add(deviceHandlerMethodArgumentResolver());
-    }
+  @Override
+  public void addInterceptors(InterceptorRegistry registry) {
+    registry.addInterceptor(deviceResolverHandlerInterceptor());
+  }
 
-    @Bean
-    public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder){
-        return restTemplateBuilder
-                .setConnectTimeout(Duration.of(5, ChronoUnit.SECONDS))
-           .setReadTimeout(Duration.of(30, ChronoUnit.SECONDS))
-           .build();
-    }
+  @Override
+  public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+    argumentResolvers.add(deviceHandlerMethodArgumentResolver());
+  }
 
-    @Bean
-    public LayoutDialect layoutDialect() {
-        return new LayoutDialect();
-    }
+  @Bean
+  public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder) {
+    return restTemplateBuilder
+      .setConnectTimeout(Duration.of(5, ChronoUnit.SECONDS))
+      .setReadTimeout(Duration.of(30, ChronoUnit.SECONDS))
+      .build();
+  }
 
-    @Bean
-    public ApplicationListener<BeforeSaveEvent<Object>> assignId() {
-        return event -> {
-            Object entity = event.getEntity();
-            if(entity instanceof HnEntity && ((HnEntity) entity).getId() == null){
-                ((HnEntity) entity).setId(sequence.getNextId());
-            }
-        };
-    }
+  @Bean
+  public LayoutDialect layoutDialect() {
+    return new LayoutDialect();
+  }
+
+  @Bean
+  public ApplicationListener<BeforeSaveEvent<Object>> assignId() {
+    return event -> {
+      Object entity = event.getEntity();
+      if (entity instanceof HnEntity && ((HnEntity) entity).getId() == null) {
+        ((HnEntity) entity).setId(sequence.getNextId());
+      }
+    };
+  }
 }

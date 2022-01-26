@@ -6,25 +6,25 @@ package cache;
  * Time: 10:22 PM
  */
 public class ConfigCacheItem {
-    public String getKey() {
-        return key;
-    }
+  String  key;
+  String  value;
+  boolean overridePlayConfig;
 
-    public String getValue() {
-        return value;
-    }
+  public ConfigCacheItem(String key, String value, boolean overridePlayConfig) {
+    this.key                = key;
+    this.value              = value;
+    this.overridePlayConfig = overridePlayConfig;
+  }
 
-    public boolean isOverridePlayConfig() {
-        return overridePlayConfig;
-    }
+  public String getKey() {
+    return key;
+  }
 
-    public ConfigCacheItem(String key, String value, boolean overridePlayConfig){
-        this.key = key;
-        this.value = value;
-        this.overridePlayConfig = overridePlayConfig;
-    }
+  public String getValue() {
+    return value;
+  }
 
-    String key;
-    String value;
-    boolean overridePlayConfig;
+  public boolean isOverridePlayConfig() {
+    return overridePlayConfig;
+  }
 }

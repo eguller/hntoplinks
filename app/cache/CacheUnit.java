@@ -6,5 +6,5 @@ package cache;
  * Time: 10:59 AM
  */
 public enum CacheUnit {
-    today, week, month, year, all;
+  today, week, month, year, all;
 }

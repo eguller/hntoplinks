@@ -10,9 +10,9 @@ import play.jobs.Job;
  * Time: 11:46 PM
  */
 @Every("10mn")
-public class IpCacheExpiryJob  extends Job{
-    @Override
-    public void doJob(){
-        IPCache.getInstance().deleteExpired();
-    }
+public class IpCacheExpiryJob extends Job {
+  @Override
+  public void doJob() {
+    IPCache.getInstance().deleteExpired();
+  }
 }

@@ -14,8 +14,8 @@ import play.jobs.Job;
 @Every("10mn")
 public class CacheCleanup extends Job {
 
-    @Override
-    public void doJob(){
-        ItemCache.getInstance().cleanupExpired();
-    }
+  @Override
+  public void doJob() {
+    ItemCache.getInstance().cleanupExpired();
+  }
 }

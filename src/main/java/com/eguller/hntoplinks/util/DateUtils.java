@@ -4,51 +4,51 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 public class DateUtils {
-    public static String since(LocalDateTime time) {
-        long yearsBetween = ChronoUnit.YEARS.between(time, LocalDateTime.now());
-        if (yearsBetween == 1) {
-            return yearsBetween + " year ago";
-        } else if (yearsBetween > 1) {
-            return yearsBetween + " years ago";
-        }
-
-        long monthsBetween = ChronoUnit.MONTHS.between(time, LocalDateTime.now());
-        if (monthsBetween == 1) {
-            return monthsBetween + " month ago";
-        } else if (monthsBetween > 1) {
-            return monthsBetween + " months ago";
-        }
-
-        long weeksBetween = ChronoUnit.WEEKS.between(time, LocalDateTime.now());
-        if (weeksBetween == 1) {
-            return yearsBetween + " week ago";
-        } else if (weeksBetween > 1) {
-            return yearsBetween + " weeks ago";
-        }
-
-        long daysBetween = ChronoUnit.DAYS.between(time, LocalDateTime.now());
-        long hoursBetween = ChronoUnit.HOURS.between(time, LocalDateTime.now());
-        if (hoursBetween >= 24) {
-            if (daysBetween == 1) {
-                return daysBetween + " day ago";
-            } else if (daysBetween > 1) {
-                return daysBetween + " days ago";
-            }
-        }
-
-        if (hoursBetween == 1) {
-            return hoursBetween + " hour ago";
-        } else if (hoursBetween > 1) {
-            return hoursBetween + " hours ago";
-        }
-
-        long minutesBetween = ChronoUnit.MINUTES.between(time, LocalDateTime.now());
-        if (minutesBetween == 1) {
-            return minutesBetween + " minute ago";
-        } else if (minutesBetween > 1) {
-            return minutesBetween + " minutes ago";
-        } else {
-            return "just now";
-        }
+  public static String since(LocalDateTime time) {
+    long yearsBetween = ChronoUnit.YEARS.between(time, LocalDateTime.now());
+    if (yearsBetween == 1) {
+      return yearsBetween + " year ago";
+    } else if (yearsBetween > 1) {
+      return yearsBetween + " years ago";
     }
+
+    long monthsBetween = ChronoUnit.MONTHS.between(time, LocalDateTime.now());
+    if (monthsBetween == 1) {
+      return monthsBetween + " month ago";
+    } else if (monthsBetween > 1) {
+      return monthsBetween + " months ago";
+    }
+
+    long weeksBetween = ChronoUnit.WEEKS.between(time, LocalDateTime.now());
+    if (weeksBetween == 1) {
+      return yearsBetween + " week ago";
+    } else if (weeksBetween > 1) {
+      return yearsBetween + " weeks ago";
+    }
+
+    long daysBetween = ChronoUnit.DAYS.between(time, LocalDateTime.now());
+    long hoursBetween = ChronoUnit.HOURS.between(time, LocalDateTime.now());
+    if (hoursBetween >= 24) {
+      if (daysBetween == 1) {
+        return daysBetween + " day ago";
+      } else if (daysBetween > 1) {
+        return daysBetween + " days ago";
+      }
+    }
+
+    if (hoursBetween == 1) {
+      return hoursBetween + " hour ago";
+    } else if (hoursBetween > 1) {
+      return hoursBetween + " hours ago";
+    }
+
+    long minutesBetween = ChronoUnit.MINUTES.between(time, LocalDateTime.now());
+    if (minutesBetween == 1) {
+      return minutesBetween + " minute ago";
+    } else if (minutesBetween > 1) {
+      return minutesBetween + " minutes ago";
+    } else {
+      return "just now";
+    }
+  }
 }
