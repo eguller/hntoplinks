@@ -121,7 +121,7 @@ public class AppicationController {
     @GetMapping("/stats")
     public String stats(Model model){
         Statistics statistics = statisticsService.readStatistics();
-        StatsPage statsPage = StatsPage.builder().statistics(statistics).build();
+        StatsPage statsPage = StatsPage.builder().title("Statistics").statistics(statistics).build();
         model.addAttribute("page", statsPage);
         return view("statistics");
     }

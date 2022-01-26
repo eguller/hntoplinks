@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta name="google-site-verification" content="WKJOe5IW0VLyH8Fiot8242DCluzN-qpVA27nXMRXXKI"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
     <link rel="shortcut icon" crossorigin="anonymous" th:href="@{{images}/favicon.ico(images=${@environment.getProperty('hntoplinks.images')})}">
     <link rel="stylesheet" crossorigin="anonymous" media="all"
           th:href="@{{stylesheets}/common.css(stylesheets=${@environment.getProperty('hntoplinks.stylesheets')})}">
@@ -16,15 +16,15 @@
 <body>
 <div data-role="page">
     <div data-role="header" data-position="fixed">
-        <div th:insert="fragments/menu_mobile.html :: menu-mobile ">
-    </div>
+        <th:block th:insert="fragments/menu_mobile.html :: menu-mobile ">
+    </th:block>
     <!-- /header -->
     <div data-role="main" layout:fragment="content-mobile">
     </div>
     <!-- /content -->
     <div data-role="footer" style="text-align: center;" data-position="fixed">
-        <div th:insert="fragments/footer_mobile.html :: footer-mobile">
-    </div>
+        <th:block th:insert="fragments/footer_mobile.html :: footer-mobile">
+    </th:block>
 </div>
 <script type="text/javascript">
 		var _gaq = _gaq || [];
