@@ -3,8 +3,9 @@
       xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta content="WKJOe5IW0VLyH8Fiot8242DCluzN-qpVA27nXMRXXKI" name="google-site-verification"/>
-  <script crossorigin="anonymous"
-          th:src="@{{javascripts}/common.js(javascripts=${@environment.getProperty('hntoplinks.js')})}"
+
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  <script th:src="@{{javascripts}/common.js(javascripts=${@environment.getProperty('hntoplinks.js')})}"
           type="text/javascript"></script>
 
   <link crossorigin="anonymous" media="all" rel="stylesheet"

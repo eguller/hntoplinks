@@ -5,6 +5,7 @@ import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.repository.CrudRepository;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 public interface SubscriptionRepository extends CrudRepository<SubscriptionEntity, Long> {
   @Modifying
@@ -17,4 +18,6 @@ public interface SubscriptionRepository extends CrudRepository<SubscriptionEntit
   long countByMonthlyIsTrue();
 
   long countByAnnuallyIsTrue();
+
+  Optional<SubscriptionEntity> findBySubsUUID(String subscriptionId);
 }

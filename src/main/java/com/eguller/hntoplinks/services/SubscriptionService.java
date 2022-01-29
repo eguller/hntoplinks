@@ -1,5 +1,6 @@
 package com.eguller.hntoplinks.services;
 
+import com.eguller.hntoplinks.models.Subscription;
 import com.eguller.hntoplinks.repository.SubscriptionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
 @Service
 public class SubscriptionService {
@@ -24,4 +26,16 @@ public class SubscriptionService {
       logger.info("{} non-activated subscription was deleted.", deleted);
     }
   }
+
+  public void findById(String id) {
+
+  }
+
+  public Optional<Subscription> findBySubscriptionId(String subscriptionId) {
+    var subscriptionEntity = subscriptionRepository.findBySubsUUID(subscriptionId);
+    var subscription = subscriptionEntity.map(Subscription::entityToModel).orElse(null);
+    return Optional.of(subscription);
+  }
+
+
 }

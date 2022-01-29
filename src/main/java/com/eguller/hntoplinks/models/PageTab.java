@@ -4,8 +4,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 public enum PageTab {
-  today, week, month, year, all;
-  private static final String TITLE_SUFFIX = "Hacker News Top Links";
+  today, week, month, year, all, subscribe;
 
   public static Optional<PageTab> fromString(String pageTabStr) {
     return Arrays.stream(PageTab.values())
@@ -20,6 +19,7 @@ public enum PageTab {
       case month -> "Month - Hacker News Top Links";
       case year -> "Year - Hacker News Top Links";
       case all -> "All Time Best - Hacker News Top Links";
+      case subscribe -> "Subscribe";
       default -> "Hacker News Top Links";
     };
   }

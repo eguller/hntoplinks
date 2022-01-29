@@ -1,0 +1,85 @@
+<html layout:decorate="~{layouts/web}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+>
+
+<table bgcolor=#f6f6ef border=0 cellpadding=0 cellspacing=0 width="85%" layout:fragment="content">
+  <tr th:insert="fragments/menu.html :: menu">
+  </tr>
+  <tr style="height: 10px"></tr>
+  <tr>
+    <td colspan="2">
+      <form id="subscribe" method="POST" th:action="@{/subscribe}">
+        <table border=0 cellpadding=0 cellspacing=0 style="margin-left: 30%;">
+          <tr>
+            <td class="head" colspan="2">Subscribe Hacker News Top Links</td>
+          </tr>
+          <tr>
+            <td class="cright">Daily Top Links</td>
+            <td class="cleft">
+              <input th:if="${page.subscription.daily}" name="newSubscription.daily" type="checkbox" checked="checked"
+                     }/>
+              <input th:unless="${page.subscription.daily}" name="newSubscription.daily" type="checkbox" }/>
+            </td>
+          </tr>
+          <tr>
+            <td class="cright">Weekly Top Links</td>
+            <td class="cleft">
+              <input th:if="${page.subscription.weekly}" name="newSubscription.weekly" type="checkbox" checked="checked"
+                     }/>
+              <input th:unless="${page.subscription.weekly}" name="newSubscription.weekly" type="checkbox" }/>
+            </td>
+          </tr>
+          <tr>
+            <td class="cright">Monthly Top Links</td>
+            <td class="cleft">
+              <input th:if="${page.subscription.monthly}" name="newSubscription.monthly" type="checkbox"
+                     checked="checked"
+                     }/>
+              <input th:unless="${page.subscription.monthly}" name="newSubscription.monthly" type="checkbox" }/>
+            </td>
+          </tr>
+          <tr>
+            <td class="cright">Annually Top Links</td>
+            <td class="cleft">
+              <input th:if="${page.subscription.annually}" name="newSubscription.annually" type="checkbox"
+                     checked="checked"
+                     }/>
+              <input th:unless="${page.subscription.annually}" name="newSubscription.annually" type="checkbox" }/>
+            </td>
+          </tr>
+          <tr>
+            <td class="cright">Email</td>
+            <td class="cleft">
+              <input name="newSubscription.email" style="width: 160px;" type="text"
+                     th:value="${page.subscription.email}"/>
+            </td>
+          </tr>
+          <tr>
+            <td class="cright" colspan="2" style="padding-bottom: 5px; padding-top: 5px;">
+              <input onclick="submitSubscriptionForm();" type="button" value="Submit">
+            </td>
+          </tr>
+          <tr>
+            <td class="cright" colspan="2">
+              <div class="g-recaptcha" data-sitekey="6LeciUUeAAAAAMixTT0VHQ3JyCih1jpz_4zRK_0b"></div>
+            </td>
+          </tr>
+
+          <th:block th:if="${page.hasErrors()}">
+            <th:block th:each="story,iterStat : ${page.errors}">
+              <tr>
+                <td colspan="2">
+                  <ul class="error">
+                    <li>${error}</li>
+                  </ul>
+                </td>
+              </tr>
+            </th:block>
+          </th:block>
+        </table>
+      </form>
+    </td>
+  </tr>
+
+  #{footer /}
+</table>

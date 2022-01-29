@@ -2,12 +2,14 @@ package com.eguller.hntoplinks.controllers;
 
 import com.eguller.hntoplinks.models.AboutPage;
 import com.eguller.hntoplinks.models.PageTab;
-import com.eguller.hntoplinks.models.Statistics;
 import com.eguller.hntoplinks.models.StatsPage;
 import com.eguller.hntoplinks.models.Story;
 import com.eguller.hntoplinks.models.StoryPage;
+import com.eguller.hntoplinks.models.Subscription;
+import com.eguller.hntoplinks.models.SubscriptionPage;
 import com.eguller.hntoplinks.services.StatisticsService;
 import com.eguller.hntoplinks.services.StoryCacheService;
+import com.eguller.hntoplinks.services.SubscriptionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.annotation.RequestScope;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +39,9 @@ public class AppicationController {
   private              HttpServletRequest httpServletRequest;
   @Autowired
   private              StoryCacheService  storyCacheService;
+
+  @Autowired
+  private SubscriptionService subscriptionService;
 
   @Autowired
   private StatisticsService statisticsService;
@@ -56,7 +63,7 @@ public class AppicationController {
 
   @GetMapping("/today/{page:\\d+}")
   public String today(Model model, @PathVariable(value = "page") Integer page) {
-    StoryPage storyPage = getStoryPage(PageTab.today, page);
+    var storyPage = getStoryPage(PageTab.today, page);
     model.addAttribute("page", storyPage);
     return view("index");
   }
@@ -68,7 +75,7 @@ public class AppicationController {
 
   @GetMapping("/week/{page:\\d+}")
   public String week(Model model, @PathVariable(value = "page") Integer page) {
-    StoryPage storyPage = getStoryPage(PageTab.week, page);
+    var storyPage = getStoryPage(PageTab.week, page);
     model.addAttribute("page", storyPage);
     return view("index");
   }
@@ -80,7 +87,7 @@ public class AppicationController {
 
   @GetMapping("/month/{page:\\d+}")
   public String month(Model model, @PathVariable(value = "page") Integer page) {
-    StoryPage storyPage = getStoryPage(PageTab.month, page);
+    var storyPage = getStoryPage(PageTab.month, page);
     model.addAttribute("page", storyPage);
     return view("index");
   }
@@ -92,7 +99,7 @@ public class AppicationController {
 
   @GetMapping("/year/{page:\\d+}")
   public String year(Model model, @PathVariable(value = "page") Integer page) {
-    StoryPage storyPage = getStoryPage(PageTab.year, page);
+    var storyPage = getStoryPage(PageTab.year, page);
     model.addAttribute("page", storyPage);
     return view("index");
   }
@@ -104,24 +111,44 @@ public class AppicationController {
 
   @GetMapping("/all/{page:\\d+}")
   public String all(Model model, @PathVariable(value = "page") Integer page) {
-    StoryPage storyPage = getStoryPage(PageTab.all, page);
+    var storyPage = getStoryPage(PageTab.all, page);
     model.addAttribute("page", storyPage);
     return view("index");
   }
 
   @GetMapping("/about")
   public String about(Model model) {
-    AboutPage aboutPage = AboutPage.builder().title("About").build();
+    var aboutPage = AboutPage.builder().title("About").build();
     model.addAttribute("page", aboutPage);
     return view("about");
   }
 
   @GetMapping("/stats")
   public String stats(Model model) {
-    Statistics statistics = statisticsService.readStatistics();
+    var statistics = statisticsService.readStatistics();
     StatsPage statsPage = StatsPage.builder().title("Statistics").statistics(statistics).build();
     model.addAttribute("page", statsPage);
     return view("statistics");
+  }
+
+  @GetMapping("/subscribe")
+  public String subscribe_Get(Model model, @RequestParam(value = "id", required = false) String subscriptionId) {
+    var subscriptionPageBuilder = SubscriptionPage.builder();
+    if (subscriptionId != null) {
+      var subscription = subscriptionService.findBySubscriptionId(subscriptionId).orElse(Subscription.NEW);
+      subscriptionPageBuilder.subscription(subscription);
+    } else {
+      subscriptionPageBuilder.subscription(Subscription.NEW);
+    }
+    var subscriptionPage = subscriptionPageBuilder.build();
+    model.addAttribute("page", subscriptionPage);
+    return view("subscription");
+  }
+
+  @PostMapping("/subscribe")
+  public String subscribe_Post(Model model) {
+
+    return view("subscribe");
   }
 
   private StoryPage getStoryPage(PageTab pageTab, String pageStr) {

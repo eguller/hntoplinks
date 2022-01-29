@@ -1,5 +1,5 @@
 <html layout:decorate="~{layouts/mobile.html}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-<div data-role="main" layout:fragment="content-mobile">
+<div data-role="main" layout:fragment="content">
   <ul data-inset="true" data-role="listview">
     <th:block th:each="story,iterStat : ${page.storyList}">
       <th:block
