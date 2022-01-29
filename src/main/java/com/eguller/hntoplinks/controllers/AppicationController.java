@@ -6,6 +6,7 @@ import com.eguller.hntoplinks.models.StatsPage;
 import com.eguller.hntoplinks.models.Story;
 import com.eguller.hntoplinks.models.StoryPage;
 import com.eguller.hntoplinks.models.Subscription;
+import com.eguller.hntoplinks.models.SubscriptionForm;
 import com.eguller.hntoplinks.models.SubscriptionPage;
 import com.eguller.hntoplinks.services.StatisticsService;
 import com.eguller.hntoplinks.services.StoryCacheService;
@@ -18,6 +19,7 @@ import org.springframework.mobile.device.DeviceUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -146,8 +148,7 @@ public class AppicationController {
   }
 
   @PostMapping("/subscribe")
-  public String subscribe_Post(Model model) {
-
+  public String subscribe_Post(@ModelAttribute SubscriptionForm subscription, @ModelAttribute("g-recaptcha-response") String recaptchaResponse, Model model) {
     return view("subscribe");
   }
 

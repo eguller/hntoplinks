@@ -16,47 +16,48 @@
           <tr>
             <td class="cright">Daily Top Links</td>
             <td class="cleft">
-              <input th:if="${page.subscription.daily}" name="newSubscription.daily" type="checkbox" checked="checked"
+              <input th:if="${page.subscription.daily}" name="subscription.daily" type="checkbox" checked="checked"
                      }/>
-              <input th:unless="${page.subscription.daily}" name="newSubscription.daily" type="checkbox" }/>
+              <input th:unless="${page.subscription.daily}" name="subscription.daily" type="checkbox" }/>
             </td>
           </tr>
           <tr>
             <td class="cright">Weekly Top Links</td>
             <td class="cleft">
-              <input th:if="${page.subscription.weekly}" name="newSubscription.weekly" type="checkbox" checked="checked"
+              <input th:if="${page.subscription.weekly}" name="subscription.weekly" type="checkbox" checked="checked"
                      }/>
-              <input th:unless="${page.subscription.weekly}" name="newSubscription.weekly" type="checkbox" }/>
+              <input th:unless="${page.subscription.weekly}" name="subscription.weekly" type="checkbox" }/>
             </td>
           </tr>
           <tr>
             <td class="cright">Monthly Top Links</td>
             <td class="cleft">
-              <input th:if="${page.subscription.monthly}" name="newSubscription.monthly" type="checkbox"
+              <input th:if="${page.subscription.monthly}" name="subscription.monthly" type="checkbox"
                      checked="checked"
                      }/>
-              <input th:unless="${page.subscription.monthly}" name="newSubscription.monthly" type="checkbox" }/>
+              <input th:unless="${page.subscription.monthly}" name="subscription.monthly" type="checkbox" }/>
             </td>
           </tr>
           <tr>
             <td class="cright">Annually Top Links</td>
             <td class="cleft">
-              <input th:if="${page.subscription.annually}" name="newSubscription.annually" type="checkbox"
+              <input th:if="${page.subscription.annually}" name="subscription.annually" type="checkbox"
                      checked="checked"
                      }/>
-              <input th:unless="${page.subscription.annually}" name="newSubscription.annually" type="checkbox" }/>
+              <input th:unless="${page.subscription.annually}" name="subscription.annually" type="checkbox" }/>
             </td>
           </tr>
           <tr>
             <td class="cright">Email</td>
             <td class="cleft">
-              <input name="newSubscription.email" style="width: 160px;" type="text"
+              <input name="subscription.email" style="width: 160px;" type="text"
                      th:value="${page.subscription.email}"/>
             </td>
           </tr>
           <tr>
             <td class="cright" colspan="2" style="padding-bottom: 5px; padding-top: 5px;">
-              <input onclick="submitSubscriptionForm();" type="button" value="Submit">
+              <input type="submit" value="Submit">
+              <input type="hidden" name="id" th:value="${page.subscription.id}">
             </td>
           </tr>
           <tr>

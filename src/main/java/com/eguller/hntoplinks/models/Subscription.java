@@ -1,19 +1,23 @@
 package com.eguller.hntoplinks.models;
 
 import com.eguller.hntoplinks.entities.SubscriptionEntity;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Subscription {
   public static final Subscription NEW = builder().build();
-  private final String id;
-  private final String email;
-  private final boolean daily;
-  private final boolean weekly;
-  private final boolean monthly;
-  private final boolean annually;
+  private String id;
+  private String email;
+  private boolean daily;
+  private boolean weekly;
+  private boolean monthly;
+  private boolean annually;
 
   public static Subscription entityToModel(SubscriptionEntity entity){
     var subscription = builder()
