@@ -18,6 +18,7 @@ import org.springframework.mobile.device.Device;
 import org.springframework.mobile.device.DeviceUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +29,8 @@ import org.springframework.web.context.annotation.RequestScope;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
+import java.util.Optional;
+import java.util.TimeZone;
 
 
 @Controller
@@ -47,6 +50,7 @@ public class AppicationController {
 
   @Autowired
   private StatisticsService statisticsService;
+
 
   @GetMapping("/")
   public String index(Model model) {
@@ -135,22 +139,43 @@ public class AppicationController {
 
   @GetMapping("/subscribe")
   public String subscribe_Get(Model model, @RequestParam(value = "id", required = false) String subscriptionId) {
-    var subscriptionPageBuilder = SubscriptionPage.builder();
-    if (subscriptionId != null) {
-      var subscription = subscriptionService.findBySubscriptionId(subscriptionId).orElse(Subscription.NEW);
-      subscriptionPageBuilder.subscription(subscription);
-    } else {
-      subscriptionPageBuilder.subscription(Subscription.NEW);
-    }
-    var subscriptionPage = subscriptionPageBuilder.build();
+    var subscriptionPage = Optional.ofNullable(subscriptionId)
+      .flatMap(id -> subscriptionService.findBySubscriptionId(id))
+      .or(() -> Optional.of(Subscription.NEW))
+      .map(subscription -> SubscriptionPage.builder().subscription(subscription).build())
+      .get();
     model.addAttribute("page", subscriptionPage);
     return view("subscription");
   }
 
   @PostMapping("/subscribe")
-  public String subscribe_Post(@ModelAttribute SubscriptionForm subscription, @ModelAttribute("g-recaptcha-response") String recaptchaResponse, Model model) {
-    return view("subscribe");
+  public String subscribe_Post(@ModelAttribute SubscriptionForm subscriptionForm, @ModelAttribute("g-recaptcha-response") String recaptchaResponse, Model model, TimeZone timeZone) {
+    var subscriptionPageBuilder = SubscriptionPage.builder();
+    var subscription = subscriptionForm.getSubscription().toBuilder().timeZone(timeZone.getID()).build();
+    if (!StringUtils.hasLength(subscription.getEmail())) {
+      subscriptionPageBuilder.error("Email address can not be empty.");
+    } else {
+      //update
+      if (subscriptionForm.getSubscription().getId() != null) {
+        subscriptionService.findBySubscriptionId(subscription.getSubsUUID())
+          .ifPresent(existingSubscription -> {
+            if (existingSubscription.getEmail().equalsIgnoreCase(subscription.getEmail())) {
+              var updatedSubscription = subscriptionService.save(subscription);
+              subscriptionPageBuilder.subscription(updatedSubscription).message("Subscription is updated.");
+            }
+            //if id and email does not match, print message but do not do anything.
+            subscriptionPageBuilder.message("You have subscribed.");
+          });
+      } else {
+        var savedSubscription = subscriptionService.save(subscription);
+        subscriptionPageBuilder.subscription(savedSubscription).message("You have subscribed.");
+      }
+    }
+    model.addAttribute("page", subscriptionPageBuilder.build());
+    return view("subscription");
+
   }
+
 
   private StoryPage getStoryPage(PageTab pageTab, String pageStr) {
     int page = getPage(pageStr);

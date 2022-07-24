@@ -1,13 +1,16 @@
 package com.eguller.hntoplinks.entities;
 
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Table("subscription")
 public class SubscriptionEntity implements HnEntity {
+  @Id
   @Column("id")
   Long      id;
   @Column("email")
@@ -30,15 +33,15 @@ public class SubscriptionEntity implements HnEntity {
   boolean   activated = false;
 
   @Column("timezone")
-  String    timeZone;
+  String        timeZone;
   @Column("next_send_day")
-  LocalDate nextSendDay;
+  LocalDateTime nextSendDay;
   @Column("next_send_week")
-  LocalDate nextSendWeek;
+  LocalDateTime nextSendWeek;
   @Column("next_send_month")
-  LocalDate nextSendMonth;
+  LocalDateTime nextSendMonth;
   @Column("next_send_year")
-  LocalDate nextSendYear;
+  LocalDateTime nextSendYear;
 
   public Long getId() {
     return id;
@@ -129,35 +132,36 @@ public class SubscriptionEntity implements HnEntity {
     this.timeZone = timeZone;
   }
 
-  public LocalDate getNextSendDay() {
+  public LocalDateTime
+  getNextSendDay() {
     return nextSendDay;
   }
 
-  public void setNextSendDay(LocalDate nextSendDay) {
+  public void setNextSendDay(LocalDateTime nextSendDay) {
     this.nextSendDay = nextSendDay;
   }
 
-  public LocalDate getNextSendWeek() {
+  public LocalDateTime getNextSendWeek() {
     return nextSendWeek;
   }
 
-  public void setNextSendWeek(LocalDate nextSendWeek) {
+  public void setNextSendWeek(LocalDateTime nextSendWeek) {
     this.nextSendWeek = nextSendWeek;
   }
 
-  public LocalDate getNextSendMonth() {
+  public LocalDateTime getNextSendMonth() {
     return nextSendMonth;
   }
 
-  public void setNextSendMonth(LocalDate nextSendMonth) {
+  public void setNextSendMonth(LocalDateTime nextSendMonth) {
     this.nextSendMonth = nextSendMonth;
   }
 
-  public LocalDate getNextSendYear() {
+  public LocalDateTime getNextSendYear() {
     return nextSendYear;
   }
 
-  public void setNextSendYear(LocalDate nextSendYear) {
+  public void setNextSendYear(LocalDateTime nextSendYear) {
     this.nextSendYear = nextSendYear;
   }
 }

@@ -20,4 +20,6 @@ public interface SubscriptionRepository extends CrudRepository<SubscriptionEntit
   long countByAnnuallyIsTrue();
 
   Optional<SubscriptionEntity> findBySubsUUID(String subscriptionId);
+
+  Optional<SubscriptionEntity> findByEmail(String email);
 }

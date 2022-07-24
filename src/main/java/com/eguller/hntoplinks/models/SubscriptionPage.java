@@ -19,7 +19,14 @@ public class SubscriptionPage extends Page {
   @Singular
   private final List<String> errors;
 
-  public boolean hasErrors(){
+  @Singular
+  private final List<String> messages;
+
+  public boolean hasErrors() {
     return !CollectionUtils.isEmpty(errors);
+  }
+
+  public boolean hasMessages() {
+    return !CollectionUtils.isEmpty(messages);
   }
 }

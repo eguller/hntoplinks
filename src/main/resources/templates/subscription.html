@@ -56,31 +56,44 @@
           </tr>
           <tr>
             <td class="cright" colspan="2" style="padding-bottom: 5px; padding-top: 5px;">
-              <input type="submit" value="Submit">
+              <input name="subscription.submit" type="submit" value="Submit" disabled>
               <input type="hidden" name="id" th:value="${page.subscription.id}">
             </td>
           </tr>
-          <tr>
-            <td class="cright" colspan="2">
-              <div class="g-recaptcha" data-sitekey="6LeciUUeAAAAAMixTT0VHQ3JyCih1jpz_4zRK_0b"></div>
-            </td>
-          </tr>
 
-          <th:block th:if="${page.hasErrors()}">
-            <th:block th:each="story,iterStat : ${page.errors}">
+          <th:block th:if="${page.hasMessages()}">
+            <th:block th:each="message : ${page.messages}">
               <tr>
                 <td colspan="2">
-                  <ul class="error">
-                    <li>${error}</li>
+                  <ul>
+                    <li th:value="${message}"></li>
                   </ul>
                 </td>
               </tr>
             </th:block>
           </th:block>
+
+          <th:block th:if="${page.hasErrors()}">
+            <th:block th:each="error : ${page.errors}">
+              <tr>
+                <td colspan="2">
+                  <ul class="error">
+                    <li th:value="${error}"></li>
+                  </ul>
+                </td>
+              </tr>
+            </th:block>
+          </th:block>
+          <tr>
+            <td class="cright" colspan="2">
+              <div class="g-recaptcha" data-sitekey="6LeciUUeAAAAAMixTT0VHQ3JyCih1jpz_4zRK_0b"
+                   data-callback="enableSubscriptionFormSubmit"></div>
+            </td>
+          </tr>
         </table>
       </form>
     </td>
   </tr>
 
-  #{footer /}
+   <tr th:replace="fragments/footer.html :: footer"/>
 </table>

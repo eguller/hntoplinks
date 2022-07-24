@@ -1,7 +1,12 @@
 package com.eguller.hntoplinks.util;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAccessor;
+import java.time.temporal.TemporalAdjusters;
 
 public class DateUtils {
   public static String since(LocalDateTime time) {
@@ -21,9 +26,9 @@ public class DateUtils {
 
     long weeksBetween = ChronoUnit.WEEKS.between(time, LocalDateTime.now());
     if (weeksBetween == 1) {
-      return yearsBetween + " week ago";
+      return weeksBetween + " week ago";
     } else if (weeksBetween > 1) {
-      return yearsBetween + " weeks ago";
+      return weeksBetween + " weeks ago";
     }
 
     long daysBetween = ChronoUnit.DAYS.between(time, LocalDateTime.now());
@@ -50,5 +55,29 @@ public class DateUtils {
     } else {
       return "just now";
     }
+  }
+
+  public static ZoneId parseZoneId(String zoneId) {
+    try {
+      return ZoneId.of(zoneId);
+    } catch (Exception ex) {
+      return ZoneId.of("Etc/UTC");
+    }
+  }
+
+  public static LocalDateTime tomorrow_7_AM(ZoneId targetZone) {
+    return LocalDateTime.now(targetZone).plusDays(1).withHour(7).withMinute(0).withSecond(0);
+  }
+
+  public static LocalDateTime nextMonday_7_AM(ZoneId targetZone) {
+    return LocalDateTime.now(targetZone).with(TemporalAdjusters.next(DayOfWeek.MONDAY)).withHour(7).withMinute(0).withSecond(0);
+  }
+
+  public static LocalDateTime firstDayOfNextMonth_7_AM(ZoneId targetZone) {
+    return LocalDateTime.now(targetZone).with(TemporalAdjusters.firstDayOfNextMonth()).withHour(7).withMinute(0).withSecond(0);
+  }
+
+  public static LocalDateTime firstDayOfNextYear_7_AM(ZoneId targetZone) {
+    return LocalDateTime.now(targetZone).with(TemporalAdjusters.firstDayOfNextYear()).withHour(7).withMinute(0).withSecond(0);
   }
 }
