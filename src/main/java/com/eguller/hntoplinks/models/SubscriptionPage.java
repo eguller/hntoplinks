@@ -16,6 +16,8 @@ public class SubscriptionPage extends Page {
   @Builder.Default
   private       PageTab      activeTab = PageTab.subscribe;
   private final Subscription subscription;
+
+  private boolean captchaEnabled;
   @Singular
   private final List<String> errors;
 

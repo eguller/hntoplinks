@@ -56,17 +56,25 @@
           </tr>
           <tr>
             <td class="cright" colspan="2" style="padding-bottom: 5px; padding-top: 5px;">
-              <input name="subscription.submit" type="submit" value="Submit" disabled>
-              <input type="hidden" name="id" th:value="${page.subscription.id}">
+              <th:block th:if="${page.captchaEnabled}">
+                <input name="subscription.submit" type="submit" value="Submit" disabled>
+              </th:block>
+              <th:block th:unless="${page.captchaEnabled}">
+                <input name="subscription.submit" type="submit" value="Submit">
+              </th:block>
+              <input type="hidden" name="subscription.subsUUID" th:value="${page.subscription.subsUUID}">
+              <th:block th:unless="${page.captchaEnabled}">
+                <input type="hidden" name="g-recaptcha-response" th:value="dummy">
+              </th:block>
             </td>
           </tr>
 
           <th:block th:if="${page.hasMessages()}">
-            <th:block th:each="message : ${page.messages}">
+            <th:block th:each="message: ${page.messages}">
               <tr>
                 <td colspan="2">
                   <ul>
-                    <li th:value="${message}"></li>
+                    <li th:text="${message}"></li>
                   </ul>
                 </td>
               </tr>
@@ -74,26 +82,28 @@
           </th:block>
 
           <th:block th:if="${page.hasErrors()}">
-            <th:block th:each="error : ${page.errors}">
+            <th:block th:each="error: ${page.errors}">
               <tr>
                 <td colspan="2">
                   <ul class="error">
-                    <li th:value="${error}"></li>
+                    <li th:text="${error}"></li>
                   </ul>
                 </td>
               </tr>
             </th:block>
           </th:block>
-          <tr>
-            <td class="cright" colspan="2">
-              <div class="g-recaptcha" data-sitekey="6LeciUUeAAAAAMixTT0VHQ3JyCih1jpz_4zRK_0b"
-                   data-callback="enableSubscriptionFormSubmit"></div>
-            </td>
-          </tr>
+          <th:block th:if="${page.captchaEnabled}">
+            <tr>
+              <td class="cright" colspan="2">
+                <div class="g-recaptcha" data-sitekey="6LeciUUeAAAAAMixTT0VHQ3JyCih1jpz_4zRK_0b"
+                     data-callback="enableSubscriptionFormSubmit"></div>
+              </td>
+            </tr>
+          </th:block>
         </table>
       </form>
     </td>
   </tr>
 
-   <tr th:replace="fragments/footer.html :: footer"/>
+  <tr th:replace="fragments/footer.html :: footer"/>
 </table>

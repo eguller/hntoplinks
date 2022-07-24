@@ -3,8 +3,11 @@
       xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta content="WKJOe5IW0VLyH8Fiot8242DCluzN-qpVA27nXMRXXKI" name="google-site-verification"/>
+  <th:block
+    th:if="${page instanceof T(com.eguller.hntoplinks.models.SubscriptionPage) and page.captchaEnabled == true}">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  </th:block>
 
-  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
   <script th:src="@{{javascripts}/common.js(javascripts=${@environment.getProperty('hntoplinks.js')})}"
           type="text/javascript"></script>
 

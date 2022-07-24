@@ -14,6 +14,7 @@ import com.eguller.hntoplinks.services.SubscriptionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mobile.device.Device;
 import org.springframework.mobile.device.DeviceUtils;
 import org.springframework.stereotype.Controller;
@@ -50,6 +51,9 @@ public class AppicationController {
 
   @Autowired
   private StatisticsService statisticsService;
+
+   @Value("${hntoplinks.captcha.enabled}")
+   private boolean captchaEnabled;
 
 
   @GetMapping("/")
@@ -142,11 +146,13 @@ public class AppicationController {
     var subscriptionPage = Optional.ofNullable(subscriptionId)
       .flatMap(id -> subscriptionService.findBySubscriptionId(id))
       .or(() -> Optional.of(Subscription.NEW))
-      .map(subscription -> SubscriptionPage.builder().subscription(subscription).build())
+      .map(subscription -> SubscriptionPage.builder().captchaEnabled(captchaEnabled).subscription(subscription).build())
       .get();
+
     model.addAttribute("page", subscriptionPage);
     return view("subscription");
   }
+
 
   @PostMapping("/subscribe")
   public String subscribe_Post(@ModelAttribute SubscriptionForm subscriptionForm, @ModelAttribute("g-recaptcha-response") String recaptchaResponse, Model model, TimeZone timeZone) {
@@ -156,7 +162,7 @@ public class AppicationController {
       subscriptionPageBuilder.error("Email address can not be empty.");
     } else {
       //update
-      if (subscriptionForm.getSubscription().getId() != null) {
+      if (subscriptionForm.getSubscription().getSubsUUID() != null) {
         subscriptionService.findBySubscriptionId(subscription.getSubsUUID())
           .ifPresent(existingSubscription -> {
             if (existingSubscription.getEmail().equalsIgnoreCase(subscription.getEmail())) {
@@ -171,6 +177,7 @@ public class AppicationController {
         subscriptionPageBuilder.subscription(savedSubscription).message("You have subscribed.");
       }
     }
+    subscriptionPageBuilder.captchaEnabled(captchaEnabled);
     model.addAttribute("page", subscriptionPageBuilder.build());
     return view("subscription");
 

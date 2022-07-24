@@ -15,7 +15,6 @@ import java.util.function.Function;
 @AllArgsConstructor
 public class Subscription {
   public static final Subscription NEW = builder().build();
-  private Long id;
   private String subsUUID;
   private String email;
   private boolean daily;
@@ -27,7 +26,6 @@ public class Subscription {
   public static Subscription entityToModel(SubscriptionEntity entity){
     var subscription = builder()
       .email(entity.getEmail())
-      .id(entity.getId())
       .subsUUID(entity.getSubsUUID())
       .daily(entity.isDaily())
       .weekly(entity.isWeekly())
@@ -44,7 +42,6 @@ public class Subscription {
 
   public static SubscriptionEntity toEntity(Subscription subscription){
     var entity = new SubscriptionEntity();
-    entity.setId(subscription.getId());
     entity.setSubsUUID(subscription.getSubsUUID());
     entity.setEmail(subscription.getEmail().toLowerCase());
     entity.setDaily(subscription.isDaily());

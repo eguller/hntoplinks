@@ -2,6 +2,10 @@
   color: red;
 }
 
+.green {
+  color: limegreen;
+}
+
 th.statleft, td.statleft {
   text-align: left;
   padding-left: 10px;
