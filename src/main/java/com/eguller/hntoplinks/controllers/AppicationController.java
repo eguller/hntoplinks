@@ -11,6 +11,7 @@ import com.eguller.hntoplinks.models.SubscriptionPage;
 import com.eguller.hntoplinks.services.StatisticsService;
 import com.eguller.hntoplinks.services.StoryCacheService;
 import com.eguller.hntoplinks.services.SubscriptionService;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,8 +53,8 @@ public class AppicationController {
   @Autowired
   private StatisticsService statisticsService;
 
-   @Value("${hntoplinks.captcha.enabled}")
-   private boolean captchaEnabled;
+  @Value("${hntoplinks.captcha.enabled}")
+  private boolean captchaEnabled;
 
 
   @GetMapping("/")
@@ -158,24 +159,29 @@ public class AppicationController {
   public String subscribe_Post(@ModelAttribute SubscriptionForm subscriptionForm, @ModelAttribute("g-recaptcha-response") String recaptchaResponse, Model model, TimeZone timeZone) {
     var subscriptionPageBuilder = SubscriptionPage.builder();
     var subscription = subscriptionForm.getSubscription().toBuilder().timeZone(timeZone.getID()).build();
+    subscriptionPageBuilder.subscription(subscription);
     if (!StringUtils.hasLength(subscription.getEmail())) {
       subscriptionPageBuilder.error("Email address can not be empty.");
+    } else if (!EmailValidator.getInstance().isValid(subscription.getEmail())){
+      subscriptionPageBuilder.error("Email address is not valid.");
     } else {
-      //update
-      if (subscriptionForm.getSubscription().getSubsUUID() != null) {
-        subscriptionService.findBySubscriptionId(subscription.getSubsUUID())
-          .ifPresent(existingSubscription -> {
-            if (existingSubscription.getEmail().equalsIgnoreCase(subscription.getEmail())) {
+      subscriptionService.findByEmail(subscription.getEmail().toLowerCase())
+        .ifPresentOrElse(existingSubscription -> {
+            if (existingSubscription.getSubsUUID().equalsIgnoreCase(subscription.getSubsUUID())) {
               var updatedSubscription = subscriptionService.save(subscription);
-              subscriptionPageBuilder.subscription(updatedSubscription).message("Subscription is updated.");
+              subscriptionPageBuilder.subscription(updatedSubscription);
             }
             //if id and email does not match, print message but do not do anything.
-            subscriptionPageBuilder.message("You have subscribed.");
-          });
-      } else {
-        var savedSubscription = subscriptionService.save(subscription);
-        subscriptionPageBuilder.subscription(savedSubscription).message("You have subscribed.");
-      }
+            subscriptionPageBuilder.message("Subscription has been updated.");
+          },
+          () -> {
+            subscription.setSubsUUID(null);
+            var savedSubscription = subscriptionService.save(subscription);
+            subscriptionPageBuilder.message("Subscription has been saved.");
+            subscriptionPageBuilder.subscription(savedSubscription);
+          }
+        );
+
     }
     subscriptionPageBuilder.captchaEnabled(captchaEnabled);
     model.addAttribute("page", subscriptionPageBuilder.build());

@@ -33,6 +33,8 @@ dependencies {
   implementation group: 'nz.net.ultraq.thymeleaf', name: 'thymeleaf-layout-dialect', version: '3.0.0'
   implementation 'org.flywaydb:flyway-core'
   implementation group: 'org.springframework.mobile', name: 'spring-mobile-device', version: '1.1.5.RELEASE'
+  implementation 'commons-validator:commons-validator:1.7'
+
   compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.22'
   annotationProcessor 'org.projectlombok:lombok:1.18.22'
   developmentOnly 'org.springframework.boot:spring-boot-devtools'
