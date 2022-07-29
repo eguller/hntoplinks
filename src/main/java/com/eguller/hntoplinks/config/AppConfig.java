@@ -13,19 +13,28 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.relational.core.mapping.event.BeforeSaveEvent;
 import org.springframework.mobile.device.DeviceHandlerMethodArgumentResolver;
 import org.springframework.mobile.device.DeviceResolverHandlerInterceptor;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.spring5.SpringTemplateEngine;
+import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
+import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import java.lang.invoke.MethodHandles;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 @Configuration
 @EnableScheduling
+@EnableAsync
 public class AppConfig implements WebMvcConfigurer {
   private static final Logger   logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   @Autowired
@@ -72,5 +81,25 @@ public class AppConfig implements WebMvcConfigurer {
         ((HnEntity) entity).setId(sequence.getNextId());
       }
     };
+  }
+
+  @Bean
+  public TemplateEngine emailTemplateEngine() {
+    final SpringTemplateEngine templateEngine = new SpringTemplateEngine();
+    // Resolver for HTML emails (except the editable one)
+    templateEngine.addTemplateResolver(htmlTemplateResolver());
+    return templateEngine;
+  }
+
+  private ITemplateResolver htmlTemplateResolver() {
+    final ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
+    templateResolver.setOrder(Integer.valueOf(2));
+    templateResolver.setResolvablePatterns(new HashSet<>(Arrays.asList("/html/*", "/fragments/*")));
+    templateResolver.setPrefix("/templates/email");
+    templateResolver.setSuffix(".html");
+    templateResolver.setTemplateMode(TemplateMode.HTML);
+    templateResolver.setCharacterEncoding("UTF-8");
+    templateResolver.setCacheable(false);
+    return templateResolver;
   }
 }

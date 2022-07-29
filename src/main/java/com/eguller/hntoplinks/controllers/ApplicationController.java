@@ -8,6 +8,8 @@ import com.eguller.hntoplinks.models.StoryPage;
 import com.eguller.hntoplinks.models.Subscription;
 import com.eguller.hntoplinks.models.SubscriptionForm;
 import com.eguller.hntoplinks.models.SubscriptionPage;
+import com.eguller.hntoplinks.services.EmailService;
+import com.eguller.hntoplinks.services.RecaptchaVerifier;
 import com.eguller.hntoplinks.services.StatisticsService;
 import com.eguller.hntoplinks.services.StoryCacheService;
 import com.eguller.hntoplinks.services.SubscriptionService;
@@ -37,7 +39,7 @@ import java.util.TimeZone;
 
 @Controller
 @RequestScope
-public class AppicationController {
+public class ApplicationController {
   private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private static final int                MAX_PAGES      = 10;
@@ -52,6 +54,12 @@ public class AppicationController {
 
   @Autowired
   private StatisticsService statisticsService;
+
+  @Autowired
+  private RecaptchaVerifier recaptchaVerifier;
+
+  @Autowired
+  private EmailService emailService;
 
   @Value("${hntoplinks.captcha.enabled}")
   private boolean captchaEnabled;
@@ -179,6 +187,7 @@ public class AppicationController {
             var savedSubscription = subscriptionService.save(subscription);
             subscriptionPageBuilder.message("Subscription has been saved.");
             subscriptionPageBuilder.subscription(savedSubscription);
+            emailService.sendSubscriptionEmail(savedSubscription);
           }
         );
 
@@ -229,7 +238,7 @@ public class AppicationController {
 
   private String view(String view) {
     Device device = DeviceUtils.getCurrentDevice(httpServletRequest);
-    if (device.isNormal()) {
+    if (device == null || device.isNormal()) {
       return view;
     } else {
       return view + "_mobile";
