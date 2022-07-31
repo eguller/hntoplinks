@@ -1,5 +1,0 @@
-# You can specialize this file for each language.
-# For example, for French create a messages.fr file
-#
-validation.isTrue.timeperiod = At least one time period must be selected.
-validation.required.email = Email address is required.

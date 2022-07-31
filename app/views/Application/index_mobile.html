@@ -1,9 +1,0 @@
-#{extends 'mobile.html' /}
-<ul data-inset="true" data-role="listview">
-  #{list items, as:'storyEntity'}
-  #{item_mobile storyEntity:storyEntity , index: item_index, page:page /}
-  #{/list}
-  #{if items!= null && items.size() == 30 }
-  <li><a href="/${activeTab}/${page+1}" rel="nofollow">More</a>
-    #{/if}
-</ul>
