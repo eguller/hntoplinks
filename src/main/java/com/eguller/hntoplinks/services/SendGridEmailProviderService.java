@@ -14,8 +14,6 @@ import java.util.Map;
 @Service
 @ConditionalOnProperty(value = "hntoplinks.email-provider", havingValue = "sendgrid", matchIfMissing = false)
 public class SendGridEmailProviderService implements EmailProviderService {
-  private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-
   @Value("${hntoplinks.sendgrid.api-key}")
   private String apiKey;
 
