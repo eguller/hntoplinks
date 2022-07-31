@@ -224,6 +224,18 @@ public class ApplicationController {
           subscriptionPageBuilder.subscription(savedSubscription);
           emailService.sendSubscriptionEmail(savedSubscription);
           statisticsService.userSubscribed();
+          if(savedSubscription.isDaily()){
+            statisticsService.userSubscribedForDaily();
+          }
+          if(savedSubscription.isWeekly()){
+            statisticsService.userSubscribedForWeekly();
+          }
+          if(savedSubscription.isMonthly()){
+            statisticsService.userSubscribedForMonthly();
+          }
+          if(savedSubscription.isAnnually()){
+            statisticsService.userSubscribedForAnnually();
+          }
         }
       );
 
