@@ -1,6 +1,6 @@
 package com.eguller.hntoplinks.controllers;
 
-import com.eguller.hntoplinks.models.AboutPage;
+import com.eguller.hntoplinks.models.Page;
 import com.eguller.hntoplinks.models.PageTab;
 import com.eguller.hntoplinks.models.StatsPage;
 import com.eguller.hntoplinks.models.Story;
@@ -137,7 +137,7 @@ public class ApplicationController {
 
   @GetMapping("/about")
   public String about(Model model) {
-    var aboutPage = AboutPage.builder().title("About").build();
+    var aboutPage = Page.pageBuilder().title("About").build();
     model.addAttribute("page", aboutPage);
     return view("about");
   }
@@ -162,37 +162,71 @@ public class ApplicationController {
     return view("subscription");
   }
 
+  @GetMapping("/unsubscribe/{id}")
+  public String unsubscribe_Get(Model model, @PathVariable(value = "id") String subscriptionId) {
+    var unsubscribePage = Page.pageBuilder().title("Unsubscribe").build();
+    var isUnsubscribed = subscriptionService.unsubscribe(subscriptionId);
+    if(isUnsubscribed){
+      statisticsService.userUnsubscribed();
+    }
+    model.addAttribute("page", unsubscribePage);
+    return view("unsubscribe");
+  }
+
+  @GetMapping("/update-subscription/{id}")
+  public String updateSubscription_Get(Model model, @PathVariable(value = "id") String subscriptionId) {
+    var subscription = subscriptionService.findBySubscriptionId(subscriptionId);
+    var subscriptionPageBuilder = SubscriptionPage.builder().title("Update Subscription").subscription(subscription.orElse(null));
+
+    model.addAttribute("page", subscriptionPageBuilder.build());
+    return view("subscription");
+  }
+
 
   @PostMapping("/subscribe")
   public String subscribe_Post(@ModelAttribute SubscriptionForm subscriptionForm, @ModelAttribute("g-recaptcha-response") String recaptchaResponse, Model model, TimeZone timeZone) {
     var subscriptionPageBuilder = SubscriptionPage.builder();
-    var subscription = subscriptionForm.getSubscription().toBuilder().timeZone(timeZone.getID()).build();
+    var subscription = subscriptionForm.getSubscription().toBuilder().timeZone(timeZone.toZoneId()).build();
     subscriptionPageBuilder.subscription(subscription);
+    subscriptionPageBuilder.captchaEnabled(captchaEnabled);
+    var hasError = false;
     if (!StringUtils.hasLength(subscription.getEmail())) {
       subscriptionPageBuilder.error("Email address can not be empty.");
-    } else if (!EmailValidator.getInstance().isValid(subscription.getEmail())){
+      hasError = true;
+    } else if (!EmailValidator.getInstance().isValid(subscription.getEmail())) {
       subscriptionPageBuilder.error("Email address is not valid.");
-    } else {
-      subscriptionService.findByEmail(subscription.getEmail().toLowerCase())
-        .ifPresentOrElse(existingSubscription -> {
-            if (existingSubscription.getSubsUUID().equalsIgnoreCase(subscription.getSubsUUID())) {
-              var updatedSubscription = subscriptionService.save(subscription);
-              subscriptionPageBuilder.subscription(updatedSubscription);
-            }
-            //if id and email does not match, print message but do not do anything.
-            subscriptionPageBuilder.message("Subscription has been updated.");
-          },
-          () -> {
-            subscription.setSubsUUID(null);
-            var savedSubscription = subscriptionService.save(subscription);
-            subscriptionPageBuilder.message("Subscription has been saved.");
-            subscriptionPageBuilder.subscription(savedSubscription);
-            emailService.sendSubscriptionEmail(savedSubscription);
-          }
-        );
-
+      hasError = true;
     }
-    subscriptionPageBuilder.captchaEnabled(captchaEnabled);
+
+    if (!subscription.hasSubscription()) {
+      subscriptionPageBuilder.error("Please select at least one of the daily, weekly, monthly or annually subscriptions.");
+      hasError = true;
+    }
+
+    if (hasError) {
+      model.addAttribute("page", subscriptionPageBuilder.build());
+      return view("subscription");
+    }
+
+    subscriptionService.findByEmail(subscription.getEmail().toLowerCase())
+      .ifPresentOrElse(existingSubscription -> {
+          if (existingSubscription.getSubsUUID().equalsIgnoreCase(subscription.getSubsUUID())) {
+            var updatedSubscription = subscriptionService.save(subscription);
+            subscriptionPageBuilder.subscription(updatedSubscription);
+          }
+          //if id and email does not match, print message but do not do anything.
+          subscriptionPageBuilder.message("Subscription has been updated.");
+        },
+        () -> {
+          subscription.setSubsUUID(null);
+          var savedSubscription = subscriptionService.save(subscription);
+          subscriptionPageBuilder.message("You have subscribed.");
+          subscriptionPageBuilder.subscription(savedSubscription);
+          emailService.sendSubscriptionEmail(savedSubscription);
+          statisticsService.userSubscribed();
+        }
+      );
+
     model.addAttribute("page", subscriptionPageBuilder.build());
     return view("subscription");
 

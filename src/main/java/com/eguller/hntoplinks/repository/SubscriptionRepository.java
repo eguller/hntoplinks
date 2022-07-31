@@ -29,7 +29,7 @@ public interface SubscriptionRepository extends CrudRepository<SubscriptionEntit
   @Query("""
      select * from subscription
      where
-     actived = true
+     activated = true
      and
      (
         (daily = true and next_send_day < now())
@@ -41,5 +41,7 @@ public interface SubscriptionRepository extends CrudRepository<SubscriptionEntit
         (annually = true and next_send_year < now ())
      )
     """)
-  List<SubscriptionEntity> findSubscriptionToSendEmail();
+  List<SubscriptionEntity> findSubscriptionsToSendEmail();
+
+  int deleteBySubsUUID(String uuid);
 }

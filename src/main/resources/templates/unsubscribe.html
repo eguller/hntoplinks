@@ -1,0 +1,18 @@
+<html layout:decorate="~{layouts/web}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+>
+
+<table bgcolor=#f6f6ef border=0 cellpadding=0 cellspacing=0 layout:fragment="content" width="85%">
+  <tr th:insert="fragments/menu.html :: menu">
+  </tr>
+  <tr style="height: 10px"></tr>
+  <tr>
+    <td class="about">
+      <p>
+        You have unsubscribed.
+      </p>
+    </td>
+  </tr>
+  <tr th:replace="fragments/footer.html :: footer (footerSet='home')"/>
+</table>
+</html>

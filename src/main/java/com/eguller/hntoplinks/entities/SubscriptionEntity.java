@@ -7,6 +7,8 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Objects;
+import java.util.function.Function;
 
 @Table("subscription")
 public class SubscriptionEntity implements HnEntity {
@@ -42,6 +44,12 @@ public class SubscriptionEntity implements HnEntity {
   LocalDateTime nextSendMonth;
   @Column("next_send_year")
   LocalDateTime nextSendYear;
+
+  private static Function<LocalDateTime, Boolean> isSubscriptionExpired = localDateTime -> {
+    var expired = (localDateTime == null || LocalDateTime.now().isAfter(localDateTime));
+    return expired;
+  };
+
 
   public Long getId() {
     return id;
@@ -163,5 +171,38 @@ public class SubscriptionEntity implements HnEntity {
 
   public void setNextSendYear(LocalDateTime nextSendYear) {
     this.nextSendYear = nextSendYear;
+  }
+
+  public boolean isDailyExpired() {
+    var expired = isSubscriptionExpired.apply(this.nextSendDay);
+    return expired;
+  }
+
+  public boolean isWeeklyExpired(){
+    var expired = isSubscriptionExpired.apply(this.nextSendWeek);
+    return expired;
+  }
+
+  public boolean isMonthlyExpired(){
+    var expired = isSubscriptionExpired.apply(this.nextSendMonth);
+    return expired;
+  }
+
+  public boolean isAnnuallyExpired(){
+    var expired = isSubscriptionExpired.apply(this.nextSendYear);
+    return expired;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    SubscriptionEntity that = (SubscriptionEntity) o;
+    return Objects.equals(id, that.id);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id);
   }
 }

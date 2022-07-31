@@ -6,7 +6,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Optional;
+import java.util.TimeZone;
 import java.util.function.Function;
 
 @Data
@@ -18,20 +21,29 @@ public class Subscription {
   private String subsUUID;
   private String email;
   private boolean daily;
+  private LocalDateTime nextSendDay;
   private boolean weekly;
+  private LocalDateTime nextSendWeek;
   private boolean monthly;
+  private LocalDateTime nextSendMonth;
   private boolean annually;
-  private String timeZone;
+  private LocalDateTime nextSendYear;
+
+  @Builder.Default
+  private ZoneId        timeZone = ZoneId.systemDefault();
 
   public static Subscription entityToModel(SubscriptionEntity entity){
     var subscription = builder()
       .email(entity.getEmail())
       .subsUUID(entity.getSubsUUID())
       .daily(entity.isDaily())
+      .nextSendDay(entity.getNextSendDay())
       .weekly(entity.isWeekly())
+      .nextSendWeek(entity.getNextSendWeek())
       .monthly(entity.isMonthly())
+      .nextSendMonth(entity.getNextSendMonth())
       .annually(entity.isAnnually())
-
+      .nextSendYear(entity.getNextSendYear())
       .build();
     return subscription;
   }
@@ -49,6 +61,10 @@ public class Subscription {
     entity.setMonthly(subscription.isMonthly());
     entity.setAnnually(subscription.isAnnually());
     return entity;
+  }
+
+  public boolean hasSubscription(){
+    return (daily || weekly || monthly || annually);
   }
 
 }

@@ -16,6 +16,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.ui.ExtendedModelMap;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -66,7 +67,7 @@ public class StoryServiceTest {
     var subscription = Subscription.builder()
       .email(emailAddress)
       .daily(true)
-      .timeZone("UTC")
+      .timeZone(ZoneId.of("UTC"))
       .build();
     var subscriptionForm = SubscriptionForm.builder().subscription(subscription).build();
 

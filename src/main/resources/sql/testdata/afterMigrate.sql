@@ -101,8 +101,6 @@ insert into item (id, comhead, comment, postdate, hnid, lastupdate, points, titl
 values (nextval('hibernate_sequence'), 'hntoplinks.com', '44', DATEADD(HOUR, -12, CURRENT_DATE()), 34,
         DATEADD(HOUR, 1, CURRENT_DATE()), 266, ' Test - 34', 'https://hntoplinks.com/34', 'eguller');
 insert into statistic (id, stat_key, stat_value)
-values (nextval('hibernate_sequence'), 'ACTIVE_SUBSCRIBER', '509');
-insert into statistic (id, stat_key, stat_value)
 values (nextval('hibernate_sequence'), 'MONTHLY_SUBSCRIBER', '135');
 insert into statistic (id, stat_key, stat_value)
 values (nextval('hibernate_sequence'), 'ANNUALLY_SUBSCRIBER', '110');

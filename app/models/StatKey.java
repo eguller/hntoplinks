@@ -7,7 +7,6 @@ package models;
  */
 public enum StatKey {
   SUBSCRIBERS("Subscriber"),
-  ACTIVE_SUBSCRIBER("Active Subscriber"),
   DAILY_SUBSCRIBER("Daily Subscriber"),
   WEEKLY_SUBSCRIBER("Weekly Subscriber"),
   MONTHLY_SUBSCRIBER("Monthly Subscriber"),

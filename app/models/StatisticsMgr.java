@@ -188,7 +188,6 @@ public class StatisticsMgr {
   public List<Statistic> getSnapshot() {
     List<Statistic> stats = new ArrayList<Statistic>(16);
     stats.add(new Statistic(StatKey.SUBSCRIBERS, String.valueOf(subscriberCount.get())));
-    stats.add(new Statistic(StatKey.ACTIVE_SUBSCRIBER, String.valueOf(activeSubscriberCount.get())));
     stats.add(new Statistic(StatKey.DAILY_SUBSCRIBER, String.valueOf(dailySubscriberCount.get())));
     stats.add(new Statistic(StatKey.WEEKLY_SUBSCRIBER, String.valueOf(weeklySubscriberCount.get())));
     stats.add(new Statistic(StatKey.MONTHLY_SUBSCRIBER, String.valueOf(monthlySubscriberCount.get())));

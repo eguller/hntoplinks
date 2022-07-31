@@ -12,11 +12,12 @@ import org.springframework.web.context.annotation.ApplicationScope;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @ApplicationScope
 public class StatisticsService {
-  private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+  private static final Logger            logger              = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
 
   @Value("${hntoplinks.stats-cache-expiry}")
@@ -24,8 +25,14 @@ public class StatisticsService {
 
   private StatisticRepository statisticRepository;
 
-  private Statistics statistics = null;
+  private Statistics    statistics           = null;
   private LocalDateTime lastStatisticsLoaded = LocalDateTime.MIN;
+
+  private AtomicInteger sendEmailFailed  = new AtomicInteger(0);
+  private AtomicInteger sendEmailSuccess = new AtomicInteger(0);
+  private AtomicInteger userSubscribed   = new AtomicInteger(0);
+  private AtomicInteger userUnsubcribed  = new AtomicInteger(0);
+
 
   public StatisticsService(StatisticRepository statisticRepository) {
     this.statisticRepository = statisticRepository;
@@ -40,8 +47,6 @@ public class StatisticsService {
     statisticRepository.findAll().forEach(statisticEntity -> {
       if (StatKey.SUBSCRIBERS.name().equals(statisticEntity.getStatKey())) {
         builder.subscriberCount(Long.parseLong(statisticEntity.getStatValue()));
-      } else if (StatKey.ACTIVE_SUBSCRIBER.name().equals(statisticEntity.getStatKey())) {
-        builder.activeSubscriberCount(Long.parseLong(statisticEntity.getStatValue()));
       } else if (StatKey.DAILY_SUBSCRIBER.name().equals(statisticEntity.getStatKey())) {
         builder.dailySubscriberCount(Long.parseLong(statisticEntity.getStatValue()));
       } else if (StatKey.WEEKLY_SUBSCRIBER.name().equals(statisticEntity.getStatKey())) {
@@ -74,5 +79,29 @@ public class StatisticsService {
 
   public void updateLastHnUpdate() {
     statisticRepository.updateStatistic(StatKey.LAST_HN_UPDATE, DATE_TIME_FORMATTER.format(LocalDateTime.now()));
+  }
+
+  public void sendEmailFailed() {
+    sendEmailFailed.incrementAndGet();
+  }
+
+  public void sendEmailSuccess() {
+    sendEmailSuccess.incrementAndGet();
+  }
+
+  public void userSubscribed() {
+    userSubscribed.incrementAndGet();
+
+  }
+
+  public void userUnsubscribed() {
+    userUnsubcribed.incrementAndGet();
+  }
+
+  public void updateStatistics() {
+    int sendEmailFailed = this.sendEmailFailed.getAndSet(0);
+    int sendEmailSuccess = this.sendEmailSuccess.getAndSet(0);
+    int usersSubscribed = this.userSubscribed.getAndSet(0);
+    int usersUnsubscribed = this.userUnsubcribed.getAndSet(0);
   }
 }

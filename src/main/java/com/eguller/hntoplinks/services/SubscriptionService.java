@@ -21,6 +21,9 @@ public class SubscriptionService {
   @Autowired
   private              SubscriptionRepository subscriptionRepository;
 
+  @Autowired
+  private StatisticsService statisticsService;
+
   public void deleteExpiredInactiveSubscriptions() {
     LocalDate expiryDate = LocalDate.now().minus(EXPIRE_IN_DAYS, ChronoUnit.DAYS);
     int deleted = subscriptionRepository.deleteBySubscriptionDateBeforeAndActivatedIsFalse(expiryDate);
@@ -41,6 +44,11 @@ public class SubscriptionService {
     return subscriptionOpt;
   }
 
+  public boolean unsubscribe(String uuid){
+    var numberOfUnsubscribes = subscriptionRepository.deleteBySubsUUID(uuid);
+    return numberOfUnsubscribes > 0;
+  }
+
 
   public Subscription save(Subscription subscription) {
 
@@ -58,7 +66,7 @@ public class SubscriptionService {
       });
 
 
-    var zoneId = DateUtils.parseZoneId(subscription.getTimeZone());
+    var zoneId = subscription.getTimeZone();
 
     subscriptionEntity.setTimeZone(zoneId.getId());
 
