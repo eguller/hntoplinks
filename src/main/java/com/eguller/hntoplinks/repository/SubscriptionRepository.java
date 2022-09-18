@@ -43,5 +43,7 @@ public interface SubscriptionRepository extends CrudRepository<SubscriptionEntit
     """)
   List<SubscriptionEntity> findSubscriptionsToSendEmail();
 
-  int deleteBySubsUUID(String uuid);
+  @Modifying
+  @Query("delete from subscription where subsuuid=:subscriptionId")
+  long deleteBySubsUUID(String subscriptionId);
 }

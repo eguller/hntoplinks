@@ -3,6 +3,7 @@ package com.eguller.hntoplinks.services;
 
 import com.eguller.hntoplinks.Application;
 import com.eguller.hntoplinks.controllers.ApplicationController;
+import com.eguller.hntoplinks.models.Email;
 import com.eguller.hntoplinks.models.Story;
 import com.eguller.hntoplinks.models.Subscription;
 import com.eguller.hntoplinks.models.SubscriptionForm;
@@ -32,11 +33,7 @@ public class StoryServiceTest {
   @Autowired
   private StoryCacheService storyCacheService;
 
-  @Autowired
-  private ApplicationController appicationController;
 
-  @Autowired
-  private SubscriptionRepository subscriptionRepository;
 
 
   @Test
@@ -61,25 +58,5 @@ public class StoryServiceTest {
     Assertions.assertEquals(1, count); //there should not be any duplicate.
   }
 
-  @Test
-  public void test_subscribe(){
-    var emailAddress = "abc@def.com";
-    var subscription = Subscription.builder()
-      .email(emailAddress)
-      .daily(true)
-      .timeZone(ZoneId.of("UTC"))
-      .build();
-    var subscriptionForm = SubscriptionForm.builder().subscription(subscription).build();
 
-    var model = new ExtendedModelMap();
-    appicationController.subscribe_Post(subscriptionForm, null, model, TimeZone.getTimeZone("UTC"));
-
-    var subscriptionEntity = subscriptionRepository.findByEmail(emailAddress);
-    Assertions.assertEquals(emailAddress, subscriptionEntity.get().getEmail());
-    Assertions.assertTrue(subscriptionEntity.get().isDaily());
-    Assertions.assertFalse(subscriptionEntity.get().isWeekly());
-    Assertions.assertFalse(subscriptionEntity.get().isMonthly());
-    Assertions.assertFalse(subscriptionEntity.get().isAnnually());
-
-  }
 }

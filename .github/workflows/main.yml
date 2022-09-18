@@ -32,4 +32,6 @@ jobs:
           HD_DATABASE_NAME: ${{secrets.DATABASE_NAME}}
           HD_DATABASE_USERNAME: ${{secrets.DATABASE_USERNAME}}
           HD_DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
+          HD_MANDRILL_API_KEY: ${{secrets.MANDRILL_API_KEY}}
+          HD_SENDGRID_API_KEY: ${{secrets.SENDGRID_API_KEY}}
 

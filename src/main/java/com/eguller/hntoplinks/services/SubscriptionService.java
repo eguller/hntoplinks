@@ -45,8 +45,8 @@ public class SubscriptionService {
   }
 
   public boolean unsubscribe(String uuid){
-    var numberOfUnsubscribes = subscriptionRepository.deleteBySubsUUID(uuid);
-    return numberOfUnsubscribes > 0;
+    var numberOfDeletedEntities = subscriptionRepository.deleteBySubsUUID(uuid);
+    return numberOfDeletedEntities > 0;
   }
 
 
