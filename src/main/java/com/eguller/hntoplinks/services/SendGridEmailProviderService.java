@@ -43,11 +43,6 @@ public class SendGridEmailProviderService implements EmailProviderService {
     }
   }
 
-  @Override
-  public void sendAsync(Email email) {
-    send(email);
-  }
-
   private void addHeaders(SendGrid.Email email, Map<String, String> headers) {
     for (Map.Entry<String, String> header : headers.entrySet()) {
       email.addHeader(header.getKey(), header.getValue());

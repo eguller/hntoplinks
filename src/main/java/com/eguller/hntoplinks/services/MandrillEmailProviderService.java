@@ -50,9 +50,4 @@ public class MandrillEmailProviderService implements EmailProviderService {
       throw new RuntimeException("Sending email has failed.", ex);
     }
   }
-
-  @Override
-  public void sendAsync(Email email) {
-    send(email);
-  }
 }

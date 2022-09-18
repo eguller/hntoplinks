@@ -23,7 +23,7 @@ public class EmailService {
       .subject("[hntoplinks] - Welcome to hntoplinks.com")
       .html(content)
       .build();
-    emailProviderService.sendAsync(email);
+    emailProviderService.send(email);
   }
 
   public void sendTopLinksEmail(TopLinksEmail topLinksEmail){

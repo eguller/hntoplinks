@@ -20,11 +20,4 @@ public class MockEmailProviderService implements EmailProviderService {
     mockEmailStore.addEmail(mail);
     logger.info("Sending email. to=%s, subject: %s, content=%s".formatted(mail.getTo(), mail.getSubject(), mail.getHtml()));
   }
-
-  @Override
-  public void sendAsync(Email email) {
-    send(email);
-  }
-
-
 }
