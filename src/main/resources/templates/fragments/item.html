@@ -3,8 +3,7 @@
 <body>
 <th:block th:fragment="item">
   <tr>
-    <td align=right class="title" th:text="${storyIndex} + '. '"
-        th:with="storyIndex=${ (page.currentPage - 1) * page.storyPerPage + storyIndex}" valign=top>
+    <td align=right class="title" th:text="${storyIndex} + '. '" valign=top>
     </td>
     <td width="5px;"></td>
     <td class="title"><a target="_blank" th:href="@{${story.url}}" th:text="${story.title}"></a>
@@ -16,8 +15,8 @@
   </tr>
   <tr>
     <td colspan="2"></td>
-    <td class="subtext"><span id="score_${story.hnid}" th:text="${story.score} + ' points'">
-					</span> by <a target="_blank"
+    <td class="subtext"><th:span th:id="'score_' + ${story.hnId}" th:text="${story.score} + ' points'">
+					</th:span> by <a target="_blank"
                         th:href="@{http://news.ycombinator.com/user(id=${story.by})}" th:text="${story.by}"></a>
       <th:block th:text="${story.since}"/>
       | <a

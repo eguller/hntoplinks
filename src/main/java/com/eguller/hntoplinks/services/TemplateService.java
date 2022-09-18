@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -30,20 +29,20 @@ public class TemplateService {
     final Context ctx = new Context(Locale.ENGLISH);
     ctx.setVariable("data", subscriptionEmailData);
 
-    final String htmlContent = this.templateEngine.process("/html/subscription_email.html", ctx);
+    final String htmlContent = this.templateEngine.process("/email/html/subscription_email.html", ctx);
     return htmlContent;
   }
 
   public String generateTopEmail(String subject, Subscription subscription, List<Story> topEmails) {
     var toplinksEmailData = TopEmailData.builder()
       .subject(subject)
-      .unsubscribUrl(hntoplinksBaseUrl + "/unsubscribe/" + subscription.getSubsUUID())
+      .unsubscribeUrl(hntoplinksBaseUrl + "/unsubscribe/" + subscription.getSubsUUID())
       .updateSubscriptionUrl(hntoplinksBaseUrl + "/update-subscription/" + subscription.getSubsUUID())
       .storyList(topEmails).build();
 
     final Context ctx = new Context(Locale.ENGLISH);
     ctx.setVariable("data", toplinksEmailData);
-    final String htmlContent = this.templateEngine.process("/html/toplinks_email.html", ctx);
+    final String htmlContent = this.templateEngine.process("/email/html/toplinks_email.html", ctx);
     return htmlContent;
   }
 
@@ -53,7 +52,7 @@ public class TemplateService {
   private static class TopEmailData {
     private String      subject;
     private List<Story> storyList;
-    private String      unsubscribUrl;
+    private String      unsubscribeUrl;
     private String      updateSubscriptionUrl;
 
   }

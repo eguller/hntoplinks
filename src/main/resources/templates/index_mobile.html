@@ -3,7 +3,7 @@
   <ul data-inset="true" data-role="listview">
     <th:block th:each="story,iterStat : ${page.storyList}">
       <th:block
-        th:insert="fragments/item_mobile.html :: item_mobile(story=${story}, page=${page}, storyIndex=${iterStat.count})"/>
+        th:insert="fragments/item_mobile.html :: item_mobile(story=${story}, page=${page}, storyIndex=${ (page.currentPage - 1) * page.storyPerPage + iterStat.count})"/>
     </th:block>
 
     <th:block th:if="${page.hasMoreStories}">

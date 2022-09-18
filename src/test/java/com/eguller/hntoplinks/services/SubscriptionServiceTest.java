@@ -6,6 +6,7 @@ import com.eguller.hntoplinks.controllers.ApplicationController;
 import com.eguller.hntoplinks.models.Email;
 import com.eguller.hntoplinks.models.Subscription;
 import com.eguller.hntoplinks.models.SubscriptionForm;
+import com.eguller.hntoplinks.models.SubscriptionPage;
 import com.eguller.hntoplinks.repository.SubscriptionRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,7 @@ public class SubscriptionServiceTest {
   @Test
   public void test_subscribe() {
     var emailAddress = "test_subscribe1@hntoplinks.com";
-    var model = subscribe(emailAddress);
+    var model = subscribeDailyNew(emailAddress);
 
     var subscriptionEntity = subscriptionRepository.findByEmail(emailAddress);
     Assertions.assertEquals(emailAddress, subscriptionEntity.get().getEmail());
@@ -51,7 +52,7 @@ public class SubscriptionServiceTest {
   @Test
   public void test_unsubscribe() {
     var emailAddress = "test_unsubscribe1@hntoplinks.com";
-    var model = subscribe(emailAddress);
+    var model = subscribeDailyNew(emailAddress);
     var subscriptionEntity = subscriptionRepository.findByEmail(emailAddress);
     Assertions.assertEquals(emailAddress, subscriptionEntity.get().getEmail());
     applicationController.unsubscribe_Get(new ExtendedModelMap(), subscriptionEntity.get().getSubsUUID());
@@ -59,10 +60,34 @@ public class SubscriptionServiceTest {
     Assertions.assertFalse(subscriptionEntity.isPresent());
   }
 
-  private Model subscribe(String emailAddress) {
+  @Test
+  public void test_updateSubscription() {
+    var emailAddress = "test_updatesubscription1@hntoplinks.com";
+    var model = subscribeDailyNew(emailAddress);
+    var subscriptionEntity = subscriptionRepository.findByEmail(emailAddress);
+    Assertions.assertEquals(emailAddress, subscriptionEntity.get().getEmail());
+    Assertions.assertTrue(subscriptionEntity.get().isDaily());
+    Assertions.assertFalse(subscriptionEntity.get().isWeekly());
+    subscribe(emailAddress, ((SubscriptionPage) model.getAttribute("page")).getSubscription().getSubsUUID(), true, true, false, false);
+    Assertions.assertTrue(subscriptionEntity.get().isDaily());
+    Assertions.assertFalse(subscriptionEntity.get().isWeekly());
+    subscriptionEntity = subscriptionRepository.findByEmail(emailAddress);
+    Assertions.assertTrue(subscriptionEntity.get().isDaily());
+    Assertions.assertTrue(subscriptionEntity.get().isWeekly());
+  }
+
+  private Model subscribeDailyNew(String emailAddress) {
+    return subscribe(emailAddress, null, true, false, false, false);
+  }
+
+  private ExtendedModelMap subscribe(String emailAddress, String subscriptionUuid, boolean daily, boolean weekly, boolean monthly, boolean annually) {
     var subscription = Subscription.builder()
+      .subsUUID(subscriptionUuid)
       .email(emailAddress)
-      .daily(true)
+      .daily(daily)
+      .weekly(weekly)
+      .monthly(monthly)
+      .annually(annually)
       .timeZone(ZoneId.of("UTC"))
       .build();
     var subscriptionForm = SubscriptionForm.builder().subscription(subscription).build();

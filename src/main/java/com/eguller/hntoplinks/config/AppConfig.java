@@ -94,8 +94,8 @@ public class AppConfig implements WebMvcConfigurer {
   private ITemplateResolver htmlTemplateResolver() {
     final ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
     templateResolver.setOrder(Integer.valueOf(2));
-    templateResolver.setResolvablePatterns(new HashSet<>(Arrays.asList("/html/*", "/fragments/*")));
-    templateResolver.setPrefix("/templates/email");
+    templateResolver.setResolvablePatterns(new HashSet<>(Arrays.asList("/email/html/*", "/fragments/*")));
+    templateResolver.setPrefix("/templates");
     templateResolver.setSuffix(".html");
     templateResolver.setTemplateMode(TemplateMode.HTML);
     templateResolver.setCharacterEncoding("UTF-8");

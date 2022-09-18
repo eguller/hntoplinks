@@ -3,23 +3,30 @@ package com.eguller.hntoplinks.services;
 
 import com.eguller.hntoplinks.Application;
 import com.eguller.hntoplinks.controllers.ApplicationController;
+import com.eguller.hntoplinks.jobs.SendMailJob;
 import com.eguller.hntoplinks.models.Email;
 import com.eguller.hntoplinks.models.Story;
 import com.eguller.hntoplinks.models.Subscription;
 import com.eguller.hntoplinks.models.SubscriptionForm;
+import com.eguller.hntoplinks.models.SubscriptionPage;
 import com.eguller.hntoplinks.repository.StoryRepository;
 import com.eguller.hntoplinks.repository.SubscriptionRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.ui.ExtendedModelMap;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 import java.util.TimeZone;
+import java.util.UUID;
 
 @SpringBootTest(classes = {Application.class})
 @ActiveProfiles({"local"})
@@ -33,8 +40,17 @@ public class StoryServiceTest {
   @Autowired
   private StoryCacheService storyCacheService;
 
+  @Autowired
+  private ApplicationController applicationController;
 
+  @Autowired
+  private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
+  @Autowired
+  private SendMailJob sendMailJob;
+
+  @Autowired
+  private MockEmailStore mockEmailStore;
 
   @Test
   public void test_saveStory() {
@@ -58,5 +74,32 @@ public class StoryServiceTest {
     Assertions.assertEquals(1, count); //there should not be any duplicate.
   }
 
+  @Test
+  public void test_sendDailyEmail() {
+    var storyTitle = "Daily Mail Test - " + UUID.randomUUID().toString();
+    var hnStory = new Story(null, (new Random().nextLong(Long.MAX_VALUE)), (new Random().nextInt(Integer.MAX_VALUE)), storyTitle, "https://daily.mail.test.hntoplinks.com", "hntoplinks.com", "daily_mail_test_user", (new Random().nextInt(Integer.MAX_VALUE)), LocalDateTime.now().minusHours(1));
+    storyService.saveStories(List.of(hnStory));
+    storyCacheService.addNewStories(List.of(hnStory));
+    var emailAddress = "test_daily_mail1@hntoplinks.com";
+    var subscription = Subscription.builder()
+      .email(emailAddress)
+      .daily(true)
+      .timeZone(ZoneId.of("UTC"))
+      .build();
+    var subscriptionForm = SubscriptionForm.builder().subscription(subscription).build();
+    var model = new ExtendedModelMap();
+    applicationController.subscribe_Post(subscriptionForm, null, model, TimeZone.getTimeZone("UTC"));
 
+    var subscriberId = ((SubscriptionPage) model.get("page")).getSubscription().getSubsUUID();
+
+    var parameters = new HashMap<String, Object>();
+    parameters.put("nextSendDate", LocalDateTime.now().minusHours(1)); //next_send time alread passed should trigger an email send.
+    parameters.put("subsuuid", subscriberId);
+    namedParameterJdbcTemplate.update("update subscription set next_send_day = :nextSendDate where subsuuid = :subsuuid", parameters);
+    sendMailJob.sendEmail();
+
+    var email = mockEmailStore.getLastMail(emailAddress);
+    Assertions.assertTrue(email.isPresent());
+    Assertions.assertTrue(email.get().getHtml().contains(hnStory.title()));
+  }
 }
