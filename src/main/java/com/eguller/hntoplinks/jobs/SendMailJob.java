@@ -59,7 +59,6 @@ public class SendMailJob {
           .templateService(templateService)
           .storyCacheService(storyCacheService)
           .subscription(subscriptionModel).build();
-        var result = sendEmail(topEmail);
         sendEmail(topEmail)
           .onSuccess(() -> subscription.setNextSendDay(DateUtils.tomorrow_7_AM(subscriptionModel.getTimeZone())))
           .execute();
