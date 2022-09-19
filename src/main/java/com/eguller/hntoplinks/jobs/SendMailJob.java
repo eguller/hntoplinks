@@ -72,7 +72,7 @@ public class SendMailJob {
           .subscription(Subscription.entityToModel(subscription)).build();
 
         sendEmail(topEmail)
-          .onSuccess(() -> subscription.setNextSendDay(DateUtils.nextMonday_7_AM(subscriptionModel.getTimeZone())))
+          .onSuccess(() -> subscription.setNextSendWeek(DateUtils.nextMonday_7_AM(subscriptionModel.getTimeZone())))
           .execute();
 
       }
@@ -83,7 +83,7 @@ public class SendMailJob {
           .storyCacheService(storyCacheService)
           .subscription(Subscription.entityToModel(subscription)).build();
         sendEmail(topEmail)
-          .onSuccess(() -> subscription.setNextSendDay(DateUtils.firstDayOfNextMonth_7_AM(subscriptionModel.getTimeZone())))
+          .onSuccess(() -> subscription.setNextSendMonth(DateUtils.firstDayOfNextMonth_7_AM(subscriptionModel.getTimeZone())))
           .execute();
 
       }
@@ -94,7 +94,7 @@ public class SendMailJob {
           .storyCacheService(storyCacheService)
           .subscription(Subscription.entityToModel(subscription)).build();
         sendEmail(topEmail)
-          .onSuccess(() -> subscription.setNextSendDay(DateUtils.firstDayOfNextYear_7_AM(subscriptionModel.getTimeZone())))
+          .onSuccess(() -> subscription.setNextSendYear(DateUtils.firstDayOfNextYear_7_AM(subscriptionModel.getTimeZone())))
           .execute();
       }
     } else {
