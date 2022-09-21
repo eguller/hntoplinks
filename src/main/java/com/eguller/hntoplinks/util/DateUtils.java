@@ -1,5 +1,9 @@
 package com.eguller.hntoplinks.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.lang.invoke.MethodHandles;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -8,6 +12,8 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 
 public class DateUtils {
+  private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
   public static String since(LocalDateTime time) {
     long yearsBetween = ChronoUnit.YEARS.between(time, LocalDateTime.now());
     if (yearsBetween == 1) {
@@ -56,12 +62,14 @@ public class DateUtils {
     }
   }
 
-  public static ZoneId parseZoneId(String zoneId) {
+  public static ZoneId parseZoneId(String zoneIdStr) {
+    var zoneId = ZoneId.systemDefault();
     try {
-      return ZoneId.of(zoneId);
+      zoneId = ZoneId.of(zoneIdStr);
     } catch (Exception ex) {
-      return ZoneId.of("Etc/UTC");
+      logger.error("zoneId could not be parsed. zoneId=" + zoneIdStr);
     }
+    return zoneId;
   }
 
   public static LocalDateTime tomorrow_7_AM(ZoneId targetZone) {
@@ -78,5 +86,15 @@ public class DateUtils {
 
   public static LocalDateTime firstDayOfNextYear_7_AM(ZoneId targetZone) {
     return ZonedDateTime.now(targetZone).with(TemporalAdjusters.firstDayOfNextYear()).withHour(7).withMinute(0).withSecond(0).withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
+  }
+
+  public static ZoneId zoneOf(String zoneIdStr) {
+    var zoneId = ZoneId.systemDefault();
+    try {
+      zoneId = ZoneId.of(zoneIdStr);
+    } catch (Exception ex) {
+
+    }
+    return zoneId;
   }
 }

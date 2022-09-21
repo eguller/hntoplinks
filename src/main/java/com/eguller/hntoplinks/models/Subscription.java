@@ -1,6 +1,7 @@
 package com.eguller.hntoplinks.models;
 
 import com.eguller.hntoplinks.entities.SubscriptionEntity;
+import com.eguller.hntoplinks.util.DateUtils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -44,6 +45,7 @@ public class Subscription {
       .nextSendMonth(entity.getNextSendMonth())
       .annually(entity.isAnnually())
       .nextSendYear(entity.getNextSendYear())
+      .timeZone(DateUtils.parseZoneId(entity.getTimeZone()))
       .build();
     return subscription;
   }
@@ -60,6 +62,7 @@ public class Subscription {
     entity.setWeekly(subscription.isWeekly());
     entity.setMonthly(subscription.isMonthly());
     entity.setAnnually(subscription.isAnnually());
+    entity.setTimeZone(subscription.getTimeZone().toString());
     return entity;
   }
 

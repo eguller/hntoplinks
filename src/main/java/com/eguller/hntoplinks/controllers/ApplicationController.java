@@ -42,15 +42,14 @@ import java.util.TimeZone;
 public class ApplicationController {
   private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  private static final int                MAX_PAGES      = 10;
-  private static final int                STORY_PER_PAGE = 30;
+  private static final int                 MAX_PAGES      = 10;
+  private static final int                 STORY_PER_PAGE = 30;
   @Autowired
-  private              HttpServletRequest httpServletRequest;
+  private              HttpServletRequest  httpServletRequest;
   @Autowired
-  private              StoryCacheService  storyCacheService;
-
+  private              StoryCacheService   storyCacheService;
   @Autowired
-  private SubscriptionService subscriptionService;
+  private              SubscriptionService subscriptionService;
 
   @Autowired
   private StatisticsService statisticsService;
@@ -166,7 +165,7 @@ public class ApplicationController {
   public String unsubscribe_Get(Model model, @PathVariable(value = "id") String subscriptionId) {
     var unsubscribePage = Page.pageBuilder().title("Unsubscribe").build();
     var isUnsubscribed = subscriptionService.unsubscribe(subscriptionId);
-    if(isUnsubscribed){
+    if (isUnsubscribed) {
       statisticsService.userUnsubscribed();
     }
     model.addAttribute("page", unsubscribePage);
@@ -198,6 +197,13 @@ public class ApplicationController {
       hasError = true;
     }
 
+    var isCaptchaValid = recaptchaVerifier.verify(recaptchaResponse);
+
+    if(!isCaptchaValid){
+      subscriptionPageBuilder.error("I'm not a robot check has failed.");
+      hasError = true;
+    }
+
     if (!subscription.hasSubscription()) {
       subscriptionPageBuilder.error("Please select at least one of the daily, weekly, monthly or annually subscriptions.");
       hasError = true;
@@ -224,16 +230,16 @@ public class ApplicationController {
           subscriptionPageBuilder.subscription(savedSubscription);
           emailService.sendSubscriptionEmail(savedSubscription);
           statisticsService.userSubscribed();
-          if(savedSubscription.isDaily()){
+          if (savedSubscription.isDaily()) {
             statisticsService.userSubscribedForDaily();
           }
-          if(savedSubscription.isWeekly()){
+          if (savedSubscription.isWeekly()) {
             statisticsService.userSubscribedForWeekly();
           }
-          if(savedSubscription.isMonthly()){
+          if (savedSubscription.isMonthly()) {
             statisticsService.userSubscribedForMonthly();
           }
-          if(savedSubscription.isAnnually()){
+          if (savedSubscription.isAnnually()) {
             statisticsService.userSubscribedForAnnually();
           }
         }
@@ -242,12 +248,6 @@ public class ApplicationController {
     model.addAttribute("page", subscriptionPageBuilder.build());
     return view("subscription");
 
-  }
-
-
-  private StoryPage getStoryPage(PageTab pageTab, String pageStr) {
-    int page = getPage(pageStr);
-    return getStoryPage(pageTab, page);
   }
 
   private StoryPage getStoryPage(PageTab pageTab, Integer page) {

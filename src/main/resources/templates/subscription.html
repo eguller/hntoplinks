@@ -16,35 +16,25 @@
           <tr>
             <td class="cright">Daily Top Links</td>
             <td class="cleft">
-              <input th:if="${page.subscription.daily}" name="subscription.daily" type="checkbox" checked="checked"
-                     }/>
-              <input th:unless="${page.subscription.daily}" name="subscription.daily" type="checkbox" }/>
+              <input name="subscription.daily" type="checkbox" th:checked="${page.subscription.daily}"/>
             </td>
           </tr>
           <tr>
             <td class="cright">Weekly Top Links</td>
             <td class="cleft">
-              <input th:if="${page.subscription.weekly}" name="subscription.weekly" type="checkbox" checked="checked"
-                     }/>
-              <input th:unless="${page.subscription.weekly}" name="subscription.weekly" type="checkbox" }/>
+              <input name="subscription.weekly" type="checkbox" th:checked="${page.subscription.weekly}"/>
             </td>
           </tr>
           <tr>
             <td class="cright">Monthly Top Links</td>
             <td class="cleft">
-              <input th:if="${page.subscription.monthly}" name="subscription.monthly" type="checkbox"
-                     checked="checked"
-                     }/>
-              <input th:unless="${page.subscription.monthly}" name="subscription.monthly" type="checkbox" }/>
+              <input name="subscription.monthly" type="checkbox" th:checked="${page.subscription.monthly}"/>
             </td>
           </tr>
           <tr>
             <td class="cright">Annually Top Links</td>
             <td class="cleft">
-              <input th:if="${page.subscription.annually}" name="subscription.annually" type="checkbox"
-                     checked="checked"
-                     }/>
-              <input th:unless="${page.subscription.annually}" name="subscription.annually" type="checkbox" }/>
+              <input name="subscription.annually" type="checkbox" th:checked="${page.subscription.annually}"/>
             </td>
           </tr>
           <tr>
@@ -56,12 +46,7 @@
           </tr>
           <tr>
             <td class="cright" colspan="2" style="padding-bottom: 5px; padding-top: 5px;">
-              <th:block th:if="${page.captchaEnabled}">
-                <input name="subscription.submit" type="submit" value="Submit" disabled>
-              </th:block>
-              <th:block th:unless="${page.captchaEnabled}">
-                <input name="subscription.submit" type="submit" value="Submit">
-              </th:block>
+              <input name="subscription.submit" type="submit" value="Submit" th:disabled="${page.captchaEnabled}">
               <input type="hidden" name="subscription.subsUUID" th:value="${page.subscription.subsUUID}">
               <th:block th:unless="${page.captchaEnabled}">
                 <input type="hidden" name="g-recaptcha-response" th:value="dummy">

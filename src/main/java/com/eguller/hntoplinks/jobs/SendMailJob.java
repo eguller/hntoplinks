@@ -47,7 +47,9 @@ public class SendMailJob {
   @Scheduled(fixedDelay = 15, timeUnit = TimeUnit.MINUTES)
   public void sendEmail() {
     var subscriptionsToSendEmail = subscriptionRepository.findSubscriptionsToSendEmail();
-    subscriptionsToSendEmail.forEach(subscription -> sendEmail(subscription));
+    subscriptionsToSendEmail.stream()
+      .filter(subscriptionEntity -> subscriptionEntity.isActivated())
+      .forEach(subscription -> sendEmail(subscription));
     subscriptionRepository.saveAll(subscriptionsToSendEmail);
   }
 

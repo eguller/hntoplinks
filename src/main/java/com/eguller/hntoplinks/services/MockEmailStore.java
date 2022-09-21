@@ -20,4 +20,12 @@ public class MockEmailStore {
   public Optional<Email> getLastMail(String emailAddress) {
     return Optional.ofNullable(emails.get(emailAddress));
   }
+
+  public void reset() {
+    emails.clear();
+  }
+
+  public void reset(String email){
+    emails.remove(email);
+  }
 }

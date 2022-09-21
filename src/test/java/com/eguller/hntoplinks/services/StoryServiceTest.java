@@ -11,6 +11,7 @@ import com.eguller.hntoplinks.models.SubscriptionForm;
 import com.eguller.hntoplinks.models.SubscriptionPage;
 import com.eguller.hntoplinks.repository.StoryRepository;
 import com.eguller.hntoplinks.repository.SubscriptionRepository;
+import com.eguller.hntoplinks.util.SubscriptionUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,7 +77,7 @@ public class StoryServiceTest {
 
   @Test
   public void test_sendDailyEmail() {
-    var storyTitle = "Daily Mail Test - " + UUID.randomUUID().toString();
+    var storyTitle = "Daily Mail Test - " + UUID.randomUUID();
     var hnStory = new Story(null, (new Random().nextLong(Long.MAX_VALUE)), (new Random().nextInt(Integer.MAX_VALUE)), storyTitle, "https://daily.mail.test.hntoplinks.com", "hntoplinks.com", "daily_mail_test_user", (new Random().nextInt(Integer.MAX_VALUE)), LocalDateTime.now().minusHours(1));
     storyService.saveStories(List.of(hnStory));
     storyCacheService.addNewStories(List.of(hnStory));
@@ -101,5 +102,29 @@ public class StoryServiceTest {
     var email = mockEmailStore.getLastMail(emailAddress);
     Assertions.assertTrue(email.isPresent());
     Assertions.assertTrue(email.get().getHtml().contains(hnStory.title()));
+  }
+
+  @Test
+  public void test_receiveEmail() {
+    var activeUserEmailAddress = "test_active_user1@hntoplinks.com";
+    var inActiveUserEmailAddress = "test_inactive_user1@hntoplinks.com";
+    SubscriptionUtil.subscribeDailyNew(this.applicationController, activeUserEmailAddress);
+    SubscriptionUtil.subscribeDailyNew(this.applicationController, activeUserEmailAddress);
+
+    var queryParams = new HashMap<String, String>();
+    queryParams.put("email", inActiveUserEmailAddress);
+    namedParameterJdbcTemplate.update("update subscription set activated = false where email=:email", queryParams);
+
+    var parameters = new HashMap<String, Object>();
+    parameters.put("nextSendDate", LocalDateTime.now().minusHours(1)); //next_send time alread passed should trigger an email send.
+    namedParameterJdbcTemplate.update("update subscription set next_send_day = :nextSendDate", parameters);
+
+    sendMailJob.sendEmail();
+
+    var activeUserEmail = mockEmailStore.getLastMail(activeUserEmailAddress);
+    var inactiveUserEmail = mockEmailStore.getLastMail(inActiveUserEmailAddress);
+
+    Assertions.assertTrue(activeUserEmail.isPresent());
+    Assertions.assertFalse(inactiveUserEmail.isPresent());
   }
 }
