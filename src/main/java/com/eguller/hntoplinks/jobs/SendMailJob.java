@@ -124,14 +124,13 @@ public class SendMailJob {
     }
 
     public void execute() {
-      try {
-        emailService.sendTopLinksEmail(topLinksEmail);
+      var result = emailService.sendTopLinksEmail(topLinksEmail);
+      if (result.getFailed().isEmpty()) {
         statisticsService.sendEmailSuccess();
         if (onSuccess != null) {
           onSuccess.run();
         }
-      } catch (Exception ex) {
-        logger.error("Sending email has failed. email=" + topLinksEmail.getSubscription().getEmail(), ex);
+      } else {
         statisticsService.sendEmailFailed();
         if (onFail != null) {
           onFail.run();

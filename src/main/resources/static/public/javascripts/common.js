@@ -3,6 +3,6 @@ function enableSubscriptionFormSubmit(){
 }
 
 function submitSubscriptionForm(){
-  document.getElementsByName("subscription.submit")[0].submit();
+  document.getElementById("subscribe")[0].submit();
 }
 

@@ -2,8 +2,19 @@ package com.eguller.hntoplinks.services;
 
 
 import com.eguller.hntoplinks.models.Email;
-import org.springframework.scheduling.annotation.Async;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Singular;
+
+import java.util.Set;
 
 public interface EmailProviderService {
-  void send(Email mail);
+  Response send(Email mail);
+
+  @Builder
+  @Getter
+  class Response {
+    @Singular("failed")
+    Set<String> failed;
+  }
 }

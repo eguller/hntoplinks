@@ -16,8 +16,10 @@ public class MockEmailProviderService implements EmailProviderService {
   @Autowired
   MockEmailStore mockEmailStore;
   @Override
-  public void send(Email mail) {
+  public Response send(Email mail) {
     mockEmailStore.addEmail(mail);
     logger.info("Sending email. to=%s, subject: %s, content=%d".formatted(mail.getTo(), mail.getSubject(), mail.getHtml().length()));
+    var providerResponse = Response.builder().build();
+    return providerResponse;
   }
 }

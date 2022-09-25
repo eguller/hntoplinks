@@ -38,6 +38,13 @@
     </button>
 
   </form>
+  <th:block th:if="${page.hasMessages()}">
+    <ul class="green">
+      <th:block th:each="error: ${page.messages}">
+        <li th:text="${error}"></li>
+      </th:block>
+    </ul>
+  </th:block>
   <th:block th:if="${page.hasErrors()}">
     <ul class="error">
       <th:block th:each="error: ${page.errors}">
@@ -45,4 +52,5 @@
       </th:block>
     </ul>
   </th:block>
+
 </div>

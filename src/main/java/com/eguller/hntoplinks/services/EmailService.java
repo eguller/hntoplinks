@@ -13,9 +13,6 @@ public class EmailService {
   @Autowired
   private TemplateService      templateService;
 
-  @Autowired
-  private StoryCacheService storyCacheService;
-
   public void sendSubscriptionEmail(Subscription subscription) {
     var content = templateService.generateSubscriptionEmail(subscription);
     var email = Email.builder()
@@ -26,9 +23,9 @@ public class EmailService {
     emailProviderService.send(email);
   }
 
-  public void sendTopLinksEmail(TopLinksEmail topLinksEmail){
+  public EmailProviderService.Response sendTopLinksEmail(TopLinksEmail topLinksEmail) {
     var email = topLinksEmail.createEmail();
-    emailProviderService.send(email);
+    return emailProviderService.send(email);
   }
 
 }

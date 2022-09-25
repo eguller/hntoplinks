@@ -24,7 +24,7 @@ jobs:
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: "hntoplinks" #Must be unique in Heroku
-          heroku_email: "enginguller@gmail.com"
+          heroku_email: ${{secrets.HEROKU_EMAIL}}
           stack: "container"
           usedocker: true
         env:
@@ -32,6 +32,6 @@ jobs:
           HD_DATABASE_NAME: ${{secrets.DATABASE_NAME}}
           HD_DATABASE_USERNAME: ${{secrets.DATABASE_USERNAME}}
           HD_DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
-          HD_MANDRILL_API_KEY: ${{secrets.MANDRILL_API_KEY}}
           HD_SENDGRID_API_KEY: ${{secrets.SENDGRID_API_KEY}}
+          HD_CAPTCHA_SECRET: ${{secrets.CAPTCHA_SECRET}}
 

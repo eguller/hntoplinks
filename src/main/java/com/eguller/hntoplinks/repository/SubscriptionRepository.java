@@ -39,7 +39,7 @@ public interface SubscriptionRepository extends CrudRepository<SubscriptionEntit
         (monthly = true and next_send_month < now())
         or
         (annually = true and next_send_year < now ())
-     ) limit 1
+     ) limit 5
     """)
   List<SubscriptionEntity> findSubscriptionsToSendEmail();
 
