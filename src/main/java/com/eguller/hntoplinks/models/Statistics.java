@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 @Builder
 public class Statistics {
   private long          subscriberCount;
-  private long          activeSubscriberCount;
   private long          dailySubscriberCount;
   private long          weeklySubscriberCount;
   private long          monthlySubscriberCount;

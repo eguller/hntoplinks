@@ -183,9 +183,9 @@ public class ApplicationController {
 
 
   @PostMapping("/subscribe")
-  public String subscribe_Post(@ModelAttribute SubscriptionForm subscriptionForm, @ModelAttribute("g-recaptcha-response") String recaptchaResponse, Model model, TimeZone timeZone) {
+  public String subscribe_Post(@ModelAttribute SubscriptionForm subscriptionForm, @ModelAttribute("g-recaptcha-response") String recaptchaResponse, Model model) {
     var subscriptionPageBuilder = SubscriptionPage.builder();
-    var subscription = subscriptionForm.getSubscription().toBuilder().timeZone(timeZone.toZoneId()).build();
+    var subscription = subscriptionForm.getSubscription();
     subscriptionPageBuilder.subscription(subscription);
     subscriptionPageBuilder.captchaEnabled(captchaEnabled);
     var hasError = false;
