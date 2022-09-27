@@ -89,7 +89,7 @@ public class StoryServiceTest {
       .build();
     var subscriptionForm = SubscriptionForm.builder().subscription(subscription).build();
     var model = new ExtendedModelMap();
-    applicationController.subscribe_Post(subscriptionForm, null, model, TimeZone.getTimeZone("UTC"));
+    applicationController.subscribe_Post(subscriptionForm, null, model);
 
     var subscriberId = ((SubscriptionPage) model.get("page")).getSubscription().getSubsUUID();
 

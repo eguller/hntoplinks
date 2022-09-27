@@ -27,7 +27,7 @@ public class SubscriptionUtil {
     var subscriptionForm = SubscriptionForm.builder().subscription(subscription).build();
 
     var model = new ExtendedModelMap();
-    applicationController.subscribe_Post(subscriptionForm, null, model, TimeZone.getTimeZone("UTC"));
+    applicationController.subscribe_Post(subscriptionForm, null, model);
     return model;
   }
 }
