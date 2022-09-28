@@ -50,7 +50,7 @@
                       onclick="submitSubscriptionForm();">Submit
               </button>
               <input type="hidden" name="subscription.subsUUID" th:value="${page.subscription.subsUUID}">
-              <input type="hidden" name="subscription.timezone" th:value="UTC" />
+              <input type="hidden" name="subscription.timeZone" th:value="UTC" />
               <th:block th:unless="${page.captchaEnabled}">
                 <input type="hidden" name="g-recaptcha-response" th:value="dummy">
               </th:block>
