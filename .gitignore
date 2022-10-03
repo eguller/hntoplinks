@@ -41,3 +41,6 @@ out/
 
 # pg dump
 latest.dump
+
+# utils
+infra/utils/fedora-ssh/.ssh/*

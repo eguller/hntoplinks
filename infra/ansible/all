@@ -1,0 +1,26 @@
+all:
+  children:
+    webservers:
+      hosts:
+        hntoplinks.com
+        localhost
+    appservers:
+      hosts:
+        hntoplinks.com
+        localhost
+    dbservers:
+      hosts:
+        hntoplinks.com
+        localhost
+    digitalocean:
+      hosts:
+        hntoplinks.com
+    local:
+      hosts:
+        localhost
+    prod:
+      children:
+        digitalocean:
+    test:
+      children:
+        local:
