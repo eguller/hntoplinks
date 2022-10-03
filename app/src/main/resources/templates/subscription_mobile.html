@@ -1,0 +1,57 @@
+<html layout:decorate="~{layouts/mobile}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<div layout:fragment="content">
+  <form id="subscribe" method="POST" th:action="@{/subscribe}">
+    <fieldset data-role="controlgroup">
+      <label for="subscription.daily">Daily Top Links</label>
+      <input id="subscription.daily" name="subscription.daily" type="checkbox" th:checked="${page.subscription.daily}"/>
+
+      <label for="subscription.weekly">Weekly Top Links</label>
+      <input id="subscription.weekly" name="subscription.weekly" type="checkbox"
+             th:checked="${page.subscription.weekly}"/>
+
+      <label for="subscription.monthly">Monthly Top Links</label>
+      <input id="subscription.monthly" name="subscription.monthly" type="checkbox"
+             th:checked="${page.subscription.monthly}"/>
+
+      <label for="subscription.annually">Annually Top Links</label>
+      <input id="subscription.annually" name="subscription.annually" type="checkbox"
+             th:checked="${page.subscription.annually}"/>
+    </fieldset>
+    <label class="ui-hidden-accessible" for="subscription.email">Email</label>
+    <input data-clear-btn="true" id="subscription.email" name="subscription.email" placeholder="Email"
+           type="email" th:value="${page.subscription.email}"/>
+
+    <input name="subscription.subsUUID" type="hidden" value="${page.subscription.subsUUID}"/>
+    <th:block th:if="${page.captchaEnabled}">
+      <div style="text-align: center;">
+        <div class="g-recaptcha" data-sitekey="6LeciUUeAAAAAMixTT0VHQ3JyCih1jpz_4zRK_0b"
+             data-callback="enableSubscriptionFormSubmit" style="display: inline-block;"></div>
+      </div>
+      <input type="hidden" name="g-recaptcha-response" th:value="dummy">
+      <input type="hidden" name="subscription.timeZone" th:value="UTC"/>
+    </th:block>
+
+    <button class="ui-shadow ui-btn ui-corner-all" id="subscription.submit" name="subscription.submit"
+            th:disabled="${page.captchaEnabled}" onclick="submitSubscriptionForm();"
+            type="submit">Submit
+    </button>
+
+  </form>
+  <th:block th:if="${page.hasMessages()}">
+    <ul class="green">
+      <th:block th:each="error: ${page.messages}">
+        <li th:text="${error}"></li>
+      </th:block>
+    </ul>
+  </th:block>
+  <th:block th:if="${page.hasErrors()}">
+    <ul class="error">
+      <th:block th:each="error: ${page.errors}">
+        <li th:text="${error}"></li>
+      </th:block>
+    </ul>
+  </th:block>
+
+</div>

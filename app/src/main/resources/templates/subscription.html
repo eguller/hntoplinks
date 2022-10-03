@@ -1,0 +1,97 @@
+<html layout:decorate="~{layouts/web}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+>
+
+<table bgcolor=#f6f6ef border=0 cellpadding=0 cellspacing=0 width="85%" layout:fragment="content">
+  <tr th:insert="fragments/menu.html :: menu">
+  </tr>
+  <tr style="height: 10px"></tr>
+  <tr>
+    <td colspan="2">
+      <form id="subscribe" method="POST" th:action="@{/subscribe}" onsubmit="">
+        <table border=0 cellpadding=0 cellspacing=0 style="margin-left: 30%;">
+          <tr>
+            <td class="head" colspan="2">Subscribe Hacker News Top Links</td>
+          </tr>
+          <tr>
+            <td class="cright">Daily Top Links</td>
+            <td class="cleft">
+              <input name="subscription.daily" type="checkbox" th:checked="${page.subscription.daily}"/>
+            </td>
+          </tr>
+          <tr>
+            <td class="cright">Weekly Top Links</td>
+            <td class="cleft">
+              <input name="subscription.weekly" type="checkbox" th:checked="${page.subscription.weekly}"/>
+            </td>
+          </tr>
+          <tr>
+            <td class="cright">Monthly Top Links</td>
+            <td class="cleft">
+              <input name="subscription.monthly" type="checkbox" th:checked="${page.subscription.monthly}"/>
+            </td>
+          </tr>
+          <tr>
+            <td class="cright">Annually Top Links</td>
+            <td class="cleft">
+              <input name="subscription.annually" type="checkbox" th:checked="${page.subscription.annually}"/>
+            </td>
+          </tr>
+          <tr>
+            <td class="cright">Email</td>
+            <td class="cleft">
+              <input name="subscription.email" style="width: 160px;" type="text"
+                     th:value="${page.subscription.email}"/>
+            </td>
+          </tr>
+          <tr>
+            <td class="cright" colspan="2" style="padding-bottom: 5px; padding-top: 5px;">
+              <button name="subscription.submit" type="submit" value="Submit" th:disabled="${page.captchaEnabled}"
+                      onclick="submitSubscriptionForm();">Submit
+              </button>
+              <input type="hidden" name="subscription.subsUUID" th:value="${page.subscription.subsUUID}">
+              <input type="hidden" name="subscription.timeZone" th:value="UTC" />
+              <th:block th:unless="${page.captchaEnabled}">
+                <input type="hidden" name="g-recaptcha-response" th:value="dummy">
+              </th:block>
+            </td>
+          </tr>
+
+          <th:block th:if="${page.hasMessages()}">
+            <th:block th:each="message: ${page.messages}">
+              <tr>
+                <td colspan="2">
+                  <ul>
+                    <li class="green" th:text="${message}"></li>
+                  </ul>
+                </td>
+              </tr>
+            </th:block>
+          </th:block>
+
+          <th:block th:if="${page.hasErrors()}">
+            <th:block th:each="error: ${page.errors}">
+              <tr>
+                <td colspan="2">
+                  <ul class="error">
+                    <li th:text="${error}"></li>
+                  </ul>
+                </td>
+              </tr>
+            </th:block>
+          </th:block>
+          <th:block th:if="${page.captchaEnabled}">
+            <tr>
+              <td class="cright" colspan="2">
+                <div class="g-recaptcha" data-sitekey="6LeciUUeAAAAAMixTT0VHQ3JyCih1jpz_4zRK_0b"
+                     data-callback="enableSubscriptionFormSubmit"></div>
+              </td>
+            </tr>
+          </th:block>
+        </table>
+      </form>
+    </td>
+  </tr>
+
+  <tr th:replace="fragments/footer.html :: footer"/>
+</table>

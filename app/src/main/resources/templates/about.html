@@ -1,0 +1,40 @@
+<html layout:decorate="~{layouts/web}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+>
+
+<table bgcolor=#f6f6ef border=0 cellpadding=0 cellspacing=0 layout:fragment="content" width="85%">
+  <tr th:insert="fragments/menu.html :: menu">
+  </tr>
+  <tr style="height: 10px"></tr>
+  <tr>
+    <td class="about">
+      Hello,
+      <p>
+        I am a big fan of <a href="http://news.ycombinator.com" target="_blank">Hacker News</a> but sometimes I
+        do not
+        have time to check it frequently and I created this web page, so I can read daily, weekly, monthly top
+        news
+        to stay up to date. If you want to receive daily, weekly, monthly or annually <a
+        href="https://www.hntoplinks.com" target="_blank">Hacker News Top Links</a> emails please subscribe
+        from <a href="/subscribe" style="color: blue;" target="_blank">here</a>
+      </p>
+
+      <p>There are also other alternatives to help Hacker News fans to read it more efficiently. See <a
+        href="https://github.com/cheeaun/hackerweb/wiki/Hacker-News-apps" style="color: blue;"
+        target="_blank">this list</a>
+        for all alternative Hacker News reading applications.</p>
+
+      <p>
+        Please see following <a href="https://github.com/cheeaun/awesome-hacker-news"
+                                target="_blank">list</a> for alternative applications. <br>
+        Source code is availabe at <a href="https://github.com/eguller/hntoplinks" style="color: blue;"
+                                      target="blank">github</a>.
+        <br>
+        For questions/suggestions please send email to <img alt=""
+                                                            th:src="@{'/public/images/enginguller1.png'}">
+      </p>
+    </td>
+  </tr>
+  <tr th:replace="fragments/footer.html :: footer (footerSet='home')"/>
+</table>
+</html>
