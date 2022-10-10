@@ -6,20 +6,6 @@
       - postgresql-server-{{ pg_version }}
     state: present
 
-#
-# - name: Ensure group "db" exists
-#   ansible.builtin.group:
-#     name: db
-#     state: present
-#   when: is_server_docker_container
-#
-# - name: Add the user 'postgres' with a specific uid and a primary group of 'db'
-#   ansible.builtin.user:
-#     name: postgres
-#     comment: postgres
-#     group: db
-#   when: is_server_docker_container
-#
 - name: Create a directory if it does not exist
   ansible.builtin.file:
     path: /var/postgresql/log
