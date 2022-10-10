@@ -1,0 +1,4 @@
+---
+- hosts: db_servers
+  roles:
+    - db

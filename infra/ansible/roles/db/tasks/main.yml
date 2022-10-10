@@ -1,0 +1,58 @@
+---
+- name: install postgresql
+  ansible.builtin.yum:
+    name:
+      - postgresql-{{ pg_version }}
+      - postgresql-server-{{ pg_version }}
+    state: present
+
+#
+# - name: Ensure group "db" exists
+#   ansible.builtin.group:
+#     name: db
+#     state: present
+#   when: is_server_docker_container
+#
+# - name: Add the user 'postgres' with a specific uid and a primary group of 'db'
+#   ansible.builtin.user:
+#     name: postgres
+#     comment: postgres
+#     group: db
+#   when: is_server_docker_container
+#
+- name: Create a directory if it does not exist
+  ansible.builtin.file:
+    path: /var/postgresql/log
+    state: directory
+    mode: '0750'
+    owner: postgres
+    group: postgres
+  when: is_server_docker_container
+
+- name: Create a directory if it does not exist
+  ansible.builtin.file:
+    path: /usr/local/pgsql/
+    state: directory
+    mode: '0750'
+    owner: postgres
+    group: postgres
+  when: is_server_docker_container
+
+- name: yum install daemonize
+  yum:
+    name: daemonize
+    state: latest
+
+- name: Init postgresql db
+  ansible.builtin.command: pg_ctl -D /usr/local/pgsql/data initdb
+  args:
+    creates: /usr/local/pgsql/data/
+  become: true
+  become_user: postgres
+  when: is_server_docker_container
+
+- name: Start daemon
+  shell: daemonize -l /var/postgresql/.lock -e /var/postgresql/log/stderr.log -o /var/postgresql/log/stdout.log /usr/bin/pg_ctl start -s --log /var/postgresql/log/postgres.log --pgdata /usr/local/pgsql/data
+  become: true
+  become_user: postgres
+  when: is_server_docker_container

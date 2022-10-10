@@ -1,0 +1,15 @@
+---
+all:
+  children:
+    web_servers:
+      hosts:
+        hntoplinks.com
+      app_servers:
+        hosts:
+          hntoplinks.com
+      db_servers:
+        hosts:
+          hntoplinks.com
+      prod:
+        hosts:
+          hntoplinks.com

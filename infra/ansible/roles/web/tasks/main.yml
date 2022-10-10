@@ -1,0 +1,6 @@
+---
+- name: install nginx
+  ansible.builtin.yum:
+    name:
+      - nginx-{{ nginx_version }}
+    state: present

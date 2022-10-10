@@ -1,0 +1,15 @@
+---
+all:
+  children:
+    web_servers:
+      hosts:
+       localhost
+    app_servers:
+      hosts:
+        localhost
+    db_servers:
+      hosts:
+        localhost
+    test:
+      hosts:
+        localhost

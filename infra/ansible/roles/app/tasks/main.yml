@@ -1,0 +1,17 @@
+---
+- name: Ensure group "app" exists
+  ansible.builtin.group:
+    name: app
+    state: present
+
+- name: Add the user 'hntoplinks' with a specific uid and a primary group of 'app'
+  ansible.builtin.user:
+    name: hntoplinks
+    comment: hntoplinks
+    group: app
+
+- name: install java
+  ansible.builtin.yum:
+    name:
+      - java-17-openjdk
+    state: present
