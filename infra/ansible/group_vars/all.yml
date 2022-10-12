@@ -1,2 +1,11 @@
 ---
 ansible_ssh_user: root
+
+app_user: hntoplinks
+app_group: app
+
+app_port: 8090
+app_name: hntoplinks.jar
+app_src: ../../app/build/libs/{{ app_name }}
+
+

@@ -4,3 +4,9 @@
     name:
       - nginx-{{ nginx_version }}
     state: present
+
+- name: Start daemon
+  shell: daemonize -l /var/lib/nginx/.lock -e /var/log/nginx/stderr.log -o /var/log/nginx/stdout.log /usr/sbin/nginx
+  become: true
+  become_user: nginx
+  when: is_server_docker_container

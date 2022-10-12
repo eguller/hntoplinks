@@ -1,13 +1,15 @@
 ---
-- name: Ensure group "app" exists
+- name: Ensure group "{{ app_group }}" exists
   ansible.builtin.group:
     name: app
     state: present
 
-- name: Add the user 'hntoplinks' with a specific uid and a primary group of 'app'
+- name: Add the user '{{ app_user }}' with a specific uid and a primary group of 'app'
   ansible.builtin.user:
-    name: hntoplinks
+    name: "{{ app_user }}"
     comment: hntoplinks
+    shell: /sbin/nologin
+    create_home: no
     group: app
 
 - name: install java
@@ -15,3 +17,20 @@
     name:
       - java-17-openjdk
     state: present
+
+- name: Create a directory if it does not exist
+  ansible.builtin.file:
+    path: "{{ app_path }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    state: directory
+    mode: '0755'
+
+- name: Copy app file
+  ansible.builtin.copy:
+    src: "{{ app_src }}"
+    dest: "{{ app_path }}/{{ app_name }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: '0644'
+
