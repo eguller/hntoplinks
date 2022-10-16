@@ -49,6 +49,10 @@ jobs:
           key: ${{secrets.SSH_PRIVATE_KEY}}
           options: |
             --inventory prod.yml
+            --extra-vars postgres_db_user_password=${{ secrets.POSTGRES_DB_USER_PASSWORD }}
+            --extra-vars hntoplinks_db_user_password=${{ secrets.HNTOPLINKS_DB_USER_PASSWORD }}
+            --extra-vars sendgrid_api_key=${{ secrets.SENDGRID_API_KEY }}
+            --extra-vars captcha_secret=${{ secrets.CAPTCHA_SECRET }}
        
           
 
