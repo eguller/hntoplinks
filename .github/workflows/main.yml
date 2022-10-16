@@ -33,6 +33,7 @@ jobs:
       - uses: actions/download-artifact@master
         with:
           name: hntoplinks.jar
+          path: app/build/libs/
 
       - name: Show directory structure of artifacts           
         run: ls -R
