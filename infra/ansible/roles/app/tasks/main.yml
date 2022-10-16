@@ -18,7 +18,7 @@
       - java-17-openjdk
     state: present
 
-- name: Create a directory if it does not exist
+- name: Create app directory
   ansible.builtin.file:
     path: "{{ app_path }}"
     owner: "{{ app_user }}"
@@ -26,11 +26,47 @@
     state: directory
     mode: '0755'
 
+- name: Create log directory
+  ansible.builtin.file:
+    path: "{{ app_path }}/logs"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    state: directory
+    mode: '0755'    
+
+- name: Create heap dump directory
+  ansible.builtin.file:
+    path: "{{ app_path }}/dumps"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    state: directory
+    mode: '0755'    
+
 - name: Copy app file
   ansible.builtin.copy:
     src: "{{ app_src }}"
-    dest: "{{ app_path }}/{{ app_name }}"
+    dest: "{{ app_path }}/{{ app_name }}.jar"
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
     mode: '0644'
+  register: app_file
 
+- name: upload service file
+  ansible.builtin.template:
+    src: "{{ service_template_file_name }}"
+    dest: /etc/systemd/system/hntoplinks.service
+  register: service_config
+
+- name: reload hntoplinks service
+  ansible.builtin.systemd:
+    name: hntoplinks
+    enabled: yes
+    daemon_reload: yes  
+    state: restarted
+  when: service_config.changed
+
+- name: run hntoplinks service
+  ansible.builtin.systemd:
+    name: hntoplinks
+    enabled: yes 
+    state: started    

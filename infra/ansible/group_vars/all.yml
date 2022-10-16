@@ -1,11 +1,13 @@
 ---
 ansible_ssh_user: root
 
-app_user: hntoplinks
-app_group: app
+app_port: 9000
 
-app_port: 8090
-app_name: hntoplinks.jar
-app_src: ../../app/build/libs/{{ app_name }}
+hntoplinks_db_name: "hntoplinks"
+hntoplinks_db_user: "hntoplinks"
+
+postgres_db_user_password: "{{ lookup('ansible.builtin.env', 'POSTGRES_DB_USER_PASSWORD', default='dummy') }}"
+hntoplinks_db_user_password: "{{ lookup('ansible.builtin.env', 'HNTOPLINKS_DB_USER_PASSWORD', default='dummy') }}"
+sendgrid_api_key: "{{ lookup('ansible.builtin.env', 'SENDGRID_API_KEY', default='dummy') }}"
 
 

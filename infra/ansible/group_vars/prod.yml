@@ -1,2 +1,2 @@
-create_postgres_user: false
-run_postgres: false
+service_template_file_name: "hntoplinks-prod.service.j2"
+nginx_server_name: "hntoplinks.com www.hntoplinks.com"

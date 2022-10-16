@@ -5,8 +5,33 @@
       - nginx-{{ nginx_version }}
     state: present
 
-- name: Start daemon
-  shell: daemonize -l /var/lib/nginx/.lock -e /var/log/nginx/stderr.log -o /var/log/nginx/stdout.log /usr/sbin/nginx
-  become: true
-  become_user: nginx
-  when: is_server_docker_container
+- name: Set httpd_can_network_connect flag on and keep it persistent across reboots
+  ansible.posix.seboolean:
+    name: httpd_can_network_connect
+    state: yes
+    persistent: yes
+
+- name: upload nginx configuration file
+  ansible.builtin.template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+  register: nginx_config   
+
+- name: upload hntoplinks nginx configuration file
+  ansible.builtin.template:
+    src: hntoplinks.conf.j2
+    dest: /etc/nginx/conf.d/hntoplinks.conf
+  register: hntoplinks_nginx_config     
+
+- name: reload nginx configuration
+  ansible.builtin.systemd:
+    name: nginx
+    enabled: yes
+    state: reloaded
+  when: nginx_config.changed or hntoplinks_nginx_config.changed  
+
+- name: enable service nginx
+  ansible.builtin.systemd:
+    name: nginx
+    enabled: yes
+    state: started

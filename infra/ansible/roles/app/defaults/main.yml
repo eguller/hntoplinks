@@ -1,1 +1,8 @@
-app_path: /app
+app_user: hntoplinks
+app_group: app
+
+database_host: "localhost"
+app_name: hntoplinks
+app_src: ../../app/build/libs/{{ app_name }}.jar
+app_path: "/app/{{ app_name }}"
+app_log_path: "{{ app_path }}/logs/{{ app_name }}.log"

@@ -1,2 +1,2 @@
-create_postgres_user: true
-is_server_docker_container: true
+service_template_file_name: "hntoplinks-test.service.j2"
+nginx_server_name: "localhost"

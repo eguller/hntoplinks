@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - master
+      - feature/digital-ocean-migration
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -20,18 +20,30 @@ jobs:
         with:
           arguments: build
 
-      - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
+      - uses: actions/upload-artifact@v3
         with:
-          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-          heroku_app_name: "hntoplinks" #Must be unique in Heroku
-          heroku_email: ${{secrets.HEROKU_EMAIL}}
-          stack: "container"
-          usedocker: true
-        env:
-          HD_DATABASE_HOST: ${{secrets.DATABASE_HOST}}
-          HD_DATABASE_NAME: ${{secrets.DATABASE_NAME}}
-          HD_DATABASE_USERNAME: ${{secrets.DATABASE_USERNAME}}
-          HD_DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
-          HD_SENDGRID_API_KEY: ${{secrets.SENDGRID_API_KEY}}
-          HD_CAPTCHA_SECRET: ${{secrets.CAPTCHA_SECRET}}
+          name: hntoplinks.jar
+          path: app/build/libs/hntoplinks.jar
+
+  deploy:
+    runs-on: ubuntu-latest  
+    steps:  
+      - uses: actions/download-artifact@master
+        with:
+          name: hntoplinks.jar
+          path: app/build/libs/hntoplinks.jar      
+
+      - name: Run playbook
+        uses: dawidd6/action-ansible-playbook@v2
+        with:
+          # Required, playbook filepath
+          playbook: site.yml
+          # Optional, directory where playbooks live
+          directory: ./infra/ansible
+          # Optional, SSH private key
+          key: ${{secrets.SSH_PRIVATE_KEY}}
+       
+          
+
+
 

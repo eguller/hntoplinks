@@ -26,6 +26,8 @@ bin/
 *.iml
 *.ipr
 out/
+.ideaDataSources
+dataSources
 !**/src/main/**/out/
 !**/src/test/**/out/
 
@@ -44,3 +46,6 @@ latest.dump
 
 # utils
 infra/utils/fedora-ssh/.ssh/*
+
+# vagrant
+.vagrant/
