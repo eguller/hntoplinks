@@ -33,8 +33,6 @@ jobs:
       - uses: actions/download-artifact@master
         with:
           name: hntoplinks.jar
-          path: app/build/libs/      
-
       - name: Run playbook
         uses: dawidd6/action-ansible-playbook@v2
         with:
