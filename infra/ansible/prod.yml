@@ -4,12 +4,12 @@ all:
     web_servers:
       hosts:
         beta.hntoplinks.com
-      app_servers:
-        hosts:
-          beta.hntoplinks.com
-      db_servers:
-        hosts:
-          beta.hntoplinks.com
-      prod:
-        hosts:
-          beta.hntoplinks.com
+    app_servers:
+      hosts:
+        beta.hntoplinks.com
+    db_servers:
+      hosts:
+        beta.hntoplinks.com
+    prod:
+      hosts:
+        beta.hntoplinks.com
