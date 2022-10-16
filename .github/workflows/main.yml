@@ -33,6 +33,10 @@ jobs:
       - uses: actions/download-artifact@master
         with:
           name: hntoplinks.jar
+
+      - name: Show directory structure of artifacts           
+        run: ls -R
+
       - name: Run playbook
         uses: dawidd6/action-ansible-playbook@v2
         with:
