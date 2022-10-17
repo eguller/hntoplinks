@@ -3,13 +3,13 @@ all:
   children:
     web_servers:
       hosts:
-        beta.hntoplinks.com
+        hntoplinks.com
     app_servers:
       hosts:
-        beta.hntoplinks.com
+        hntoplinks.com
     db_servers:
       hosts:
-        beta.hntoplinks.com
+        hntoplinks.com
     prod:
       hosts:
-        beta.hntoplinks.com
+        hntoplinks.com
