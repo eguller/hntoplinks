@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - feature/digital-ocean-migration
+      - master
 jobs:
   build:
     runs-on: ubuntu-latest
