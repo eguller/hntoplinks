@@ -44,7 +44,7 @@ public class SendMailJob {
   @Autowired
   private StatisticsService statisticsService;
 
-  @Scheduled(fixedDelay = 15, timeUnit = TimeUnit.MINUTES)
+  @Scheduled(initialDelay = 5, fixedDelay = 15, timeUnit = TimeUnit.MINUTES)
   public void sendEmail() {
     var subscriptionsToSendEmail = subscriptionRepository.findSubscriptionsToSendEmail();
     subscriptionsToSendEmail.stream()
