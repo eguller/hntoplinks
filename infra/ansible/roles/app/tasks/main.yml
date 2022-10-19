@@ -16,6 +16,7 @@
   ansible.builtin.yum:
     name:
       - java-17-openjdk
+    use_backend: yum4  
     state: present
 
 - name: Create app directory
