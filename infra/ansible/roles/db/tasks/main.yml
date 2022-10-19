@@ -16,10 +16,10 @@
 #       - gcc
 #     state: present    
 # 
-# - name: check if pg_hba.conf file exists
-#   stat: 
-#     path: /var/lib/pgsql/data/pg_hba.conf
-#   register: pg_hba_conf
+- name: check if pg_hba.conf file exists
+  stat: 
+    path: /var/lib/pgsql/data/pg_hba.conf
+  register: pg_hba_conf
 
 - name: upload postgres user password file
   ansible.builtin.template:
