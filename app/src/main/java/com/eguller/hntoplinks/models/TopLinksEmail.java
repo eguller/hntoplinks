@@ -12,6 +12,7 @@ import java.util.List;
 @Data
 @SuperBuilder
 public abstract class TopLinksEmail {
+  private static final int MAX_STORY_COUNT = 25;
   protected Subscription      subscription;
   protected StoryCacheService storyCacheService;
   protected TemplateService   templateService;
@@ -19,7 +20,7 @@ public abstract class TopLinksEmail {
   public Email createEmail() {
     var subject = createSubject();
     var topStories = getTopStories();
-    var content = templateService.generateTopEmail(subject, subscription, topStories);
+    var content = templateService.generateTopEmail(subject, subscription, topStories.subList(0, Math.min(topStories.size() - 1, MAX_STORY_COUNT)));
 
     var email = Email.builder()
       .subject("[hntoplinks] - " + subject)
