@@ -26,17 +26,14 @@ jobs:
           path: app/build/libs/hntoplinks.jar
 
   deploy:
-    runs-on: ubuntu-latest  
+    runs-on: ubuntu-latest
     needs: build
-    steps:  
-      - uses: actions/checkout@v2    
+    steps:
+      - uses: actions/checkout@v2
       - uses: actions/download-artifact@master
         with:
           name: hntoplinks.jar
           path: app/build/libs/
-
-      - name: Show directory structure of artifacts           
-        run: ls -R
 
       - name: Run playbook
         uses: dawidd6/action-ansible-playbook@v2
@@ -53,8 +50,8 @@ jobs:
             --extra-vars hntoplinks_db_user_password=${{ secrets.HNTOPLINKS_DB_USER_PASSWORD }}
             --extra-vars sendgrid_api_key=${{ secrets.SENDGRID_API_KEY }}
             --extra-vars captcha_secret=${{ secrets.CAPTCHA_SECRET }}
-       
-          
+
+
 
 
 
