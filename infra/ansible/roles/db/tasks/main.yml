@@ -1,21 +1,19 @@
 ---
 - name: install postgresql
-  ansible.builtin.yum:
+  ansible.builtin.dnf:
     name:
       - postgresql-{{ pg_version }}
       - postgresql-server-{{ pg_version }}
-      - postgresql-contrib-{{ pg_version }}
-    use_backend: yum4        
+      - postgresql-contrib-{{ pg_version }}       
     state: present
 
 - name: install required packages for psycopg2
-  ansible.builtin.yum:
+  ansible.builtin.dnf:
     name:
       - pip
       - libpq-devel
       - python3-devel
-      - gcc
-    use_backend: yum4        
+      - gcc       
     state: present    
 
 - name: check if pg_hba.conf file exists
