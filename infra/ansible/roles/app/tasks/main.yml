@@ -12,12 +12,12 @@
     create_home: no
     group: app
 
-- name: install java
-  ansible.builtin.yum:
-    name:
-      - java-17-openjdk
-    use_backend: yum4  
-    state: present
+# - name: install java
+#   ansible.builtin.yum:
+#     name:
+#       - java-17-openjdk
+#     use_backend: yum4
+#     state: present
 
 - name: Create app directory
   ansible.builtin.file:
@@ -33,7 +33,7 @@
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
     state: directory
-    mode: '0755'    
+    mode: '0755'
 
 - name: Create heap dump directory
   ansible.builtin.file:
@@ -41,7 +41,7 @@
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
     state: directory
-    mode: '0755'    
+    mode: '0755'
 
 - name: Copy app file
   ansible.builtin.copy:
@@ -62,12 +62,12 @@
   ansible.builtin.systemd:
     name: hntoplinks
     enabled: yes
-    daemon_reload: yes  
+    daemon_reload: yes
     state: restarted
   when: service_config.changed
 
 - name: run hntoplinks service
   ansible.builtin.systemd:
     name: hntoplinks
-    enabled: yes 
-    state: started    
+    enabled: yes
+    state: started

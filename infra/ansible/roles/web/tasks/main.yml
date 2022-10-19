@@ -1,9 +1,9 @@
 ---
-- name: install nginx
-  ansible.builtin.yum:
-    name:
-      - nginx-{{ nginx_version }}
-    state: present
+#- name: install nginx
+#  ansible.builtin.yum:
+#    name:
+#      - nginx-{{ nginx_version }}
+#    state: present
 
 - name: Set httpd_can_network_connect flag on and keep it persistent across reboots
   ansible.posix.seboolean:
@@ -15,20 +15,20 @@
   ansible.builtin.template:
     src: nginx.conf.j2
     dest: /etc/nginx/nginx.conf
-  register: nginx_config   
+  register: nginx_config
 
 - name: upload hntoplinks nginx configuration file
   ansible.builtin.template:
     src: hntoplinks.conf.j2
     dest: /etc/nginx/conf.d/hntoplinks.conf
-  register: hntoplinks_nginx_config     
+  register: hntoplinks_nginx_config
 
 - name: reload nginx configuration
   ansible.builtin.systemd:
     name: nginx
     enabled: yes
     state: reloaded
-  when: nginx_config.changed or hntoplinks_nginx_config.changed  
+  when: nginx_config.changed or hntoplinks_nginx_config.changed
 
 - name: enable service nginx
   ansible.builtin.systemd:

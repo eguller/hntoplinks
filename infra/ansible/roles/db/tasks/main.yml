@@ -1,23 +1,23 @@
 ---
-- name: install postgresql
-  ansible.builtin.dnf:
-    name:
-      - postgresql-{{ pg_version }}
-      - postgresql-server-{{ pg_version }}
-      - postgresql-contrib-{{ pg_version }}       
-    state: present
-
-- name: install required packages for psycopg2
-  ansible.builtin.dnf:
-    name:
-      - pip
-      - libpq-devel
-      - python3-devel
-      - gcc       
-    state: present    
+# - name: install postgresql
+#   ansible.builtin.dnf:
+#     name:
+#       - postgresql-{{ pg_version }}
+#       - postgresql-server-{{ pg_version }}
+#       - postgresql-contrib-{{ pg_version }}
+#     state: present
+#
+# - name: install required packages for psycopg2
+#   ansible.builtin.dnf:
+#     name:
+#       - pip
+#       - libpq-devel
+#       - python3-devel
+#       - gcc
+#     state: present
 
 - name: check if pg_hba.conf file exists
-  stat: 
+  stat:
     path: /var/lib/pgsql/data/pg_hba.conf
   register: pg_hba_conf
 
@@ -39,7 +39,7 @@
 - name: Remove postgres password file
   ansible.builtin.file:
     path: /var/lib/pgsql/postgres_user_password
-    state: absent  
+    state: absent
 
 - name: enable service postgresql
   ansible.builtin.systemd:
@@ -52,12 +52,12 @@
     state: started
 
 # psycopg2 required for community.postgresql
-- name: Install wheel python package 
+- name: Install wheel python package
   ansible.builtin.pip:
     name: wheel
 
 # psycopg2 required for community.postgresql
-- name: Install psycopg2 python package 
+- name: Install psycopg2 python package
   ansible.builtin.pip:
     name: psycopg2
 
@@ -65,35 +65,35 @@
 #  community.postgresql.postgresql_user:
 #    db: postgres
 #    user: postgres
-#    password: "{{ postgres_db_user_password }}"   
+#    password: "{{ postgres_db_user_password }}"
 #  become: yes
-#  become_user: postgres     
+#  become_user: postgres
 
 - name: Create a new database with name "hntoplinks"
   community.postgresql.postgresql_db:
     login_host: localhost
-    login_user: postgres    
-    login_password: "{{ postgres_db_user_password }}" 
-    name: hntoplinks    
+    login_user: postgres
+    login_password: "{{ postgres_db_user_password }}"
+    name: hntoplinks
     encoding: UTF-8
     lc_collate: en_US.UTF-8
     lc_ctype: en_US.UTF-8
     template: template0
   become: true
-  become_user: postgres       
+  become_user: postgres
 
 - name: Create hntoplinks user
   community.postgresql.postgresql_user:
     login_host: localhost
-    login_user: postgres    
-    login_password: "{{ postgres_db_user_password }}"   
+    login_user: postgres
+    login_password: "{{ postgres_db_user_password }}"
     db: hntoplinks
     user: hntoplinks
-    password: "{{ hntoplinks_db_user_password }}" 
+    password: "{{ hntoplinks_db_user_password }}"
     role_attr_flags: NOSUPERUSER,NOCREATEDB
   become: true
-  become_user: postgres 
-    
+  become_user: postgres
+
 #- name: Grant hntoplinks password access
 #  community.postgresql.postgresql_pg_hba:
 #    dest: /var/lib/pgsql/data/pg_hba.conf
@@ -108,25 +108,25 @@
 - name: change owner of hntoplinks database
   community.postgresql.postgresql_owner:
     login_host: localhost
-    login_user: postgres    
-    login_password: "{{ postgres_db_user_password }}"   
+    login_user: postgres
+    login_password: "{{ postgres_db_user_password }}"
     db: hntoplinks
     new_owner: hntoplinks
     obj_type: database
     obj_name: hntoplinks
   become: true
-  become_user: postgres   
+  become_user: postgres
 
 - name: GRANT ALL PRIVILEGES ON DATABASE hntoplinks TO hntoplinks
   community.postgresql.postgresql_privs:
     login_host: localhost
-    login_user: postgres    
-    login_password: "{{ postgres_db_user_password }}"   
+    login_user: postgres
+    login_password: "{{ postgres_db_user_password }}"
     db: hntoplinks
     privs: ALL
     type: database
     obj: hntoplinks
-    role: hntoplinks  
+    role: hntoplinks
   become: true
   become_user: postgres
 
