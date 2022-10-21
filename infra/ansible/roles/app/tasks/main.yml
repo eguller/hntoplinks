@@ -12,12 +12,12 @@
     create_home: no
     group: app
 
-# - name: install java
-#   ansible.builtin.yum:
-#     name:
-#       - java-17-openjdk
-#     use_backend: yum4
-#     state: present
+- name: install java
+  ansible.builtin.yum:
+    name:
+      - java-17-openjdk
+    use_backend: yum4
+    state: present
 
 - name: Create app directory
   ansible.builtin.file:
