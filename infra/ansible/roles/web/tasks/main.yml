@@ -1,9 +1,9 @@
 ---
-#- name: install nginx
-#  ansible.builtin.yum:
-#    name:
-#      - nginx-{{ nginx_version }}
-#    state: present
+- name: install nginx
+  ansible.builtin.yum:
+    name:
+      - nginx-{{ nginx_version }}
+    state: present
 
 - name: Set httpd_can_network_connect flag on and keep it persistent across reboots
   ansible.posix.seboolean:
