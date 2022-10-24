@@ -1,22 +1,24 @@
 package com.eguller.hntoplinks.controllers;
 
+import com.eguller.hntoplinks.entities.Period;
+import com.eguller.hntoplinks.entities.SubscriberEntity;
+import com.eguller.hntoplinks.entities.SubscriptionEntity;
 import com.eguller.hntoplinks.models.Page;
 import com.eguller.hntoplinks.models.PageTab;
 import com.eguller.hntoplinks.models.StatsPage;
-import com.eguller.hntoplinks.models.Story;
 import com.eguller.hntoplinks.models.StoryPage;
-import com.eguller.hntoplinks.models.Subscription;
-import com.eguller.hntoplinks.models.SubscriptionForm;
 import com.eguller.hntoplinks.models.SubscriptionPage;
+import com.eguller.hntoplinks.repository.SubscriberRepository;
+import com.eguller.hntoplinks.repository.SubscriptionRepository;
 import com.eguller.hntoplinks.services.EmailService;
 import com.eguller.hntoplinks.services.RecaptchaVerifier;
 import com.eguller.hntoplinks.services.StatisticsService;
 import com.eguller.hntoplinks.services.StoryCacheService;
 import com.eguller.hntoplinks.services.SubscriptionService;
+import com.eguller.hntoplinks.util.DateUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mobile.device.Device;
 import org.springframework.mobile.device.DeviceUtils;
@@ -32,9 +34,10 @@ import org.springframework.web.context.annotation.RequestScope;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.invoke.MethodHandles;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.TimeZone;
+import java.util.UUID;
 
 
 @Controller
@@ -44,24 +47,33 @@ public class ApplicationController {
 
   private static final int                 MAX_PAGES      = 10;
   private static final int                 STORY_PER_PAGE = 30;
-  @Autowired
-  private              HttpServletRequest  httpServletRequest;
-  @Autowired
-  private              StoryCacheService   storyCacheService;
-  @Autowired
-  private              SubscriptionService subscriptionService;
+  private final        HttpServletRequest  httpServletRequest;
+  private final        StoryCacheService   storyCacheService;
+  private final        SubscriptionService subscriptionService;
 
-  @Autowired
-  private StatisticsService statisticsService;
+  private final StatisticsService statisticsService;
 
-  @Autowired
-  private RecaptchaVerifier recaptchaVerifier;
+  private final RecaptchaVerifier recaptchaVerifier;
 
-  @Autowired
-  private EmailService emailService;
+  private final EmailService emailService;
+
+  private final SubscriptionRepository subscriptionRepository;
+
+  private final SubscriberRepository subscriberRepository;
+
 
   @Value("${hntoplinks.captcha.enabled}")
   private boolean captchaEnabled;
+
+  public ApplicationController(HttpServletRequest httpServletRequest, StoryCacheService storyCacheService, SubscriptionService subscriptionService, StatisticsService statisticsService, SubscriberRepository subscriberRepository, SubscriptionRepository subscriptionRepository, RecaptchaVerifier recaptchaVerifier, EmailService emailService) {
+    this.httpServletRequest     = httpServletRequest;
+    this.storyCacheService      = storyCacheService;
+    this.subscriptionService    = subscriptionService;
+    this.subscriptionRepository = subscriptionRepository;
+    this.statisticsService      = statisticsService;
+    this.recaptchaVerifier      = recaptchaVerifier;
+    this.emailService           = emailService;
+  }
 
 
   @GetMapping("/")
@@ -151,12 +163,21 @@ public class ApplicationController {
 
   @GetMapping("/subscribe")
   public String subscribe_Get(Model model, @RequestParam(value = "id", required = false) String subscriptionId) {
-    var subscriptionPage = Optional.ofNullable(subscriptionId)
-      .flatMap(id -> subscriptionService.findBySubscriptionId(id))
-      .or(() -> Optional.of(Subscription.NEW))
-      .map(subscription -> SubscriptionPage.builder().captchaEnabled(captchaEnabled).subscription(subscription).build())
-      .get();
+    var subscriptionFormBuilder = SubscriptionPage.SubscriptionForm.builder();
+    var subscriptionPageBuilder = SubscriptionPage.builder().captchaEnabled(captchaEnabled);
+    if (subscriptionId != null) {
+      var subscriptionOpt = subscriptionRepository.findBySubsUUID(subscriptionId);
+      subscriptionOpt.ifPresent((subscription) -> {
+        subscriptionFormBuilder
+          .email(subscription.getEmail())
+          .daily(subscription.isSubscribedFor(Period.DAILY))
+          .weekly(subscription.isSubscribedFor(Period.WEEKLY))
+          .monthly(subscription.isSubscribedFor(Period.MONTHLY))
+          .yearly(subscription.isSubscribedFor(Period.YEARLY));
+      });
 
+    }
+    var subscriptionPage = subscriptionPageBuilder.subscriptionForm(subscriptionFormBuilder.build()).build();
     model.addAttribute("page", subscriptionPage);
     return view("subscription");
   }
@@ -164,8 +185,8 @@ public class ApplicationController {
   @GetMapping("/unsubscribe/{id}")
   public String unsubscribe_Get(Model model, @PathVariable(value = "id") String subscriptionId) {
     var unsubscribePage = Page.pageBuilder().title("Unsubscribe").build();
-    var isUnsubscribed = subscriptionService.unsubscribe(subscriptionId);
-    if (isUnsubscribed) {
+    var numberOfUsers = subscriptionRepository.deleteBySubsUUID(subscriptionId);
+    if (numberOfUsers > 0) {
       statisticsService.userUnsubscribed();
     }
     model.addAttribute("page", unsubscribePage);
@@ -174,37 +195,48 @@ public class ApplicationController {
 
   @GetMapping("/update-subscription/{id}")
   public String updateSubscription_Get(Model model, @PathVariable(value = "id") String subscriptionId) {
-    var subscription = subscriptionService.findBySubscriptionId(subscriptionId);
-    var subscriptionPageBuilder = SubscriptionPage.builder().title("Update Subscription").subscription(subscription.orElse(null));
+    var subscriptionForm = SubscriptionPage.SubscriptionForm.builder();
+    var subscriptionPageBuilder = SubscriptionPage.builder()
+      .title("Update Subscription")
+      .captchaEnabled(captchaEnabled);
+    var subscriptionOpt = subscriptionRepository.findBySubsUUID(subscriptionId);
+    subscriptionOpt.ifPresent((subscription) -> {
+      subscriptionForm
+        .email(subscription.getEmail())
+        .daily(subscription.isSubscribedFor(Period.DAILY))
+        .weekly(subscription.isSubscribedFor(Period.WEEKLY))
+        .monthly(subscription.isSubscribedFor(Period.MONTHLY))
+        .yearly(subscription.isSubscribedFor(Period.YEARLY));
+    });
 
-    model.addAttribute("page", subscriptionPageBuilder.build());
+    model.addAttribute("page", subscriptionPageBuilder.subscriptionForm(subscriptionForm.build()).build());
     return view("subscription");
   }
 
 
   @PostMapping("/subscribe")
-  public String subscribe_Post(@ModelAttribute SubscriptionForm subscriptionForm, @ModelAttribute("g-recaptcha-response") String recaptchaResponse, Model model) {
+//  public String subscribe_Post(@ModelAttribute SubscriptionPage.SubscriptionForm subscriptionForm, @ModelAttribute("g-recaptcha-response") String recaptchaResponse, Model model) {
+  public String subscribe_Post(@ModelAttribute SubscriptionPage.SubscriptionForm subscriptionForm, Model model) {
     var subscriptionPageBuilder = SubscriptionPage.builder();
-    var subscription = subscriptionForm.getSubscription();
-    subscriptionPageBuilder.subscription(subscription);
+    subscriptionPageBuilder.subscriptionForm(subscriptionForm);
     subscriptionPageBuilder.captchaEnabled(captchaEnabled);
     var hasError = false;
-    if (!StringUtils.hasLength(subscription.getEmail())) {
+    if (!StringUtils.hasLength(subscriptionForm.getEmail())) {
       subscriptionPageBuilder.error("Email address can not be empty.");
       hasError = true;
-    } else if (!EmailValidator.getInstance().isValid(subscription.getEmail())) {
+    } else if (!EmailValidator.getInstance().isValid(subscriptionForm.getEmail())) {
       subscriptionPageBuilder.error("Email address is not valid.");
       hasError = true;
     }
 
-    var isCaptchaValid = recaptchaVerifier.verify(recaptchaResponse);
+    var isCaptchaValid = recaptchaVerifier.verify(subscriptionForm.getGRecaptchaResponse());
 
-    if(!isCaptchaValid){
+    if (!isCaptchaValid) {
       subscriptionPageBuilder.error("I'm not a robot check has failed.");
       hasError = true;
     }
 
-    if (!subscription.hasSubscription()) {
+    if (!subscriptionForm.hasSubscription()) {
       subscriptionPageBuilder.error("Please select at least one of the daily, weekly, monthly or annually subscriptions.");
       hasError = true;
     }
@@ -214,40 +246,70 @@ public class ApplicationController {
       return view("subscription");
     }
 
-    subscriptionService.findByEmail(subscription.getEmail().toLowerCase())
-      .ifPresentOrElse(existingSubscription -> {
-          if (existingSubscription.getSubsUUID().equalsIgnoreCase(subscription.getSubsUUID())) {
-            var updatedSubscription = subscriptionService.save(subscription);
-            subscriptionPageBuilder.subscription(updatedSubscription);
-          }
-          //if id and email does not match, print message but do not do anything.
-          subscriptionPageBuilder.message("Subscription has been updated.");
-        },
-        () -> {
-          subscription.setSubsUUID(null);
-          var savedSubscription = subscriptionService.save(subscription);
-          subscriptionPageBuilder.message("You have subscribed.");
-          subscriptionPageBuilder.subscription(savedSubscription);
-          emailService.sendSubscriptionEmail(savedSubscription);
-          statisticsService.userSubscribed();
-          if (savedSubscription.isDaily()) {
-            statisticsService.userSubscribedForDaily();
-          }
-          if (savedSubscription.isWeekly()) {
-            statisticsService.userSubscribedForWeekly();
-          }
-          if (savedSubscription.isMonthly()) {
-            statisticsService.userSubscribedForMonthly();
-          }
-          if (savedSubscription.isAnnually()) {
-            statisticsService.userSubscribedForAnnually();
-          }
-        }
-      );
+    var subscriber = subscriberRepository.find(subscriptionForm.getEmail().toLowerCase()).or(() -> {
+      var newSubscriber = new SubscriberEntity();
+      newSubscriber.setTimeZone(subscriptionForm.getGRecaptchaResponse());
+      newSubscriber.setActivated(true);
+      newSubscriber.setSubsUUID(UUID.randomUUID().toString());
+      newSubscriber.setEmail(subscriptionForm.getEmail());
+      newSubscriber.setSubscriptionDate(LocalDate.now());
+      return Optional.of(newSubscriber);
+    }).get();
 
-    model.addAttribute("page", subscriptionPageBuilder.build());
+    if (subscriber.getSubsUUID().equalsIgnoreCase(subscriptionForm.getSubsUUID()) || subscriptionForm.getSubsUUID() == null) {
+      var dailySubscription = subscriber.getSubscriptionList().stream().filter(subscription -> Period.DAILY == subscription.getPeriod()).findFirst();
+      var weeklySubscription = subscriber.getSubscriptionList().stream().filter(subscription -> Period.WEEKLY == subscription.getPeriod()).findFirst();
+      var monthlySubscription = subscriber.getSubscriptionList().stream().filter(subscription -> Period.MONTHLY == subscription.getPeriod()).findFirst();
+      var yearlySubscription = subscriber.getSubscriptionList().stream().filter(subscription -> Period.YEARLY == subscription.getPeriod()).findFirst();
+
+      if (dailySubscription.isPresent() && !subscriptionForm.isDaily()) {
+        subscriber.getSubscriptionList().remove(dailySubscription);
+      } else if (dailySubscription.isEmpty() && subscriptionForm.isDaily()) {
+        var subscriptionEntity = new SubscriptionEntity();
+        subscriptionEntity.setSubscriber(subscriber);
+        subscriptionEntity.setPeriod(Period.DAILY);
+        subscriptionEntity.setNextSendDate(DateUtils.tomorrow_7_AM(subscriber.getTimeZoneObj()));
+        subscriber.getSubscriptionList().add(subscriptionEntity);
+      }
+
+      if (weeklySubscription.isPresent() && !subscriptionForm.isWeekly()) {
+        subscriber.getSubscriptionList().remove(weeklySubscription);
+      } else if (weeklySubscription.isEmpty() && subscriptionForm.isWeekly()) {
+        var subscriptionEntity = new SubscriptionEntity();
+        subscriptionEntity.setSubscriber(subscriber);
+        subscriptionEntity.setPeriod(Period.WEEKLY);
+        subscriptionEntity.setNextSendDate(DateUtils.nextMonday_7_AM(subscriber.getTimeZoneObj()));
+        subscriber.getSubscriptionList().add(subscriptionEntity);
+      }
+
+      if (monthlySubscription.isPresent() && !subscriptionForm.isMonthly()) {
+        subscriber.getSubscriptionList().remove(monthlySubscription);
+      } else if (monthlySubscription.isEmpty() && subscriptionForm.isMonthly()) {
+        var subscriptionEntity = new SubscriptionEntity();
+        subscriptionEntity.setSubscriber(subscriber);
+        subscriptionEntity.setPeriod(Period.MONTHLY);
+        subscriptionEntity.setNextSendDate(DateUtils.firstDayOfNextMonth_7_AM(subscriber.getTimeZoneObj()));
+        subscriber.getSubscriptionList().add(subscriptionEntity);
+      }
+
+      if (yearlySubscription.isPresent() && !subscriptionForm.isYearly()) {
+        subscriber.getSubscriptionList().remove(yearlySubscription);
+      } else if (yearlySubscription.isEmpty() && subscriptionForm.isYearly()) {
+        var subscriptionEntity = new SubscriptionEntity();
+        subscriptionEntity.setSubscriber(subscriber);
+        subscriptionEntity.setPeriod(Period.YEARLY);
+        subscriptionEntity.setNextSendDate(DateUtils.firstDayOfNextYear_7_AM(subscriber.getTimeZoneObj()));
+        subscriber.getSubscriptionList().add(subscriptionEntity);
+      }
+    }
+
+    if (subscriptionForm.getSubsUUID() == null) {
+      subscriptionPageBuilder.message("You have subscribed.");
+    } else {
+      subscriptionPageBuilder.message("Subscription has been updated.");
+    }
+    model.addAttribute("page",subscriptionPageBuilder.build());
     return view("subscription");
-
   }
 
   private StoryPage getStoryPage(PageTab pageTab, Integer page) {
@@ -260,7 +322,7 @@ public class ApplicationController {
     } else if (PageTab.month == pageTab) {
       storyList = storyCacheService.getMonthlyTop();
     } else if (PageTab.year == pageTab) {
-      storyList = storyCacheService.getAnnuallyTop();
+      storyList = storyCacheService.getYearlyTop();
     } else {
       storyList = storyCacheService.getAllTimeTop();
     }

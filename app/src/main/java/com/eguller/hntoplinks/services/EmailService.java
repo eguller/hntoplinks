@@ -1,7 +1,7 @@
 package com.eguller.hntoplinks.services;
 
+import com.eguller.hntoplinks.entities.SubscriberEntity;
 import com.eguller.hntoplinks.models.Email;
-import com.eguller.hntoplinks.models.Subscription;
 import com.eguller.hntoplinks.models.TopLinksEmail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,10 +13,10 @@ public class EmailService {
   @Autowired
   private TemplateService      templateService;
 
-  public void sendSubscriptionEmail(Subscription subscription) {
-    var content = templateService.generateSubscriptionEmail(subscription);
+  public void sendSubscriptionEmail(SubscriberEntity subscriber) {
+    var content = templateService.generateSubscriptionEmail(subscriber);
     var email = Email.builder()
-      .to(subscription.getEmail())
+      .to(subscriber.getEmail())
       .subject("[hntoplinks] - Welcome to hntoplinks.com")
       .html(content)
       .build();

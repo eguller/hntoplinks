@@ -2,10 +2,10 @@ package com.eguller.hntoplinks.jobs;
 
 
 import com.eguller.hntoplinks.models.HnStory;
+import com.eguller.hntoplinks.repository.StoryRepository;
 import com.eguller.hntoplinks.services.FirebaseioService;
 import com.eguller.hntoplinks.services.StatisticsService;
 import com.eguller.hntoplinks.services.StoryCacheService;
-import com.eguller.hntoplinks.services.StoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,15 +30,15 @@ public class ReadStoriesJob {
 
   private StoryCacheService storyCacheService;
 
-  private StoryService storyService;
+  private StoryRepository storyRepository;
 
   private StatisticsService statisticsService;
 
   @Autowired
-  public ReadStoriesJob(FirebaseioService firebaseioService, StoryCacheService storyCacheService, StoryService storyService, StatisticsService statisticsService) {
+  public ReadStoriesJob(FirebaseioService firebaseioService, StoryCacheService storyCacheService, StoryRepository storyRepository, StatisticsService statisticsService) {
     this.firebaseioService = firebaseioService;
     this.storyCacheService = storyCacheService;
-    this.storyService      = storyService;
+    this.storyRepository   = storyRepository;
     this.statisticsService = statisticsService;
   }
 
@@ -54,7 +54,7 @@ public class ReadStoriesJob {
   private void saveStories(List<HnStory> hnStoryList) {
     logger.info("Stories read from firebase. numberOfStories={}", hnStoryList.size());
     var storyList = hnStoryList.stream().map(hnStory -> hnStory.toStory()).collect(Collectors.toList());
-    storyService.saveStories(storyList);
+    storyRepository.saveStories(storyList);
     storyCacheService.addNewStories(storyList);
   }
 }

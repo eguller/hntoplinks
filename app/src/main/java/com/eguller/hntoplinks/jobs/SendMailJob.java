@@ -1,20 +1,11 @@
 package com.eguller.hntoplinks.jobs;
 
-import com.eguller.hntoplinks.entities.SubscriptionEntity;
-import com.eguller.hntoplinks.models.AnnuallyTopLinksEmail;
-import com.eguller.hntoplinks.models.DailyTopLinksEmail;
-import com.eguller.hntoplinks.models.MonthlyTopLinksEmail;
-import com.eguller.hntoplinks.models.Subscription;
-import com.eguller.hntoplinks.models.TopLinksEmail;
-import com.eguller.hntoplinks.models.WeeklyTopLinksEmail;
 import com.eguller.hntoplinks.repository.SubscriptionRepository;
 import com.eguller.hntoplinks.services.EmailService;
 import com.eguller.hntoplinks.services.StatisticsService;
 import com.eguller.hntoplinks.services.StoryCacheService;
+import com.eguller.hntoplinks.services.SubscriptionService;
 import com.eguller.hntoplinks.services.TemplateService;
-import com.eguller.hntoplinks.util.DateUtils;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 @Component
 
@@ -44,15 +35,19 @@ public class SendMailJob {
   @Autowired
   private StatisticsService statisticsService;
 
+  @Autowired
+  SubscriptionService subscriptionService;
+
   @Scheduled(initialDelay = 5, fixedDelay = 15, timeUnit = TimeUnit.MINUTES)
   public void sendEmail() {
-    var subscriptionsToSendEmail = subscriptionRepository.findSubscriptionsToSendEmail();
-    subscriptionsToSendEmail.stream()
-      .filter(subscriptionEntity -> subscriptionEntity.isActivated())
-      .forEach(subscription -> sendEmail(subscription));
-    subscriptionRepository.saveAll(subscriptionsToSendEmail);
+    var subscriptionsToSendEmail = subscriptionRepository.findSubscriptionsByExpiredNextSendDate();
+    var updatedSubscriptions = subscriptionsToSendEmail.stream()
+      .map(subscription -> subscriptionService.sendSubscriptionEmail(subscription))
+      .collect(Collectors.toSet());
+    subscriptionRepository.saveAll(updatedSubscriptions);
   }
 
+  /*
   private void sendEmail(SubscriptionEntity subscription) {
     var subscriptionModel = Subscription.entityToModel(subscription);
     if (subscription.isDaily()) {
@@ -148,4 +143,5 @@ public class SendMailJob {
       return this;
     }
   }
+  */
 }

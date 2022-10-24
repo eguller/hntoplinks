@@ -1,6 +1,7 @@
 package com.eguller.hntoplinks.services;
 
-import com.eguller.hntoplinks.models.Story;
+import com.eguller.hntoplinks.entities.StoryEntity;
+import com.eguller.hntoplinks.repository.StoryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,36 +25,36 @@ public class StoryCacheService {
   private static final Logger logger     = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private static final int    CACHE_SIZE = 300;
 
-  private Cache dailyCache    = new Cache(CACHE_SIZE, (story) -> story.createDate().isAfter(LocalDateTime.now().minusDays(1)));
-  private Cache weeklyCache   = new Cache(CACHE_SIZE, (story) -> story.createDate().isAfter(LocalDateTime.now().minusWeeks(1)));
-  private Cache monthlyCache  = new Cache(CACHE_SIZE, (story) -> story.createDate().isAfter(LocalDateTime.now().minusMonths(1)));
-  private Cache annuallyCache = new Cache(CACHE_SIZE, (story) -> story.createDate().isAfter(LocalDateTime.now().minusYears(1)));
+  private Cache dailyCache    = new Cache(CACHE_SIZE, (story) -> story.getDate().isAfter(LocalDateTime.now().minusDays(1)));
+  private Cache weeklyCache   = new Cache(CACHE_SIZE, (story) -> story.getDate().isAfter(LocalDateTime.now().minusWeeks(1)));
+  private Cache monthlyCache  = new Cache(CACHE_SIZE, (story) -> story.getDate().isAfter(LocalDateTime.now().minusMonths(1)));
+  private Cache annuallyCache = new Cache(CACHE_SIZE, (story) -> story.getDate().isAfter(LocalDateTime.now().minusYears(1)));
   private Cache allTimeCache  = new Cache(CACHE_SIZE, (story) -> true);
 
   @Autowired
-  private StoryService storyService;
+  private StoryRepository storyRepository;
 
-  public List<Story> getDailyTop() {
+  public List<StoryEntity> getDailyTop() {
     return dailyCache.getCache();
   }
 
-  public List<Story> getWeeklTop() {
+  public List<StoryEntity> getWeeklTop() {
     return weeklyCache.getCache();
   }
 
-  public List<Story> getMonthlyTop() {
+  public List<StoryEntity> getMonthlyTop() {
     return monthlyCache.getCache();
   }
 
-  public List<Story> getAnnuallyTop() {
+  public List<StoryEntity> getYearlyTop() {
     return annuallyCache.getCache();
   }
 
-  public List<Story> getAllTimeTop() {
+  public List<StoryEntity> getAllTimeTop() {
     return allTimeCache.getCache();
   }
 
-  public synchronized void addNewStories(List<Story> storyList) {
+  public synchronized void addNewStories(List<StoryEntity> storyList) {
     dailyCache.updateCache(storyList);
     weeklyCache.updateCache(storyList);
     monthlyCache.updateCache(storyList);
@@ -63,11 +64,11 @@ public class StoryCacheService {
 
   @EventListener
   synchronized void loadStoriesOnStartup(ApplicationStartedEvent applicationStartedEvent) {
-    var dailyTop = storyService.readDailyTop();
-    var weeklyTop = storyService.readWeeklyTop();
-    var monthlyTop = storyService.readMonthlyTop();
-    var annuallyTop = storyService.readyAnnuallyTop();
-    var allTimeTop = storyService.readAllTimeTop();
+    var dailyTop = storyRepository.readDailyTop();
+    var weeklyTop = storyRepository.readWeeklyTop();
+    var monthlyTop = storyRepository.readMonthlyTop();
+    var annuallyTop = storyRepository.readyAnnuallyTop();
+    var allTimeTop = storyRepository.readAllTimeTop();
     logger.info("Stories are loaded from db. daily={}, weekly={}, monthly={}, annually={}, allTimeTop={}",
       dailyTop.size(), weeklyTop.size(), monthlyTop.size(), annuallyTop.size(), allTimeTop.size());
     dailyCache.updateCache(dailyTop);
@@ -79,25 +80,25 @@ public class StoryCacheService {
 
   private static class Cache {
 
-    private static final Comparator<Story> STORY_COMPARATOR = (story1, story2) -> story2.score() - story1.score();
+    private static final Comparator<StoryEntity> STORY_COMPARATOR = (story1, story2) -> story2.getPoints() - story1.getPoints();
     private final        int               cacheSize;
-    private final        Predicate<Story>  newStoryFilter;
-    private              List<Story>       cache;
+    private final        Predicate<StoryEntity>  newStoryFilter;
+    private              List<StoryEntity>       cache;
 
-    public Cache(int cacheSize, Predicate<Story> newStoryFilter) {
+    public Cache(int cacheSize, Predicate<StoryEntity> newStoryFilter) {
       this.cacheSize      = cacheSize;
       this.newStoryFilter = newStoryFilter;
       this.cache          = new ArrayList<>();
     }
 
-    public List<Story> getCache() {
+    public List<StoryEntity> getCache() {
       return Collections.unmodifiableList(cache);
     }
 
-    public void updateCache(List<Story> newStories) {
+    public void updateCache(List<StoryEntity> newStories) {
       var existingCache = new ArrayList<>(cache);
-      var storyMap = existingCache.stream().collect(Collectors.toMap(story -> story.hnId(), story -> story));
-      newStories.stream().filter(newStoryFilter).forEach(story -> storyMap.put(story.hnId(), story));
+      var storyMap = existingCache.stream().collect(Collectors.toMap(story -> story.getHnid(), story -> story));
+      newStories.stream().filter(newStoryFilter).forEach(story -> storyMap.put(story.getHnid(), story));
       var updatedStories = storyMap.values().stream().toList();
       var sortedStories = updatedStories.stream().sorted(STORY_COMPARATOR).toList();
       this.cache = sortedStories.subList(0, Math.min(updatedStories.size(), cacheSize));

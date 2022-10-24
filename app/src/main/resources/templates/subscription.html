@@ -16,32 +16,32 @@
           <tr>
             <td class="cright">Daily Top Links</td>
             <td class="cleft">
-              <input name="subscription.daily" type="checkbox" th:checked="${page.subscription.daily}"/>
+              <input name="subscription.daily" type="checkbox" th:checked="${page.daily}"/>
             </td>
           </tr>
           <tr>
             <td class="cright">Weekly Top Links</td>
             <td class="cleft">
-              <input name="subscription.weekly" type="checkbox" th:checked="${page.subscription.weekly}"/>
+              <input name="subscription.weekly" type="checkbox" th:checked="${page.weekly}"/>
             </td>
           </tr>
           <tr>
             <td class="cright">Monthly Top Links</td>
             <td class="cleft">
-              <input name="subscription.monthly" type="checkbox" th:checked="${page.subscription.monthly}"/>
+              <input name="subscription.monthly" type="checkbox" th:checked="${page.monthly}"/>
             </td>
           </tr>
           <tr>
             <td class="cright">Annually Top Links</td>
             <td class="cleft">
-              <input name="subscription.annually" type="checkbox" th:checked="${page.subscription.annually}"/>
+              <input name="subscription.annually" type="checkbox" th:checked="${page.annually}"/>
             </td>
           </tr>
           <tr>
             <td class="cright">Email</td>
             <td class="cleft">
               <input name="subscription.email" style="width: 160px;" type="text"
-                     th:value="${page.subscription.email}"/>
+                     th:value="${page.email}"/>
             </td>
           </tr>
           <tr>
@@ -49,7 +49,7 @@
               <button name="subscription.submit" type="submit" value="Submit" th:disabled="${page.captchaEnabled}"
                       onclick="submitSubscriptionForm();">Submit
               </button>
-              <input type="hidden" name="subscription.subsUUID" th:value="${page.subscription.subsUUID}">
+              <input type="hidden" name="subscription.subsUUID" th:value="${page.subsUUID}">
               <input type="hidden" name="subscription.timeZone" th:value="UTC" />
               <th:block th:unless="${page.captchaEnabled}">
                 <input type="hidden" name="g-recaptcha-response" th:value="dummy">

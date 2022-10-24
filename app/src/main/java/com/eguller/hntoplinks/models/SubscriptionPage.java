@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Singular;
 import lombok.experimental.SuperBuilder;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.util.List;
 
@@ -13,11 +14,13 @@ import java.util.List;
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
 public class SubscriptionPage extends Page {
-  @Builder.Default
-  private       PageTab      activeTab = PageTab.subscribe;
-  private final Subscription subscription;
 
-  private boolean captchaEnabled;
+  @Builder.Default
+  private PageTab activeTab = PageTab.subscribe;
+
+  private SubscriptionForm subscriptionForm;
+
+  private       boolean      captchaEnabled;
   @Singular
   private final List<String> errors;
 
@@ -30,5 +33,30 @@ public class SubscriptionPage extends Page {
 
   public boolean hasMessages() {
     return !CollectionUtils.isEmpty(messages);
+  }
+
+  @Builder
+  @Data
+  public static class SubscriptionForm {
+    private String subsUUID;
+
+    @Builder.Default
+    private String email = "";
+
+    private boolean daily;
+
+    @Builder.Default
+    private boolean weekly = true;
+
+    private boolean monthly;
+
+    private boolean yearly;
+
+    private String gRecaptchaResponse;
+
+
+    public boolean hasSubscription() {
+      return (daily || weekly || monthly || yearly);
+    }
   }
 }
