@@ -187,7 +187,7 @@ public class ApplicationController {
   @GetMapping("/unsubscribe/{id}")
   public String unsubscribe_Get(Model model, @PathVariable(value = "id") String subscriptionId) {
     var unsubscribePage = Page.pageBuilder().title("Unsubscribe").build();
-    var numberOfUsers = subscriptionRepository.deleteBySubsUUID(subscriptionId);
+    var numberOfUsers = subscriberRepository.deleteBySubsUUID(subscriptionId);
     if (numberOfUsers > 0) {
       statisticsService.userUnsubscribed();
     }

@@ -3,37 +3,35 @@ package com.eguller.hntoplinks.services;
 
 import com.eguller.hntoplinks.Application;
 import com.eguller.hntoplinks.controllers.ApplicationController;
+import com.eguller.hntoplinks.entities.Period;
 import com.eguller.hntoplinks.entities.StoryEntity;
+import com.eguller.hntoplinks.entities.SubscriberEntity;
+import com.eguller.hntoplinks.entities.SubscriptionEntity;
 import com.eguller.hntoplinks.jobs.SendMailJob;
-import com.eguller.hntoplinks.models.Email;
-import com.eguller.hntoplinks.models.Story;
-import com.eguller.hntoplinks.models.Subscription;
-import com.eguller.hntoplinks.models.SubscriptionForm;
 import com.eguller.hntoplinks.models.SubscriptionPage;
 import com.eguller.hntoplinks.repository.StoryRepository;
-import com.eguller.hntoplinks.repository.SubscriptionRepository;
+import com.eguller.hntoplinks.repository.SubscriberRepository;
 import com.eguller.hntoplinks.util.SubscriptionUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.ui.ExtendedModelMap;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
-import java.util.TimeZone;
 import java.util.UUID;
-import java.util.function.Supplier;
 
 @SpringBootTest(classes = {Application.class})
 @ActiveProfiles({"local"})
 public class StoryServiceTest {
+
+  @Autowired
+  private SubscriberRepository subscriberRepository;
   @Autowired
   private StoryRepository storyRepository;
 
@@ -91,79 +89,146 @@ public class StoryServiceTest {
     Assertions.assertEquals(savedEntity.get().getId(), updatedEntity.get().getId());
 
 
-    long count = storyCacheService.getAllTimeTop().stream().filter(story -> story.hnId() == 1).count();
+    long count = storyCacheService.getAllTimeTop().stream().filter(story -> story.getHnid() == 1).count();
     Assertions.assertEquals(1, count); //there should not be any duplicate.
   }
 
   @Test
   public void test_sendDailyEmail() {
     var storyTitle = "Daily Mail Test - " + UUID.randomUUID();
-    var hnStory = new Story(null, (new Random().nextLong(Long.MAX_VALUE)), (new Random().nextInt(Integer.MAX_VALUE)), storyTitle, "https://daily.mail.test.hntoplinks.com", "hntoplinks.com", "daily_mail_test_user", (new Random().nextInt(Integer.MAX_VALUE)), LocalDateTime.now().minusHours(1));
+    var hnStory = new StoryEntity();
+    hnStory.setHnid((new Random().nextLong(Long.MAX_VALUE)));
+    hnStory.setPoints((new Random().nextInt(Integer.MAX_VALUE)));
+    hnStory.setComment((new Random().nextInt(Integer.MAX_VALUE)));
+    hnStory.setTitle(storyTitle);
+    hnStory.setUrl("https://daily.mail.test.hntoplinks.com");
+    hnStory.setDate(LocalDateTime.now().minusHours(1));
+    hnStory.setLastUpdate(LocalDateTime.now().minusHours(1));
+    hnStory.setUser("daily_mail_test_user");
+
     var emailAddress = "test_daily_mail1@hntoplinks.com";
-    var subscription = Subscription.builder()
-      .email(emailAddress)
-      .daily(true)
-      .timeZone(ZoneId.of("UTC"))
-      .build();
-    test_PeriodicEmail(hnStory, subscription);
-    test_PeriodicEmail(hnStory, subscription);
+    var subscriber = new SubscriberEntity();
+    subscriber.setEmail(emailAddress);
+    subscriber.setTimeZone("UTC");
+    var subscription = new SubscriptionEntity();
+    subscription.setPeriod(Period.DAILY);
+    subscription.setNextSendDate(LocalDateTime.now().minusDays(1));
+
+
+    test_PeriodicEmail(hnStory, subscriber);
+    test_PeriodicEmail(hnStory, subscriber);
 
     var email = mockEmailStore.getLastMail(emailAddress);
     Assertions.assertTrue(email.isPresent());
-    Assertions.assertTrue(email.get().getHtml().contains(hnStory.title()));
+    Assertions.assertTrue(email.get().getHtml().contains(hnStory.getTitle()));
   }
 
   @Test
   public void test_sendWeeklyEmail() {
     var storyTitle = "Weekly Mail Test - " + UUID.randomUUID();
-    var hnStory = new Story(null, (new Random().nextLong(Long.MAX_VALUE)), (new Random().nextInt(Integer.MAX_VALUE)), storyTitle, "https://daily.mail.test.hntoplinks.com", "hntoplinks.com", "daily_mail_test_user", (new Random().nextInt(Integer.MAX_VALUE)), LocalDateTime.now().minusDays(3));
+
+    var hnStory = new StoryEntity();
+    hnStory.setHnid((new Random().nextLong(Long.MAX_VALUE)));
+    hnStory.setPoints((new Random().nextInt(Integer.MAX_VALUE)));
+    hnStory.setComment((new Random().nextInt(Integer.MAX_VALUE)));
+    hnStory.setTitle(storyTitle);
+    hnStory.setUrl("https://weekly.mail.test.hntoplinks.com");
+    hnStory.setDate(LocalDateTime.now().minusDays(3));
+    hnStory.setLastUpdate(LocalDateTime.now().minusDays(3));
+    hnStory.setUser("weekly_mail_test_user");
+
     var emailAddress = "test_weekly_mail1@hntoplinks.com";
-    var subscription = Subscription.builder()
-      .email(emailAddress)
-      .weekly(true)
-      .timeZone(ZoneId.of("UTC"))
-      .build();
-    test_PeriodicEmail(hnStory, subscription);
+
+    var subscriber = new SubscriberEntity();
+    subscriber.setEmail(emailAddress);
+    subscriber.setTimeZone("UTC");
+
+    var subscription = new SubscriptionEntity();
+    subscription.setPeriod(Period.WEEKLY);
+    subscription.setNextSendDate(LocalDateTime.now().minusDays(1));
+    subscriber.getSubscriptionList().add(subscription);
+
+    test_PeriodicEmail(hnStory, subscriber);
   }
 
   @Test
   public void test_sendMonthlyEmail() {
     var storyTitle = "Monthly Mail Test - " + UUID.randomUUID();
-    var hnStory = new Story(null, (new Random().nextLong(Long.MAX_VALUE)), (new Random().nextInt(Integer.MAX_VALUE)), storyTitle, "https://daily.mail.test.hntoplinks.com", "hntoplinks.com", "daily_mail_test_user", (new Random().nextInt(Integer.MAX_VALUE)), LocalDateTime.now().minusDays(10));
+    var hnStory = new StoryEntity();
+    hnStory.setHnid((new Random().nextLong(Long.MAX_VALUE)));
+    hnStory.setPoints((new Random().nextInt(Integer.MAX_VALUE)));
+    hnStory.setComment((new Random().nextInt(Integer.MAX_VALUE)));
+    hnStory.setTitle(storyTitle);
+    hnStory.setUrl("https://monthly.mail.test.hntoplinks.com");
+    hnStory.setDate(LocalDateTime.now().minusDays(10));
+    hnStory.setLastUpdate(LocalDateTime.now().minusDays(10));
+    hnStory.setUser("monthly_mail_test_user");
+
     var emailAddress = "test_monthly_mail1@hntoplinks.com";
-    var subscription = Subscription.builder()
-      .email(emailAddress)
-      .monthly(true)
-      .timeZone(ZoneId.of("UTC"))
-      .build();
-    test_PeriodicEmail(hnStory, subscription);
+    var subscriber = new SubscriberEntity();
+    subscriber.setEmail(emailAddress);
+    subscriber.setTimeZone("UTC");
+
+    var subscription = new SubscriptionEntity();
+    subscription.setPeriod(Period.MONTHLY);
+    subscription.setNextSendDate(LocalDateTime.now().minusDays(1));
+    subscriber.getSubscriptionList().add(subscription);
+
+    test_PeriodicEmail(hnStory, subscriber);
   }
 
   @Test
-  public void test_sendAnnualEmail() {
-    var storyTitle = "Annual Mail Test - " + UUID.randomUUID();
-    var hnStory = new Story(null, (new Random().nextLong(Long.MAX_VALUE)), (new Random().nextInt(Integer.MAX_VALUE)), storyTitle, "https://daily.mail.test.hntoplinks.com", "hntoplinks.com", "daily_mail_test_user", (new Random().nextInt(Integer.MAX_VALUE)), LocalDateTime.now().minusDays(90));
-    var emailAddress = "test_annual_mail1@hntoplinks.com";
-    var subscription = Subscription.builder()
-      .email(emailAddress)
-      .annually(true)
-      .timeZone(ZoneId.of("UTC"))
-      .build();
-    test_PeriodicEmail(hnStory, subscription);
+  public void test_sendYearlyEmail() {
+    var storyTitle = "Yearly Mail Test - " + UUID.randomUUID();
+    var hnStory = new StoryEntity();
+    hnStory.setHnid((new Random().nextLong(Long.MAX_VALUE)));
+    hnStory.setPoints((new Random().nextInt(Integer.MAX_VALUE)));
+    hnStory.setComment((new Random().nextInt(Integer.MAX_VALUE)));
+    hnStory.setTitle(storyTitle);
+    hnStory.setUrl("https://yearly.mail.test.hntoplinks.com");
+    hnStory.setDate(LocalDateTime.now().minusDays(60));
+    hnStory.setLastUpdate(LocalDateTime.now().minusDays(60));
+    hnStory.setUser("yearly_mail_test_user");
+
+    var emailAddress = "test_yearly_mail1@hntoplinks.com";
+    var subscriber = new SubscriberEntity();
+    subscriber.setEmail(emailAddress);
+    subscriber.setTimeZone("UTC");
+
+    var subscription = new SubscriptionEntity();
+    subscription.setPeriod(Period.YEARLY);
+    subscription.setNextSendDate(LocalDateTime.now().minusDays(1));
+    subscriber.getSubscriptionList().add(subscription);
+
+    test_PeriodicEmail(hnStory, subscriber);
   }
 
-  private void test_PeriodicEmail(Story story, Subscription subscription) {
-    test_PeriodicEmail(List.of(story), subscription);
+  private void test_PeriodicEmail(StoryEntity story, SubscriberEntity subscriber) {
+    test_PeriodicEmail(List.of(story), subscriber);
   }
 
-  private void test_PeriodicEmail(List<Story> stories, Subscription subscription) {
-    storyService.saveStories(stories);
+  private void test_PeriodicEmail(List<StoryEntity> stories, SubscriberEntity subscriber) {
+    storyRepository.saveStories(stories);
     storyCacheService.addNewStories(stories);
-    var subscriptionForm = SubscriptionForm.builder().subscription(subscription).build();
-    var model = new ExtendedModelMap();
-    applicationController.subscribe_Post(subscriptionForm, null, model);
 
-    var subscriberId = ((SubscriptionPage) model.get("page")).getSubscription().getSubsUUID();
+
+    var subscriptionFormBuilder = SubscriptionPage.SubscriptionForm.builder();
+    subscriptionFormBuilder.email(subscriber.getEmail());
+    if(subscriber.isSubscribedFor(Period.DAILY)){
+      subscriptionFormBuilder.daily(true);
+    } else if(subscriber.isSubscribedFor(Period.WEEKLY)){
+      subscriptionFormBuilder.weekly(true);
+    } else if(subscriber.isSubscribedFor(Period.MONTHLY)){
+      subscriptionFormBuilder.monthly(true);
+    } else if(subscriber.isSubscribedFor(Period.YEARLY)){
+      subscriptionFormBuilder.yearly(true);
+    }
+
+    var subscriptionForm = subscriptionFormBuilder.build();
+    var model = new ExtendedModelMap();
+    applicationController.subscribe_Post(subscriptionForm, model);
+
+    var subscriberId = ((SubscriptionPage) model.get("page")).getSubscriptionForm().getSubsUUID();
 
     var parameters = new HashMap<String, Object>();
     parameters.put("nextSendDate", LocalDateTime.now().minusHours(1)); //next_send time already passed should trigger an email send.
@@ -175,9 +240,9 @@ public class StoryServiceTest {
 
     sendMailJob.sendEmail();
 
-    var email = mockEmailStore.getLastMail(subscription.getEmail());
+    var email = mockEmailStore.getLastMail(subscriber.getEmail());
     Assertions.assertTrue(email.isPresent());
-    stories.forEach(story -> Assertions.assertTrue(email.get().getHtml().contains(story.title())));
+    stories.forEach(story -> Assertions.assertTrue(email.get().getHtml().contains(story.getTitle())));
   }
 
   @Test

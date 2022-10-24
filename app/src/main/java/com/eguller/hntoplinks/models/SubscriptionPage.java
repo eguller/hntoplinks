@@ -54,6 +54,9 @@ public class SubscriptionPage extends Page {
 
     private String gRecaptchaResponse;
 
+    @Builder.Default
+    private String timeZone = "UTC";
+
 
     public boolean hasSubscription() {
       return (daily || weekly || monthly || yearly);

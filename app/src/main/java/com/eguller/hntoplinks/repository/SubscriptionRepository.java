@@ -12,20 +12,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface SubscriptionRepository extends CrudRepository<SubscriptionEntity, Long> {
-  @Modifying
-  int deleteBySubscriptionDateBeforeAndActivatedIsFalse(LocalDate expiryDate);
-
-  long countByDailyIsTrue();
-
-  long countByWeeklyIsTrue();
-
-  long countByMonthlyIsTrue();
-
-  long countByAnnuallyIsTrue();
-
-
-
-
   @Query("""
      select * from
      SubscriptionEntity subscription
@@ -37,6 +23,5 @@ public interface SubscriptionRepository extends CrudRepository<SubscriptionEntit
     """)
   List<SubscriptionEntity> findSubscriptionsByExpiredNextSendDate();
 
-  @Modifying
-  long deleteBySubsUUID(String subscriptionId);
+
 }

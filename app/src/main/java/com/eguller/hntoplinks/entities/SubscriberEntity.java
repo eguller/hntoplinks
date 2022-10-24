@@ -8,6 +8,7 @@ import org.springframework.data.relational.core.mapping.MappedCollection;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -32,7 +33,7 @@ public class SubscriberEntity implements HnEntity {
   private boolean activated = true;
 
   @MappedCollection(idColumn = "id", keyColumn = "subscriber_id")
-  private List<SubscriptionEntity> subscriptionList;
+  private List<SubscriptionEntity> subscriptionList = new ArrayList<>();
 
 
   @Override
