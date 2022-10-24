@@ -3,6 +3,7 @@ package com.eguller.hntoplinks.services;
 
 import com.eguller.hntoplinks.Application;
 import com.eguller.hntoplinks.controllers.ApplicationController;
+import com.eguller.hntoplinks.entities.StoryEntity;
 import com.eguller.hntoplinks.jobs.SendMailJob;
 import com.eguller.hntoplinks.models.Email;
 import com.eguller.hntoplinks.models.Story;
@@ -34,9 +35,6 @@ import java.util.function.Supplier;
 @ActiveProfiles({"local"})
 public class StoryServiceTest {
   @Autowired
-  private StoryService storyService;
-
-  @Autowired
   private StoryRepository storyRepository;
 
   @Autowired
@@ -56,17 +54,38 @@ public class StoryServiceTest {
 
   @Test
   public void test_saveStory() {
-    var hnStory = new Story(null, 1L, 59, "Test", "https://www.hntoplinks.com", "hntoplinks.com", "eguller", 99, LocalDateTime.now());
-    storyService.saveStories(List.of(hnStory));
+    var hnStory = new StoryEntity();
+    hnStory.setHnid(1L);
+    hnStory.setComhead("hntoplinks.com");
+    hnStory.setUser("eguller");
+    hnStory.setUrl("https://www.hntoplinks.com");
+    hnStory.setTitle("Title");
+    hnStory.setPoints(59);
+    hnStory.setComment(99);
+    hnStory.setDate(LocalDateTime.now());
+    hnStory.setLastUpdate(LocalDateTime.now());
+
+    storyRepository.saveStories(List.of(hnStory));
     storyCacheService.addNewStories(List.of(hnStory));
 
 
     var savedEntity = storyRepository.findByHnid(1L);
     Assertions.assertNotNull(savedEntity);
 
-    var hnStoryUpdated = new Story(null, 1L, 59, "Test", "https://www.hntoplinks.com", "hntoplinks.com", "eguller", 100, LocalDateTime.now());
-    storyService.saveStories(List.of(hnStoryUpdated));
+    var hnStoryUpdated = new StoryEntity();
+    hnStory.setHnid(1L);
+    hnStory.setComhead("hntoplinks.com");
+    hnStory.setUser("eguller");
+    hnStory.setUrl("https://www.hntoplinks.com");
+    hnStory.setTitle("Title");
+    hnStory.setPoints(59);
+    hnStory.setComment(10);
+    hnStory.setDate(LocalDateTime.now());
+    hnStory.setLastUpdate(LocalDateTime.now());
+
+    storyRepository.saveStories(List.of(hnStoryUpdated));
     storyCacheService.addNewStories(List.of(hnStoryUpdated));
+
     var updatedEntity = storyRepository.findByHnid(1L);
 
     Assertions.assertEquals(savedEntity.get().getId(), updatedEntity.get().getId());

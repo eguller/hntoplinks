@@ -61,13 +61,13 @@ public abstract class StoryRepository implements CrudRepository<StoryEntity, Lon
     return stories;
   }
 
-  abstract Optional<StoryEntity> findByHnid(long l);
+  public abstract Optional<StoryEntity> findByHnid(long l);
 
-  abstract List<StoryEntity> findTop300ByDateAfterOrderByPointsDesc(LocalDateTime date);
+  public abstract List<StoryEntity> findTop300ByDateAfterOrderByPointsDesc(LocalDateTime date);
 
-  abstract List<StoryEntity> findTop300ByOrderByPointsDesc();
+  public abstract List<StoryEntity> findTop300ByOrderByPointsDesc();
 
-  abstract List<StoryEntity> findByHnidIn(List<Long> hnIdList);
+  public abstract List<StoryEntity> findByHnidIn(List<Long> hnIdList);
 
   @Modifying
   @Query("""
@@ -86,6 +86,5 @@ public abstract class StoryRepository implements CrudRepository<StoryEntity, Lon
      )
     """)
   public abstract int deleteExpiredStories(LocalDateTime yesterday, LocalDateTime lastWeek, LocalDateTime lastMonth, LocalDateTime lastYear);
-
 
 }

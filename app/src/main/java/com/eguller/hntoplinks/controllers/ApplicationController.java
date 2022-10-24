@@ -1,6 +1,7 @@
 package com.eguller.hntoplinks.controllers;
 
 import com.eguller.hntoplinks.entities.Period;
+import com.eguller.hntoplinks.entities.StoryEntity;
 import com.eguller.hntoplinks.entities.SubscriberEntity;
 import com.eguller.hntoplinks.entities.SubscriptionEntity;
 import com.eguller.hntoplinks.models.Page;
@@ -70,6 +71,7 @@ public class ApplicationController {
     this.storyCacheService      = storyCacheService;
     this.subscriptionService    = subscriptionService;
     this.subscriptionRepository = subscriptionRepository;
+    this.subscriberRepository   = subscriberRepository;
     this.statisticsService      = statisticsService;
     this.recaptchaVerifier      = recaptchaVerifier;
     this.emailService           = emailService;
@@ -166,14 +168,14 @@ public class ApplicationController {
     var subscriptionFormBuilder = SubscriptionPage.SubscriptionForm.builder();
     var subscriptionPageBuilder = SubscriptionPage.builder().captchaEnabled(captchaEnabled);
     if (subscriptionId != null) {
-      var subscriptionOpt = subscriptionRepository.findBySubsUUID(subscriptionId);
-      subscriptionOpt.ifPresent((subscription) -> {
+      var subscriberOpt = subscriberRepository.findBySubsUUID(subscriptionId);
+      subscriberOpt.ifPresent((subscriber) -> {
         subscriptionFormBuilder
-          .email(subscription.getEmail())
-          .daily(subscription.isSubscribedFor(Period.DAILY))
-          .weekly(subscription.isSubscribedFor(Period.WEEKLY))
-          .monthly(subscription.isSubscribedFor(Period.MONTHLY))
-          .yearly(subscription.isSubscribedFor(Period.YEARLY));
+          .email(subscriber.getEmail())
+          .daily(subscriber.isSubscribedFor(Period.DAILY))
+          .weekly(subscriber.isSubscribedFor(Period.WEEKLY))
+          .monthly(subscriber.isSubscribedFor(Period.MONTHLY))
+          .yearly(subscriber.isSubscribedFor(Period.YEARLY));
       });
 
     }
@@ -199,8 +201,8 @@ public class ApplicationController {
     var subscriptionPageBuilder = SubscriptionPage.builder()
       .title("Update Subscription")
       .captchaEnabled(captchaEnabled);
-    var subscriptionOpt = subscriptionRepository.findBySubsUUID(subscriptionId);
-    subscriptionOpt.ifPresent((subscription) -> {
+    var subscriberOpt = subscriberRepository.findBySubsUUID(subscriptionId);
+    subscriberOpt.ifPresent((subscription) -> {
       subscriptionForm
         .email(subscription.getEmail())
         .daily(subscription.isSubscribedFor(Period.DAILY))
@@ -246,7 +248,7 @@ public class ApplicationController {
       return view("subscription");
     }
 
-    var subscriber = subscriberRepository.find(subscriptionForm.getEmail().toLowerCase()).or(() -> {
+    var subscriber = subscriberRepository.findByEmail(subscriptionForm.getEmail().toLowerCase()).or(() -> {
       var newSubscriber = new SubscriberEntity();
       newSubscriber.setTimeZone(subscriptionForm.getGRecaptchaResponse());
       newSubscriber.setActivated(true);
@@ -308,13 +310,13 @@ public class ApplicationController {
     } else {
       subscriptionPageBuilder.message("Subscription has been updated.");
     }
-    model.addAttribute("page",subscriptionPageBuilder.build());
+    model.addAttribute("page", subscriptionPageBuilder.build());
     return view("subscription");
   }
 
   private StoryPage getStoryPage(PageTab pageTab, Integer page) {
     var _page = page == null ? 1 : page;
-    List<Story> storyList;
+    List<StoryEntity> storyList;
     if (PageTab.today == pageTab) {
       storyList = storyCacheService.getDailyTop();
     } else if (PageTab.week == pageTab) {
