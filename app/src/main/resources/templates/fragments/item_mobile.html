@@ -8,15 +8,15 @@
                   th:text="${storyIndex} + '. ' + ${story.title}"
                   th:with="storyIndex=${ (page.currentPage - 1) * page.storyPerPage + storyIndex}">Story title</span>
       <th:block th:if="${story.hasDomain()}">
-        <span style="font-size: 10px;" th:text="'(' + ${story.domain} + ')'"> Domain </span>
+        <span style="font-size: 10px;" th:text="'(' + ${story.comhead} + ')'"> Domain </span>
       </th:block>
       <br>
       <span style="font-size: 9px;">
-        		by <th:block th:text="${story.by}"/> <th:block th:text="${story.since}"/> | <th:block
-        th:text="${story.score} + ' points'"/>
+        		by <th:block th:text="${story.user}"/> <th:block th:text="${story.since}"/> | <th:block
+        th:text="${story.points} + ' points'"/>
 		    </span>
     </a>
-    <a th:href="@{https://news.ycombinator.com/item(id=${story.hnId})}">
+    <a th:href="@{https://news.ycombinator.com/item(id=${story.hnid})}">
       Comments
     </a>
   </li>

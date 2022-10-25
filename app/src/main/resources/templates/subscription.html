@@ -16,42 +16,42 @@
           <tr>
             <td class="cright">Daily Top Links</td>
             <td class="cleft">
-              <input name="subscription.daily" type="checkbox" th:checked="${page.daily}"/>
+              <input name="subscription.daily" type="checkbox" th:checked="${page.subscriptionForm.daily}"/>
             </td>
           </tr>
           <tr>
             <td class="cright">Weekly Top Links</td>
             <td class="cleft">
-              <input name="subscription.weekly" type="checkbox" th:checked="${page.weekly}"/>
+              <input name="subscription.weekly" type="checkbox" th:checked="${page.subscriptionForm.weekly}"/>
             </td>
           </tr>
           <tr>
             <td class="cright">Monthly Top Links</td>
             <td class="cleft">
-              <input name="subscription.monthly" type="checkbox" th:checked="${page.monthly}"/>
+              <input name="subscription.monthly" type="checkbox" th:checked="${page.subscriptionForm.monthly}"/>
             </td>
           </tr>
           <tr>
             <td class="cright">Annually Top Links</td>
             <td class="cleft">
-              <input name="subscription.annually" type="checkbox" th:checked="${page.annually}"/>
+              <input name="subscription.annually" type="checkbox" th:checked="${page.subscriptionForm.yearly}"/>
             </td>
           </tr>
           <tr>
             <td class="cright">Email</td>
             <td class="cleft">
               <input name="subscription.email" style="width: 160px;" type="text"
-                     th:value="${page.email}"/>
+                     th:value="${page.subscriptionForm.email}"/>
             </td>
           </tr>
           <tr>
             <td class="cright" colspan="2" style="padding-bottom: 5px; padding-top: 5px;">
-              <button name="subscription.submit" type="submit" value="Submit" th:disabled="${page.captchaEnabled}"
+              <button name="subscription.submit" type="submit" value="Submit" th:disabled="${page.subscriptionForm.captchaEnabled}"
                       onclick="submitSubscriptionForm();">Submit
               </button>
-              <input type="hidden" name="subscription.subsUUID" th:value="${page.subsUUID}">
+              <input type="hidden" name="subscription.subsUUID" th:value="${page.subscriptionForm.subsUUID}">
               <input type="hidden" name="subscription.timeZone" th:value="UTC" />
-              <th:block th:unless="${page.captchaEnabled}">
+              <th:block th:unless="${page.subscriptionForm.captchaEnabled}">
                 <input type="hidden" name="g-recaptcha-response" th:value="dummy">
               </th:block>
             </td>

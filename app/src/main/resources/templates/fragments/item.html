@@ -7,21 +7,21 @@
     </td>
     <td width="5px;"></td>
     <td class="title"><a target="_blank" th:href="@{${story.url}}" th:text="${story.title}"></a>
-      <th:block th:if="${story.hasDomain()}">
-        <a class="comhead" target="_blank" th:href="@{https://news.ycombinator.com/from(site=${story.domain})}"
-           th:text="'(' + ${story.domain} + ')'"></a>
+      <th:block th:if="${story.hasComhead()}">
+        <a class="comhead" target="_blank" th:href="@{https://news.ycombinator.com/from(site=${story.comhead})}"
+           th:text="'(' + ${story.hasComhead} + ')'"></a>
       </th:block>
     </td>
   </tr>
   <tr>
     <td colspan="2"></td>
-    <td class="subtext"><th:span th:id="'score_' + ${story.hnId}" th:text="${story.score} + ' points'">
+    <td class="subtext"><th:span th:id="'score_' + ${story.hnid}" th:text="${story.points} + ' points'">
 					</th:span> by <a target="_blank"
-                        th:href="@{http://news.ycombinator.com/user(id=${story.by})}" th:text="${story.by}"></a>
+                        th:href="@{http://news.ycombinator.com/user(id=${story.user})}" th:text="${story.user}"></a>
       <th:block th:text="${story.since}"/>
       | <a
         target="_blank"
-        th:href="@{https://news.ycombinator.com/item(id=${story.hnId})}" th:text="${story.commentCount} + ' comments'">
+        th:href="@{https://news.ycombinator.com/item(id=${story.hnid})}" th:text="${story.comment} + ' comments'">
         ${story.getCommentStr()}
       </a></td>
   </tr>
