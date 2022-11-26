@@ -1,6 +1,7 @@
 package com.eguller.hntoplinks.services.subscription;
 
 import com.eguller.hntoplinks.entities.StoryEntity;
+import com.eguller.hntoplinks.entities.SubscriberEntity;
 import com.eguller.hntoplinks.entities.SubscriptionEntity;
 import com.eguller.hntoplinks.services.EmailProviderService;
 import com.eguller.hntoplinks.services.StoryCacheService;
@@ -13,15 +14,15 @@ import java.util.List;
 
 public class WeeklySubscriptionEmailTask extends SubscriptionEmailTask {
   private final StoryCacheService storyCacheService;
-  public WeeklySubscriptionEmailTask(TemplateService templateService, SubscriptionEntity subscription, EmailProviderService emailProviderService, StoryCacheService storyCacheService) {
-    super(templateService, subscription, emailProviderService);
+  public WeeklySubscriptionEmailTask(TemplateService templateService, SubscriberEntity subscriber, SubscriptionEntity subscription, EmailProviderService emailProviderService, StoryCacheService storyCacheService) {
+    super(templateService, subscriber, subscription, emailProviderService);
     this.storyCacheService = storyCacheService;
   }
 
   @Override
     protected String getSubject() {
-      String toDate = DateTimeFormatter.ofPattern("dd MMMM").format(LocalDateTime.now().minusDays(1).atZone(subscription.getSubscriber().getTimeZoneObj()));
-      String fromDate = DateTimeFormatter.ofPattern("dd MMMM").format(LocalDateTime.now().minusDays(7).atZone(subscription.getSubscriber().getTimeZoneObj()));
+      String toDate = DateTimeFormatter.ofPattern("dd MMMM").format(LocalDateTime.now().minusDays(1).atZone(subscriber.getTimeZoneObj()));
+      String fromDate = DateTimeFormatter.ofPattern("dd MMMM").format(LocalDateTime.now().minusDays(7).atZone(subscriber.getTimeZoneObj()));
       return String.format("%s - %s Weekly Top Links", fromDate, toDate);
     }
 

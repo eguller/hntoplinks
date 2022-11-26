@@ -1,8 +1,10 @@
 package com.eguller.hntoplinks.entities;
 
 
+import com.eguller.hntoplinks.util.DateUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
@@ -12,6 +14,7 @@ import java.util.function.Function;
 
 @Data
 @Table("subscription")
+@ToString(exclude = {"subscriber"})
 @EqualsAndHashCode(of = {"id"})
 public class SubscriptionEntity implements HnEntity {
   @Id
@@ -19,7 +22,7 @@ public class SubscriptionEntity implements HnEntity {
   private Long      id;
 
   @Column("subscriber_id")
-  private SubscriberEntity subscriber;
+  private Long subscriberId;
 
   @Column("period")
   private Period period;
@@ -42,6 +45,8 @@ public class SubscriptionEntity implements HnEntity {
   public void setId(Long id) {
     this.id = id;
   }
+
+
 
 }
 

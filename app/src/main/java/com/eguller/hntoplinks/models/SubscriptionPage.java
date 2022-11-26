@@ -34,32 +34,4 @@ public class SubscriptionPage extends Page {
   public boolean hasMessages() {
     return !CollectionUtils.isEmpty(messages);
   }
-
-  @Builder
-  @Data
-  public static class SubscriptionForm {
-    private String subsUUID;
-
-    @Builder.Default
-    private String email = "";
-
-    private boolean daily;
-
-    @Builder.Default
-    private boolean weekly = true;
-
-    private boolean monthly;
-
-    private boolean yearly;
-
-    private String gRecaptchaResponse;
-
-    @Builder.Default
-    private String timeZone = "UTC";
-
-
-    public boolean hasSubscription() {
-      return (daily || weekly || monthly || yearly);
-    }
-  }
 }

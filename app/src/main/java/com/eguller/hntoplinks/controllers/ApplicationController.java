@@ -8,6 +8,7 @@ import com.eguller.hntoplinks.models.Page;
 import com.eguller.hntoplinks.models.PageTab;
 import com.eguller.hntoplinks.models.StatsPage;
 import com.eguller.hntoplinks.models.StoryPage;
+import com.eguller.hntoplinks.models.SubscriptionForm;
 import com.eguller.hntoplinks.models.SubscriptionPage;
 import com.eguller.hntoplinks.repository.SubscriberRepository;
 import com.eguller.hntoplinks.repository.SubscriptionRepository;
@@ -36,9 +37,13 @@ import org.springframework.web.context.annotation.RequestScope;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 @Controller
@@ -165,22 +170,23 @@ public class ApplicationController {
 
   @GetMapping("/subscribe")
   public String subscribe_Get(Model model, @RequestParam(value = "id", required = false) String subscriptionId) {
-    var subscriptionFormBuilder = SubscriptionPage.SubscriptionForm.builder();
+    var subscriptionFormBuilder = SubscriptionForm.builder();
     var subscriptionPageBuilder = SubscriptionPage.builder().captchaEnabled(captchaEnabled);
     if (subscriptionId != null) {
       var subscriberOpt = subscriberRepository.findBySubsUUID(subscriptionId);
       subscriberOpt.ifPresent((subscriber) -> {
         subscriptionFormBuilder
-          .email(subscriber.getEmail())
-          .daily(subscriber.isSubscribedFor(Period.DAILY))
-          .weekly(subscriber.isSubscribedFor(Period.WEEKLY))
-          .monthly(subscriber.isSubscribedFor(Period.MONTHLY))
-          .yearly(subscriber.isSubscribedFor(Period.YEARLY));
+        .email(subscriber.getEmail())
+        .selectedPeriods(
+          subscriber.getSubscriptionList().stream()
+            .map(subscription -> subscription.getPeriod()).collect(Collectors.toList())
+        );
       });
 
     }
     var subscriptionPage = subscriptionPageBuilder.subscriptionForm(subscriptionFormBuilder.build()).build();
     model.addAttribute("page", subscriptionPage);
+    model.addAttribute("subscriptionForm", subscriptionPage.getSubscriptionForm());
     return view("subscription");
   }
 
@@ -197,28 +203,29 @@ public class ApplicationController {
 
   @GetMapping("/update-subscription/{id}")
   public String updateSubscription_Get(Model model, @PathVariable(value = "id") String subscriptionId) {
-    var subscriptionForm = SubscriptionPage.SubscriptionForm.builder();
+    var subscriptionFormBuilder = SubscriptionForm.builder();
     var subscriptionPageBuilder = SubscriptionPage.builder()
       .title("Update Subscription")
       .captchaEnabled(captchaEnabled);
     var subscriberOpt = subscriberRepository.findBySubsUUID(subscriptionId);
-    subscriberOpt.ifPresent((subscription) -> {
-      subscriptionForm
-        .email(subscription.getEmail())
-        .daily(subscription.isSubscribedFor(Period.DAILY))
-        .weekly(subscription.isSubscribedFor(Period.WEEKLY))
-        .monthly(subscription.isSubscribedFor(Period.MONTHLY))
-        .yearly(subscription.isSubscribedFor(Period.YEARLY));
+    subscriberOpt.ifPresent((subscriber) -> {
+      subscriptionFormBuilder
+        .email(subscriber.getEmail())
+        .selectedPeriods(
+          subscriber.getSubscriptionList().stream()
+            .map(subscription -> subscription.getPeriod()).collect(Collectors.toList())
+        );
     });
 
-    model.addAttribute("page", subscriptionPageBuilder.subscriptionForm(subscriptionForm.build()).build());
+    var subscriptionPage = subscriptionPageBuilder.subscriptionForm(subscriptionFormBuilder.build()).build();
+    model.addAttribute("page", subscriptionPage);
+    model.addAttribute("subscriptionForm", subscriptionPage.getSubscriptionForm());
     return view("subscription");
   }
 
 
   @PostMapping("/subscribe")
-//  public String subscribe_Post(@ModelAttribute SubscriptionPage.SubscriptionForm subscriptionForm, @ModelAttribute("g-recaptcha-response") String recaptchaResponse, Model model) {
-  public String subscribe_Post(@ModelAttribute SubscriptionPage.SubscriptionForm subscriptionForm, Model model) {
+  public String subscribe_Post(@ModelAttribute("subscriptionForm") SubscriptionForm subscriptionForm, Model model) {
     var subscriptionPageBuilder = SubscriptionPage.builder();
     subscriptionPageBuilder.subscriptionForm(subscriptionForm);
     subscriptionPageBuilder.captchaEnabled(captchaEnabled);
@@ -238,7 +245,7 @@ public class ApplicationController {
       hasError = true;
     }
 
-    if (!subscriptionForm.hasSubscription()) {
+    if (subscriptionForm.getSelectedPeriods().isEmpty()) {
       subscriptionPageBuilder.error("Please select at least one of the daily, weekly, monthly or annually subscriptions.");
       hasError = true;
     }
@@ -258,51 +265,23 @@ public class ApplicationController {
       return Optional.of(newSubscriber);
     }).get();
 
-    if (subscriber.getSubsUUID().equalsIgnoreCase(subscriptionForm.getSubsUUID()) || subscriptionForm.getSubsUUID() == null) {
-      var dailySubscription = subscriber.getSubscriptionList().stream().filter(subscription -> Period.DAILY == subscription.getPeriod()).findFirst();
-      var weeklySubscription = subscriber.getSubscriptionList().stream().filter(subscription -> Period.WEEKLY == subscription.getPeriod()).findFirst();
-      var monthlySubscription = subscriber.getSubscriptionList().stream().filter(subscription -> Period.MONTHLY == subscription.getPeriod()).findFirst();
-      var yearlySubscription = subscriber.getSubscriptionList().stream().filter(subscription -> Period.YEARLY == subscription.getPeriod()).findFirst();
+    if (subscriber.getSubsUUID().equalsIgnoreCase(subscriptionForm.getSubsUUID()) || !StringUtils.hasLength(subscriptionForm.getSubsUUID())) {
+      //find removed subscriptions
+      var existingSubscriptions = subscriber.getSubscriptionList()
+        .stream()
+        .filter(subscription -> subscriptionForm.getSelectedPeriods().contains(subscription.getPeriod()))
+        .toList();
 
-      if (dailySubscription.isPresent() && !subscriptionForm.isDaily()) {
-        subscriber.getSubscriptionList().remove(dailySubscription);
-      } else if (dailySubscription.isEmpty() && subscriptionForm.isDaily()) {
-        var subscriptionEntity = new SubscriptionEntity();
-        subscriptionEntity.setSubscriber(subscriber);
-        subscriptionEntity.setPeriod(Period.DAILY);
-        subscriptionEntity.setNextSendDate(DateUtils.tomorrow_7_AM(subscriber.getTimeZoneObj()));
-        subscriber.getSubscriptionList().add(subscriptionEntity);
-      }
 
-      if (weeklySubscription.isPresent() && !subscriptionForm.isWeekly()) {
-        subscriber.getSubscriptionList().remove(weeklySubscription);
-      } else if (weeklySubscription.isEmpty() && subscriptionForm.isWeekly()) {
-        var subscriptionEntity = new SubscriptionEntity();
-        subscriptionEntity.setSubscriber(subscriber);
-        subscriptionEntity.setPeriod(Period.WEEKLY);
-        subscriptionEntity.setNextSendDate(DateUtils.nextMonday_7_AM(subscriber.getTimeZoneObj()));
-        subscriber.getSubscriptionList().add(subscriptionEntity);
-      }
+      var newSubscriptions = subscriptionForm.getSelectedPeriods()
+        .stream()
+        .filter(period -> !subscriber.hasSubscription(period))
+        .map(period -> subscriber.createNewSubscription(period))
+        .toList();
 
-      if (monthlySubscription.isPresent() && !subscriptionForm.isMonthly()) {
-        subscriber.getSubscriptionList().remove(monthlySubscription);
-      } else if (monthlySubscription.isEmpty() && subscriptionForm.isMonthly()) {
-        var subscriptionEntity = new SubscriptionEntity();
-        subscriptionEntity.setSubscriber(subscriber);
-        subscriptionEntity.setPeriod(Period.MONTHLY);
-        subscriptionEntity.setNextSendDate(DateUtils.firstDayOfNextMonth_7_AM(subscriber.getTimeZoneObj()));
-        subscriber.getSubscriptionList().add(subscriptionEntity);
-      }
-
-      if (yearlySubscription.isPresent() && !subscriptionForm.isYearly()) {
-        subscriber.getSubscriptionList().remove(yearlySubscription);
-      } else if (yearlySubscription.isEmpty() && subscriptionForm.isYearly()) {
-        var subscriptionEntity = new SubscriptionEntity();
-        subscriptionEntity.setSubscriber(subscriber);
-        subscriptionEntity.setPeriod(Period.YEARLY);
-        subscriptionEntity.setNextSendDate(DateUtils.firstDayOfNextYear_7_AM(subscriber.getTimeZoneObj()));
-        subscriber.getSubscriptionList().add(subscriptionEntity);
-      }
+      var subscriptions = Stream.concat(existingSubscriptions.stream(), newSubscriptions.stream()).toList();
+      subscriber.setSubscriptionList(subscriptions);
+      subscriberRepository.save(subscriber);
     }
 
     if (subscriptionForm.getSubsUUID() == null) {
@@ -353,22 +332,5 @@ public class ApplicationController {
     } else {
       return view + "_mobile";
     }
-  }
-
-  public int getPage(String pageStr) {
-    try {
-      int page = Integer.parseInt(pageStr);
-      if (page < 1) {
-        return 1;
-      } else if (page > MAX_PAGES) {
-        return MAX_PAGES;
-      } else {
-        return page;
-      }
-
-    } catch (Exception ex) {
-      logger.error("Page could not be parse. pageStr={}", pageStr);
-    }
-    return 1;
   }
 }
