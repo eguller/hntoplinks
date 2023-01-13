@@ -5,19 +5,19 @@
   <form id="subscribe" method="POST" th:action="@{/subscribe}">
     <fieldset data-role="controlgroup">
       <label for="subscription.daily">Daily Top Links</label>
-      <input id="subscription.daily" name="subscription.daily" type="checkbox" th:checked="${page.subscription.daily}"/>
+      <input id="subscription.daily" name="subscription.daily" type="checkbox" th:checked="${page.subscriptionForm.daily}"/>
 
       <label for="subscription.weekly">Weekly Top Links</label>
       <input id="subscription.weekly" name="subscription.weekly" type="checkbox"
-             th:checked="${page.subscription.weekly}"/>
+             th:checked="${page.subscriptionForm.weekly}"/>
 
       <label for="subscription.monthly">Monthly Top Links</label>
       <input id="subscription.monthly" name="subscription.monthly" type="checkbox"
-             th:checked="${page.subscription.monthly}"/>
+             th:checked="${page.subscriptionForm.monthly}"/>
 
-      <label for="subscription.annually">Annually Top Links</label>
+      <label for="subscription.annually">Yearly Top Links</label>
       <input id="subscription.annually" name="subscription.annually" type="checkbox"
-             th:checked="${page.subscription.annually}"/>
+             th:checked="${page.subscriptionForm.yearly}"/>
     </fieldset>
     <label class="ui-hidden-accessible" for="subscription.email">Email</label>
     <input data-clear-btn="true" id="subscription.email" name="subscription.email" placeholder="Email"

@@ -1,8 +1,10 @@
 package com.eguller.hntoplinks.entities;
 
+import com.eguller.hntoplinks.util.DateUtils;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 
@@ -128,5 +130,13 @@ public class StoryEntity implements HnEntity {
 
   public void setLastUpdate(LocalDateTime lastUpdate) {
     this.lastUpdate = lastUpdate;
+  }
+
+  public boolean hasComhead() {
+    return StringUtils.hasText(this.comhead);
+  }
+
+  public String getSince(){
+    return DateUtils.since(this.date);
   }
 }

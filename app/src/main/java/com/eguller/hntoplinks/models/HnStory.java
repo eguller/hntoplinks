@@ -1,5 +1,6 @@
 package com.eguller.hntoplinks.models;
 
+import com.eguller.hntoplinks.entities.StoryEntity;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.slf4j.Logger;
@@ -28,19 +29,19 @@ public class HnStory {
   @JsonCreator
   public HnStory(
     @JsonProperty("by")
-      String by,
+    String by,
     @JsonProperty("id")
-      long id,
+    long id,
     @JsonProperty("score")
-      int score,
+    int score,
     @JsonProperty("time")
-      long time,
+    long time,
     @JsonProperty("title")
-      String title,
+    String title,
     @JsonProperty("url")
-      String url,
+    String url,
     @JsonProperty("kids")
-      List<Long> kids) {
+    List<Long> kids) {
     this.by    = by;
     this.id    = id;
     this.score = score;
@@ -128,17 +129,18 @@ public class HnStory {
     }
   }
 
-  public Story toStory() {
-    Story story = new Story(null,
-      this.getId(),
-      this.getKids().size(),
-      this.getTitle(),
-      this.getUrl() == null ? getInternalUrl() : getUrl(),
-      this.getDomainName(),
-      this.getBy(),
-      this.getScore(),
-      LocalDateTime.ofInstant(Instant.ofEpochMilli(TimeUnit.SECONDS.toMillis(this.getTime())), ZoneId.systemDefault())
+  public StoryEntity toStory() {
+    StoryEntity story = new StoryEntity();
+    story.setHnid(this.getId());
+    story.setComment(this.getKids().size());
+    story.setTitle(this.getTitle());
+    story.setUrl(this.getUrl());
+    story.setComhead(this.getDomainName());
+    story.setUser(this.getBy());
+    story.setPoints(this.getScore());
+    story.setDate(LocalDateTime.ofInstant(Instant.ofEpochMilli(TimeUnit.SECONDS.toMillis(this.getTime())), ZoneId.systemDefault())
     );
+    story.setLastUpdate(story.getDate());
     return story;
   }
 

@@ -7,6 +7,7 @@ import com.sendgrid.Mail;
 import com.sendgrid.Method;
 import com.sendgrid.Request;
 import com.sendgrid.SendGrid;
+import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,27 +28,20 @@ public class SendGridEmailProviderService implements EmailProviderService {
   @Value("${hntoplinks.mail.from}")
   private String from;
 
+  @SneakyThrows
   @Override
-  public Response send(Email mail) {
-    var providerResponseBuilder = Response.builder();
+  public void send(Email mail) {
     var fromAddr = new com.sendgrid.Email(from);
     var sendGrid = new SendGrid(apiKey);
-    for (var to : mail.getTo()) {
-      var toAddr = new com.sendgrid.Email(to);
-      var content = new Content("text/html", mail.getHtml());
-      var sendgridMail = new Mail(fromAddr, mail.getSubject(), toAddr, content);
-      var request = new Request();
-      request.setMethod(Method.POST);
-      request.setEndpoint("mail/send");
-      try {
-        request.setBody(sendgridMail.build());
-        sendGrid.api(request);
-      } catch (Exception e) {
-        logger.error("Email send failed. to=" + to, e);
-        providerResponseBuilder.failed(to);
-      }
-    }
-    var providerResponse = providerResponseBuilder.build();
-    return providerResponse;
+
+    var toAddr = new com.sendgrid.Email(mail.getTo());
+    var content = new Content("text/html", mail.getHtml());
+    var sendgridMail = new Mail(fromAddr, mail.getSubject(), toAddr, content);
+    var request = new Request();
+    request.setMethod(Method.POST);
+    request.setEndpoint("mail/send");
+
+    request.setBody(sendgridMail.build());
+    sendGrid.api(request);
   }
 }

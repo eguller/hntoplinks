@@ -1,22 +1,23 @@
 package com.eguller.hntoplinks.controllers;
 
+import com.eguller.hntoplinks.entities.StoryEntity;
+import com.eguller.hntoplinks.entities.SubscriberEntity;
 import com.eguller.hntoplinks.models.Page;
 import com.eguller.hntoplinks.models.PageTab;
 import com.eguller.hntoplinks.models.StatsPage;
-import com.eguller.hntoplinks.models.Story;
 import com.eguller.hntoplinks.models.StoryPage;
-import com.eguller.hntoplinks.models.Subscription;
 import com.eguller.hntoplinks.models.SubscriptionForm;
 import com.eguller.hntoplinks.models.SubscriptionPage;
+import com.eguller.hntoplinks.repository.StoryRepository;
+import com.eguller.hntoplinks.repository.SubscriberRepository;
+import com.eguller.hntoplinks.repository.SubscriptionRepository;
 import com.eguller.hntoplinks.services.EmailService;
 import com.eguller.hntoplinks.services.RecaptchaVerifier;
 import com.eguller.hntoplinks.services.StatisticsService;
-import com.eguller.hntoplinks.services.StoryCacheService;
 import com.eguller.hntoplinks.services.SubscriptionService;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mobile.device.Device;
 import org.springframework.mobile.device.DeviceUtils;
@@ -32,9 +33,13 @@ import org.springframework.web.context.annotation.RequestScope;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.invoke.MethodHandles;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.TimeZone;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 @Controller
@@ -42,26 +47,35 @@ import java.util.TimeZone;
 public class ApplicationController {
   private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  private static final int                 MAX_PAGES      = 10;
-  private static final int                 STORY_PER_PAGE = 30;
-  @Autowired
-  private              HttpServletRequest  httpServletRequest;
-  @Autowired
-  private              StoryCacheService   storyCacheService;
-  @Autowired
-  private              SubscriptionService subscriptionService;
+  private static final int                MAX_PAGES      = 10;
+  private static final int                STORY_PER_PAGE = 30;
+  private final        HttpServletRequest httpServletRequest;
 
-  @Autowired
-  private StatisticsService statisticsService;
+  private final StatisticsService statisticsService;
 
-  @Autowired
-  private RecaptchaVerifier recaptchaVerifier;
+  private final RecaptchaVerifier recaptchaVerifier;
 
-  @Autowired
-  private EmailService emailService;
+  private final EmailService emailService;
+
+  private final SubscriptionRepository subscriptionRepository;
+
+  private final SubscriberRepository subscriberRepository;
+
+  private final StoryRepository storyRepository;
+
 
   @Value("${hntoplinks.captcha.enabled}")
   private boolean captchaEnabled;
+
+  public ApplicationController(HttpServletRequest httpServletRequest, SubscriptionService subscriptionService, StatisticsService statisticsService, SubscriberRepository subscriberRepository, SubscriptionRepository subscriptionRepository, RecaptchaVerifier recaptchaVerifier, EmailService emailService, StoryRepository storyRepository) {
+    this.httpServletRequest     = httpServletRequest;
+    this.subscriptionRepository = subscriptionRepository;
+    this.subscriberRepository   = subscriberRepository;
+    this.statisticsService      = statisticsService;
+    this.recaptchaVerifier      = recaptchaVerifier;
+    this.emailService           = emailService;
+    this.storyRepository        = storyRepository;
+  }
 
 
   @GetMapping("/")
@@ -151,60 +165,82 @@ public class ApplicationController {
 
   @GetMapping("/subscribe")
   public String subscribe_Get(Model model, @RequestParam(value = "id", required = false) String subscriptionId) {
-    var subscriptionPage = Optional.ofNullable(subscriptionId)
-      .flatMap(id -> subscriptionService.findBySubscriptionId(id))
-      .or(() -> Optional.of(Subscription.NEW))
-      .map(subscription -> SubscriptionPage.builder().captchaEnabled(captchaEnabled).subscription(subscription).build())
-      .get();
+    var subscriptionFormBuilder = SubscriptionForm.builder();
+    var subscriptionPageBuilder = SubscriptionPage.builder().captchaEnabled(captchaEnabled);
+    if (subscriptionId != null) {
+      var subscriberOpt = subscriberRepository.findBySubsUUID(subscriptionId);
+      subscriberOpt.ifPresent((subscriber) -> {
+        subscriptionFormBuilder
+          .email(subscriber.getEmail())
+          .selectedPeriods(
+            subscriber.getSubscriptionList().stream()
+              .map(subscription -> subscription.getPeriod()).collect(Collectors.toSet())
+          );
+      });
 
+    }
+    var subscriptionPage = subscriptionPageBuilder.subscriptionForm(subscriptionFormBuilder.build()).build();
     model.addAttribute("page", subscriptionPage);
+    model.addAttribute("subscriptionForm", subscriptionPage.getSubscriptionForm());
     return view("subscription");
   }
 
   @GetMapping("/unsubscribe/{id}")
   public String unsubscribe_Get(Model model, @PathVariable(value = "id") String subscriptionId) {
     var unsubscribePage = Page.pageBuilder().title("Unsubscribe").build();
-    var isUnsubscribed = subscriptionService.unsubscribe(subscriptionId);
-    if (isUnsubscribed) {
-      statisticsService.userUnsubscribed();
-    }
+    var subscriberEntityOptional = subscriberRepository.findBySubsUUID(subscriptionId);
+    subscriberEntityOptional.ifPresent(subscriber -> subscriberRepository.delete(subscriber));
+
     model.addAttribute("page", unsubscribePage);
     return view("unsubscribe");
   }
 
   @GetMapping("/update-subscription/{id}")
   public String updateSubscription_Get(Model model, @PathVariable(value = "id") String subscriptionId) {
-    var subscription = subscriptionService.findBySubscriptionId(subscriptionId);
-    var subscriptionPageBuilder = SubscriptionPage.builder().title("Update Subscription").subscription(subscription.orElse(null));
+    var subscriptionFormBuilder = SubscriptionForm.builder();
+    var subscriptionPageBuilder = SubscriptionPage.builder()
+      .title("Update Subscription")
+      .captchaEnabled(captchaEnabled);
+    var subscriberOpt = subscriberRepository.findBySubsUUID(subscriptionId);
+    subscriberOpt.ifPresent((subscriber) -> {
+      subscriptionFormBuilder
+        .email(subscriber.getEmail())
+        .subsUUID(subscriber.getSubsUUID())
+        .selectedPeriods(
+          subscriber.getSubscriptionList().stream()
+            .map(subscription -> subscription.getPeriod()).collect(Collectors.toSet())
+        );
+    });
 
-    model.addAttribute("page", subscriptionPageBuilder.build());
+    var subscriptionPage = subscriptionPageBuilder.subscriptionForm(subscriptionFormBuilder.build()).build();
+    model.addAttribute("page", subscriptionPage);
+    model.addAttribute("subscriptionForm", subscriptionPage.getSubscriptionForm());
     return view("subscription");
   }
 
 
   @PostMapping("/subscribe")
-  public String subscribe_Post(@ModelAttribute SubscriptionForm subscriptionForm, @ModelAttribute("g-recaptcha-response") String recaptchaResponse, Model model) {
+  public String subscribe_Post(@ModelAttribute("subscriptionForm") SubscriptionForm subscriptionForm, Model model) {
     var subscriptionPageBuilder = SubscriptionPage.builder();
-    var subscription = subscriptionForm.getSubscription();
-    subscriptionPageBuilder.subscription(subscription);
+    subscriptionPageBuilder.subscriptionForm(subscriptionForm);
     subscriptionPageBuilder.captchaEnabled(captchaEnabled);
     var hasError = false;
-    if (!StringUtils.hasLength(subscription.getEmail())) {
+    if (!StringUtils.hasLength(subscriptionForm.getEmail())) {
       subscriptionPageBuilder.error("Email address can not be empty.");
       hasError = true;
-    } else if (!EmailValidator.getInstance().isValid(subscription.getEmail())) {
+    } else if (!EmailValidator.getInstance().isValid(subscriptionForm.getEmail())) {
       subscriptionPageBuilder.error("Email address is not valid.");
       hasError = true;
     }
 
-    var isCaptchaValid = recaptchaVerifier.verify(recaptchaResponse);
+    var isCaptchaValid = recaptchaVerifier.verify(subscriptionForm.getGRecaptchaResponse());
 
-    if(!isCaptchaValid){
+    if (!isCaptchaValid) {
       subscriptionPageBuilder.error("I'm not a robot check has failed.");
       hasError = true;
     }
 
-    if (!subscription.hasSubscription()) {
+    if (subscriptionForm.getSelectedPeriods().isEmpty()) {
       subscriptionPageBuilder.error("Please select at least one of the daily, weekly, monthly or annually subscriptions.");
       hasError = true;
     }
@@ -214,55 +250,81 @@ public class ApplicationController {
       return view("subscription");
     }
 
-    subscriptionService.findByEmail(subscription.getEmail().toLowerCase())
-      .ifPresentOrElse(existingSubscription -> {
-          if (existingSubscription.getSubsUUID().equalsIgnoreCase(subscription.getSubsUUID())) {
-            var updatedSubscription = subscriptionService.save(subscription);
-            subscriptionPageBuilder.subscription(updatedSubscription);
-          }
-          //if id and email does not match, print message but do not do anything.
-          subscriptionPageBuilder.message("Subscription has been updated.");
-        },
-        () -> {
-          subscription.setSubsUUID(null);
-          var savedSubscription = subscriptionService.save(subscription);
-          subscriptionPageBuilder.message("You have subscribed.");
-          subscriptionPageBuilder.subscription(savedSubscription);
-          emailService.sendSubscriptionEmail(savedSubscription);
-          statisticsService.userSubscribed();
-          if (savedSubscription.isDaily()) {
-            statisticsService.userSubscribedForDaily();
-          }
-          if (savedSubscription.isWeekly()) {
-            statisticsService.userSubscribedForWeekly();
-          }
-          if (savedSubscription.isMonthly()) {
-            statisticsService.userSubscribedForMonthly();
-          }
-          if (savedSubscription.isAnnually()) {
-            statisticsService.userSubscribedForAnnually();
-          }
-        }
-      );
+    var subscriber = subscriberRepository.findByEmail(subscriptionForm.getEmail().toLowerCase()).or(() -> {
+      var newSubscriber = new SubscriberEntity();
+      newSubscriber.setTimeZone(subscriptionForm.getTimeZone());
+      newSubscriber.setActivated(true);
+      newSubscriber.setActivationDate(LocalDateTime.now());
+
+      newSubscriber.setEmail(subscriptionForm.getEmail());
+      newSubscriber.setSubscriptionDate(LocalDateTime.now());
+
+      var subscriberUUID = UUID.randomUUID().toString();
+      newSubscriber.setSubsUUID(subscriberUUID);
+      return Optional.of(newSubscriber);
+    }).get();
+
+    if (subscriber.isNew()) {
+      subscriptionPageBuilder.message("You have subscribed.");
+      subscriptionForm.setSubsUUID(subscriber.getSubsUUID());
+      emailService.sendSubscriptionEmail(subscriber);
+    } else {
+      subscriptionPageBuilder.message("Subscription has been updated.");
+      if (!subscriber.getSubsUUID().equalsIgnoreCase(subscriptionForm.getSubsUUID())) {
+        model.addAttribute("page", subscriptionPageBuilder.build());
+        return view("subscription");
+      }
+    }
+
+    subscriberRepository.save(subscriber);
+
+    //find removed subscriptions
+    var existingSubscriptions = subscriber.getSubscriptionList()
+      .stream()
+      .filter(subscription -> subscriptionForm.getSelectedPeriods().contains(subscription.getPeriod()))
+      .toList();
+
+
+    var newSubscriptions = subscriptionForm.getSelectedPeriods()
+      .stream()
+      .filter(period -> !subscriber.hasSubscription(period))
+      .map(period -> subscriber.createNewSubscription(period))
+      .map(subscriptionEntity -> {
+        subscriptionEntity.setSubscriberId(subscriber.getId());
+        return subscriptionEntity;
+      })
+      .toList();
+
+    var subscriptions = Stream.concat(existingSubscriptions.stream(), newSubscriptions.stream());
+    var subscriptionsList = subscriptions.map(subscriptionEntity -> {
+      subscriptionRepository.save(subscriptionEntity);
+      return subscriptionEntity;
+    }).toList();
+
+    var deletedSubscriptions = subscriber.getSubscriptionList().stream()
+      .filter(subscriptionEntity -> !subscriptionForm.getSelectedPeriods().contains(subscriptionEntity.getPeriod()));
+    deletedSubscriptions.forEach(deletedSubscription -> subscriptionRepository.delete(deletedSubscription));
+
+    subscriber.setSubscriptionList(subscriptionsList);
+
 
     model.addAttribute("page", subscriptionPageBuilder.build());
     return view("subscription");
-
   }
 
   private StoryPage getStoryPage(PageTab pageTab, Integer page) {
     var _page = page == null ? 1 : page;
-    List<Story> storyList;
+    List<StoryEntity> storyList;
     if (PageTab.today == pageTab) {
-      storyList = storyCacheService.getDailyTop();
+      storyList = storyRepository.readDailyTop();
     } else if (PageTab.week == pageTab) {
-      storyList = storyCacheService.getWeeklTop();
+      storyList = storyRepository.readWeeklyTop();
     } else if (PageTab.month == pageTab) {
-      storyList = storyCacheService.getMonthlyTop();
+      storyList = storyRepository.readMonthlyTop();
     } else if (PageTab.year == pageTab) {
-      storyList = storyCacheService.getAnnuallyTop();
+      storyList = storyRepository.readyAnnuallyTop();
     } else {
-      storyList = storyCacheService.getAllTimeTop();
+      storyList = storyRepository.readAllTimeTop();
     }
 
     int from = Math.min(storyList.size() - 1, (_page - 1) * STORY_PER_PAGE);
@@ -289,22 +351,5 @@ public class ApplicationController {
     } else {
       return view + "_mobile";
     }
-  }
-
-  public int getPage(String pageStr) {
-    try {
-      int page = Integer.parseInt(pageStr);
-      if (page < 1) {
-        return 1;
-      } else if (page > MAX_PAGES) {
-        return MAX_PAGES;
-      } else {
-        return page;
-      }
-
-    } catch (Exception ex) {
-      logger.error("Page could not be parse. pageStr={}", pageStr);
-    }
-    return 1;
   }
 }

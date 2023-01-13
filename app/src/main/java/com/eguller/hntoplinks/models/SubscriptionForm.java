@@ -1,19 +1,28 @@
 package com.eguller.hntoplinks.models;
 
-import lombok.AllArgsConstructor;
+import com.eguller.hntoplinks.entities.Period;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestParam;
 
-@Data
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 public class SubscriptionForm {
-  //g-recaptcha-response
+  private String subsUUID;
+
+  @Builder.Default
+  private String email = "";
+
   private String gRecaptchaResponse;
-  private Subscription subscription;
+
+  @Builder.Default
+  private String timeZone = "UTC";
+
+  @Builder.Default
+  private Set<Period> selectedPeriods = new HashSet<>();
+
 }

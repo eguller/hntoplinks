@@ -1,58 +1,40 @@
 package com.eguller.hntoplinks.jobs;
 
-import com.eguller.hntoplinks.entities.SubscriptionEntity;
-import com.eguller.hntoplinks.models.AnnuallyTopLinksEmail;
-import com.eguller.hntoplinks.models.DailyTopLinksEmail;
-import com.eguller.hntoplinks.models.MonthlyTopLinksEmail;
-import com.eguller.hntoplinks.models.Subscription;
-import com.eguller.hntoplinks.models.TopLinksEmail;
-import com.eguller.hntoplinks.models.WeeklyTopLinksEmail;
+import com.eguller.hntoplinks.models.EmailTarget;
+import com.eguller.hntoplinks.repository.SubscriberRepository;
 import com.eguller.hntoplinks.repository.SubscriptionRepository;
-import com.eguller.hntoplinks.services.EmailService;
-import com.eguller.hntoplinks.services.StatisticsService;
-import com.eguller.hntoplinks.services.StoryCacheService;
-import com.eguller.hntoplinks.services.TemplateService;
-import com.eguller.hntoplinks.util.DateUtils;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import com.eguller.hntoplinks.services.SubscriptionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 @Component
 
 public class SendMailJob {
-  private static final Logger                 logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-  @Autowired
-  private              SubscriptionRepository subscriptionRepository;
+  private static final Logger               logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+  private final        SubscriberRepository subscriberRepository;
+  private final        SubscriptionService  subscriptionService;
 
-  @Autowired
-  private EmailService emailService;
-
-  @Autowired
-  private StoryCacheService storyCacheService;
-
-  @Autowired
-  private TemplateService templateService;
-
-  @Autowired
-  private StatisticsService statisticsService;
+  public SendMailJob(SubscriberRepository subscriberRepository, SubscriptionService subscriptionService) {
+    this.subscriberRepository = subscriberRepository;
+    this.subscriptionService  = subscriptionService;
+  }
 
   @Scheduled(initialDelay = 5, fixedDelay = 15, timeUnit = TimeUnit.MINUTES)
   public void sendEmail() {
-    var subscriptionsToSendEmail = subscriptionRepository.findSubscriptionsToSendEmail();
-    subscriptionsToSendEmail.stream()
-      .filter(subscriptionEntity -> subscriptionEntity.isActivated())
-      .forEach(subscription -> sendEmail(subscription));
-    subscriptionRepository.saveAll(subscriptionsToSendEmail);
+    var subscribersToSendEmail = subscriberRepository.findSubscriptionsByExpiredNextSendDate();
+    subscribersToSendEmail.stream()
+      .flatMap(subscriber -> subscriber.getSubscriptionList().stream()
+        .map(subscriptionEntity -> new EmailTarget(subscriber, subscriptionEntity))
+      ).forEach(emailTarget -> subscriptionService.sendSubscriptionEmail(emailTarget));
   }
 
+  /*
   private void sendEmail(SubscriptionEntity subscription) {
     var subscriptionModel = Subscription.entityToModel(subscription);
     if (subscription.isDaily()) {
@@ -148,4 +130,5 @@ public class SendMailJob {
       return this;
     }
   }
+  */
 }

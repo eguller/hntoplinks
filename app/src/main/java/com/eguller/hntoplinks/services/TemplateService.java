@@ -1,7 +1,7 @@
 package com.eguller.hntoplinks.services;
 
-import com.eguller.hntoplinks.models.Story;
-import com.eguller.hntoplinks.models.Subscription;
+import com.eguller.hntoplinks.entities.StoryEntity;
+import com.eguller.hntoplinks.entities.SubscriberEntity;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +23,9 @@ public class TemplateService {
   @Value("${hntoplinks.base-url}")
   private String hntoplinksBaseUrl;
 
-  public String generateSubscriptionEmail(Subscription subscription) {
+  public String generateSubscriptionEmail(SubscriberEntity subscriber) {
     var subscriptionEmailData = SubscriptionEmailData.builder()
-      .unsubscribeUrl(hntoplinksBaseUrl + "/unsubscribe/" + subscription.getSubsUUID()).build();
+      .unsubscribeUrl(hntoplinksBaseUrl + "/unsubscribe/" + subscriber.getSubsUUID()).build();
     final Context ctx = new Context(Locale.ENGLISH);
     ctx.setVariable("data", subscriptionEmailData);
 
@@ -33,11 +33,11 @@ public class TemplateService {
     return htmlContent;
   }
 
-  public String generateTopEmail(String subject, Subscription subscription, List<Story> topEmails) {
+  public String generateTopEmail(String subject, SubscriberEntity subscriber, List<StoryEntity> topEmails) {
     var toplinksEmailData = TopEmailData.builder()
       .subject(subject)
-      .unsubscribeUrl(hntoplinksBaseUrl + "/unsubscribe/" + subscription.getSubsUUID())
-      .updateSubscriptionUrl(hntoplinksBaseUrl + "/update-subscription/" + subscription.getSubsUUID())
+      .unsubscribeUrl(hntoplinksBaseUrl + "/unsubscribe/" + subscriber.getSubsUUID())
+      .updateSubscriptionUrl(hntoplinksBaseUrl + "/update-subscription/" + subscriber.getSubsUUID())
       .storyList(topEmails).build();
 
     final Context ctx = new Context(Locale.ENGLISH);
@@ -51,7 +51,7 @@ public class TemplateService {
   @Data
   private static class TopEmailData {
     private String      subject;
-    private List<Story> storyList;
+    private List<StoryEntity> storyList;
     private String      unsubscribeUrl;
     private String      updateSubscriptionUrl;
 
