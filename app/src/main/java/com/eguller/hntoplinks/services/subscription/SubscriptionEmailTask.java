@@ -2,9 +2,8 @@ package com.eguller.hntoplinks.services.subscription;
 
 
 import com.eguller.hntoplinks.entities.StoryEntity;
-import com.eguller.hntoplinks.entities.SubscriberEntity;
-import com.eguller.hntoplinks.entities.SubscriptionEntity;
 import com.eguller.hntoplinks.models.Email;
+import com.eguller.hntoplinks.models.EmailTarget;
 import com.eguller.hntoplinks.services.EmailProviderService;
 import com.eguller.hntoplinks.services.TemplateService;
 import lombok.AllArgsConstructor;
@@ -17,9 +16,7 @@ public abstract class SubscriptionEmailTask {
 
   private final TemplateService templateService;
 
-  protected  final SubscriberEntity subscriber;
-
-  protected final SubscriptionEntity subscription;
+  protected  final EmailTarget emailTarget;
 
   private EmailProviderService emailProviderService;
 
@@ -28,10 +25,10 @@ public abstract class SubscriptionEmailTask {
     var stories = getStories();
     var maxStoryCount = getMaxStoryCount();
     var topStories = stories.subList(0, Math.min(stories.size() - 1, getMaxStoryCount()));
-    var content = templateService.generateTopEmail(subject, subscriber, topStories);
+    var content = templateService.generateTopEmail(subject, emailTarget.subscriber(), topStories);
     var email = Email.builder()
       .subject("[hntoplinks] - " + subject)
-      .to(subscriber.getEmail())
+      .to(emailTarget.subscriber().getEmail())
       .html(content).build();
     emailProviderService.send(email);
   }

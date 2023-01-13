@@ -14,7 +14,7 @@ public class MockEmailStore {
   private final Map<String, Email> emails = new HashMap<>();
 
   public void addEmail(Email email) {
-    email.getTo().forEach(to -> emails.put(to, email));
+    emails.put(email.getTo(), email);
   }
 
   public Optional<Email> getLastMail(String emailAddress) {

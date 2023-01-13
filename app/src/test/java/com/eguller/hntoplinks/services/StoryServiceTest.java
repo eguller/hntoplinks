@@ -8,6 +8,7 @@ import com.eguller.hntoplinks.entities.StoryEntity;
 import com.eguller.hntoplinks.entities.SubscriberEntity;
 import com.eguller.hntoplinks.entities.SubscriptionEntity;
 import com.eguller.hntoplinks.jobs.SendMailJob;
+import com.eguller.hntoplinks.models.SubscriptionForm;
 import com.eguller.hntoplinks.models.SubscriptionPage;
 import com.eguller.hntoplinks.repository.StoryRepository;
 import com.eguller.hntoplinks.repository.SubscriberRepository;
@@ -25,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @SpringBootTest(classes = {Application.class})
 @ActiveProfiles({"local"})
@@ -34,9 +36,6 @@ public class StoryServiceTest {
   private SubscriberRepository subscriberRepository;
   @Autowired
   private StoryRepository storyRepository;
-
-  @Autowired
-  private StoryCacheService storyCacheService;
 
   @Autowired
   private ApplicationController applicationController;
@@ -64,32 +63,29 @@ public class StoryServiceTest {
     hnStory.setLastUpdate(LocalDateTime.now());
 
     storyRepository.saveStories(List.of(hnStory));
-    storyCacheService.addNewStories(List.of(hnStory));
-
 
     var savedEntity = storyRepository.findByHnid(1L);
     Assertions.assertNotNull(savedEntity);
 
     var hnStoryUpdated = new StoryEntity();
-    hnStory.setHnid(1L);
-    hnStory.setComhead("hntoplinks.com");
-    hnStory.setUser("eguller");
-    hnStory.setUrl("https://www.hntoplinks.com");
-    hnStory.setTitle("Title");
-    hnStory.setPoints(59);
-    hnStory.setComment(10);
-    hnStory.setDate(LocalDateTime.now());
-    hnStory.setLastUpdate(LocalDateTime.now());
+    hnStoryUpdated.setHnid(1L);
+    hnStoryUpdated.setComhead("hntoplinks.com");
+    hnStoryUpdated.setUser("eguller");
+    hnStoryUpdated.setUrl("https://www.hntoplinks.com");
+    hnStoryUpdated.setTitle("Title");
+    hnStoryUpdated.setPoints(66);
+    hnStoryUpdated.setComment(108);
+    hnStoryUpdated.setDate(LocalDateTime.now());
+    hnStoryUpdated.setLastUpdate(LocalDateTime.now());
 
     storyRepository.saveStories(List.of(hnStoryUpdated));
-    storyCacheService.addNewStories(List.of(hnStoryUpdated));
 
     var updatedEntity = storyRepository.findByHnid(1L);
 
     Assertions.assertEquals(savedEntity.get().getId(), updatedEntity.get().getId());
 
 
-    long count = storyCacheService.getAllTimeTop().stream().filter(story -> story.getHnid() == 1).count();
+    long count = storyRepository.readAllTimeTop().stream().filter(story -> story.getHnid() == 1).count();
     Assertions.assertEquals(1, count); //there should not be any duplicate.
   }
 
@@ -113,9 +109,8 @@ public class StoryServiceTest {
     var subscription = new SubscriptionEntity();
     subscription.setPeriod(Period.DAILY);
     subscription.setNextSendDate(LocalDateTime.now().minusDays(1));
+    subscriber.getSubscriptionList().add(subscription);
 
-
-    test_PeriodicEmail(hnStory, subscriber);
     test_PeriodicEmail(hnStory, subscriber);
 
     var email = mockEmailStore.getLastMail(emailAddress);
@@ -209,34 +204,25 @@ public class StoryServiceTest {
 
   private void test_PeriodicEmail(List<StoryEntity> stories, SubscriberEntity subscriber) {
     storyRepository.saveStories(stories);
-    storyCacheService.addNewStories(stories);
 
-
-    var subscriptionFormBuilder = SubscriptionPage.SubscriptionForm.builder();
+    var subscriptionFormBuilder = SubscriptionForm.builder();
     subscriptionFormBuilder.email(subscriber.getEmail());
-    if(subscriber.isSubscribedFor(Period.DAILY)){
-      subscriptionFormBuilder.daily(true);
-    } else if(subscriber.isSubscribedFor(Period.WEEKLY)){
-      subscriptionFormBuilder.weekly(true);
-    } else if(subscriber.isSubscribedFor(Period.MONTHLY)){
-      subscriptionFormBuilder.monthly(true);
-    } else if(subscriber.isSubscribedFor(Period.YEARLY)){
-      subscriptionFormBuilder.yearly(true);
-    }
+    subscriptionFormBuilder.selectedPeriods(subscriber.getSubscriptionList().stream().map(subscriptionEntity -> subscriptionEntity.getPeriod()).collect(Collectors.toSet()));
 
     var subscriptionForm = subscriptionFormBuilder.build();
     var model = new ExtendedModelMap();
     applicationController.subscribe_Post(subscriptionForm, model);
 
-    var subscriberId = ((SubscriptionPage) model.get("page")).getSubscriptionForm().getSubsUUID();
+    var subscriberUUID = ((SubscriptionPage) model.get("page")).getSubscriptionForm().getSubsUUID();
+    var savedSubscriber = subscriberRepository.findBySubsUUID(subscriberUUID);
 
     var parameters = new HashMap<String, Object>();
     parameters.put("nextSendDate", LocalDateTime.now().minusHours(1)); //next_send time already passed should trigger an email send.
-    parameters.put("subsuuid", subscriberId);
-    namedParameterJdbcTemplate.update("update subscription set next_send_day = :nextSendDate where subsuuid = :subsuuid", parameters);
-    namedParameterJdbcTemplate.update("update subscription set next_send_week = :nextSendDate where subsuuid = :subsuuid", parameters);
-    namedParameterJdbcTemplate.update("update subscription set next_send_month = :nextSendDate where subsuuid = :subsuuid", parameters);
-    namedParameterJdbcTemplate.update("update subscription set next_send_year = :nextSendDate where subsuuid = :subsuuid", parameters);
+    parameters.put("subscriberId", savedSubscriber.get().getId());
+    namedParameterJdbcTemplate.update("update subscription set next_send_date = :nextSendDate where period = 'DAILY' and subscriber_id = :subscriberId", parameters);
+    namedParameterJdbcTemplate.update("update subscription set next_send_date = :nextSendDate where period = 'WEEKLY' and subscriber_id = :subscriberId", parameters);
+    namedParameterJdbcTemplate.update("update subscription set next_send_date = :nextSendDate where period = 'MONTHLY' and subscriber_id = :subscriberId", parameters);
+    namedParameterJdbcTemplate.update("update subscription set next_send_date = :nextSendDate where period = 'YEARLY' and subscriber_id = :subscriberId", parameters);
 
     sendMailJob.sendEmail();
 
@@ -254,11 +240,11 @@ public class StoryServiceTest {
 
     var queryParams = new HashMap<String, String>();
     queryParams.put("email", inActiveUserEmailAddress);
-    namedParameterJdbcTemplate.update("update subscription set activated = false where email=:email", queryParams);
+    namedParameterJdbcTemplate.update("update subscriber set activated = false where email=:email", queryParams);
 
     var parameters = new HashMap<String, Object>();
     parameters.put("nextSendDate", LocalDateTime.now().minusHours(1)); //next_send time alread passed should trigger an email send.
-    namedParameterJdbcTemplate.update("update subscription set next_send_day = :nextSendDate", parameters);
+    namedParameterJdbcTemplate.update("update subscription set next_send_date = :nextSendDate", parameters);
 
     sendMailJob.sendEmail();
 

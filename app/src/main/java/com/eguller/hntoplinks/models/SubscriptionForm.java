@@ -5,7 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Builder
 @Data
@@ -21,10 +23,6 @@ public class SubscriptionForm {
   private String timeZone = "UTC";
 
   @Builder.Default
-  private List<Period> selectedPeriods = new ArrayList<>();
+  private Set<Period> selectedPeriods = new HashSet<>();
 
-
-  //public boolean hasSubscription() {
-  //  return (daily || weekly || monthly || yearly);
-  //}
 }

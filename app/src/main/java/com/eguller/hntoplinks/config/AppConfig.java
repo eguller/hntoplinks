@@ -1,16 +1,11 @@
 package com.eguller.hntoplinks.config;
 
-import com.eguller.hntoplinks.entities.HnEntity;
-import com.eguller.hntoplinks.repository.Sequence;
 import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.relational.core.mapping.event.BeforeSaveEvent;
 import org.springframework.mobile.device.DeviceHandlerMethodArgumentResolver;
 import org.springframework.mobile.device.DeviceResolverHandlerInterceptor;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -37,8 +32,7 @@ import java.util.List;
 @EnableAsync
 public class AppConfig implements WebMvcConfigurer {
   private static final Logger   logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-  @Autowired
-  private              Sequence sequence;
+
 
   @Bean
   public DeviceResolverHandlerInterceptor deviceResolverHandlerInterceptor() {
@@ -71,16 +65,6 @@ public class AppConfig implements WebMvcConfigurer {
   @Bean
   public LayoutDialect layoutDialect() {
     return new LayoutDialect();
-  }
-
-  @Bean
-  public ApplicationListener<BeforeSaveEvent<Object>> assignId() {
-    return event -> {
-      Object entity = event.getEntity();
-      if (entity instanceof HnEntity && ((HnEntity) entity).getId() == null) {
-        ((HnEntity) entity).setId(sequence.getNextId());
-      }
-    };
   }
 
   @Bean

@@ -7,16 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 public interface SubscriptionRepository extends CrudRepository<SubscriptionEntity, Long> {
-  @Query("""
-     select * from
-     subscription
-     inner join subscriber
-     on subscription.subscriber = subscriber.id
-     where
-     subscriber.activated = true and
-     subscription.next_send_date < now()
-    """)
-  List<SubscriptionEntity> findSubscriptionsByExpiredNextSendDate();
+
 
 
 }

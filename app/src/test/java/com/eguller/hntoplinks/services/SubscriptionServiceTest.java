@@ -44,7 +44,6 @@ public class SubscriptionServiceTest {
     Assertions.assertFalse(subscriptionEntity.get().isSubscribedFor(Period.YEARLY));
 
     Email email = mockEmailStore.getLastMail(emailAddress).orElseThrow();
-    Assertions.assertEquals(1, email.getTo().size());
     Assertions.assertTrue(email.getTo().contains(emailAddress));
     Assertions.assertEquals("[hntoplinks] - Welcome to hntoplinks.com", email.getSubject());
   }
@@ -68,12 +67,26 @@ public class SubscriptionServiceTest {
     Assertions.assertEquals(emailAddress, subscriptionEntity.get().getEmail());
     Assertions.assertTrue(subscriptionEntity.get().isSubscribedFor(Period.DAILY));
     Assertions.assertFalse(subscriptionEntity.get().isSubscribedFor(Period.WEEKLY));
-    SubscriptionUtil.subscribe(this.applicationController, emailAddress, ((SubscriptionPage) model.getAttribute("page")).getSubscriptionForm().getSubsUUID(), true, true, false, false);
-    Assertions.assertTrue(subscriptionEntity.get().isSubscribedFor(Period.DAILY));
-    Assertions.assertFalse(subscriptionEntity.get().isSubscribedFor(Period.WEEKLY));
+
+    SubscriptionUtil.subscribe(this.applicationController, emailAddress, ((SubscriptionPage) model.getAttribute("page")).getSubscriptionForm().getSubsUUID(), Period.DAILY, Period.WEEKLY);
     subscriptionEntity = subscriberRepository.findByEmail(emailAddress);
     Assertions.assertTrue(subscriptionEntity.get().isSubscribedFor(Period.DAILY));
     Assertions.assertTrue(subscriptionEntity.get().isSubscribedFor(Period.WEEKLY));
+
+    SubscriptionUtil.subscribe(this.applicationController, emailAddress, ((SubscriptionPage) model.getAttribute("page")).getSubscriptionForm().getSubsUUID(), Period.DAILY, Period.WEEKLY, Period.MONTHLY, Period.YEARLY);
+    subscriptionEntity = subscriberRepository.findByEmail(emailAddress);
+    Assertions.assertTrue(subscriptionEntity.get().isSubscribedFor(Period.DAILY));
+    Assertions.assertTrue(subscriptionEntity.get().isSubscribedFor(Period.WEEKLY));
+    Assertions.assertTrue(subscriptionEntity.get().isSubscribedFor(Period.MONTHLY));
+    Assertions.assertTrue(subscriptionEntity.get().isSubscribedFor(Period.YEARLY));
+
+    SubscriptionUtil.subscribe(this.applicationController, emailAddress, ((SubscriptionPage) model.getAttribute("page")).getSubscriptionForm().getSubsUUID(), Period.DAILY, Period.WEEKLY, Period.MONTHLY);
+    subscriptionEntity = subscriberRepository.findByEmail(emailAddress);
+    Assertions.assertTrue(subscriptionEntity.get().isSubscribedFor(Period.DAILY));
+    Assertions.assertTrue(subscriptionEntity.get().isSubscribedFor(Period.WEEKLY));
+    Assertions.assertTrue(subscriptionEntity.get().isSubscribedFor(Period.MONTHLY));
+    Assertions.assertFalse(subscriptionEntity.get().isSubscribedFor(Period.YEARLY));
+
   }
 
 

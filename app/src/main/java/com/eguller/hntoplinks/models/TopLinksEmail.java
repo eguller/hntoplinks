@@ -2,10 +2,7 @@ package com.eguller.hntoplinks.models;
 
 import com.eguller.hntoplinks.entities.StoryEntity;
 import com.eguller.hntoplinks.entities.SubscriberEntity;
-import com.eguller.hntoplinks.services.EmailService;
-import com.eguller.hntoplinks.services.StoryCacheService;
 import com.eguller.hntoplinks.services.TemplateService;
-import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
 
@@ -16,7 +13,6 @@ import java.util.List;
 public abstract class TopLinksEmail {
   private static final int               MAX_STORY_COUNT = 25;
   protected            SubscriberEntity  subscription;
-  protected            StoryCacheService storyCacheService;
   protected            TemplateService   templateService;
 
   public Email createEmail() {

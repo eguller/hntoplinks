@@ -1,23 +1,20 @@
 package com.eguller.hntoplinks.controllers;
 
-import com.eguller.hntoplinks.entities.Period;
 import com.eguller.hntoplinks.entities.StoryEntity;
 import com.eguller.hntoplinks.entities.SubscriberEntity;
-import com.eguller.hntoplinks.entities.SubscriptionEntity;
 import com.eguller.hntoplinks.models.Page;
 import com.eguller.hntoplinks.models.PageTab;
 import com.eguller.hntoplinks.models.StatsPage;
 import com.eguller.hntoplinks.models.StoryPage;
 import com.eguller.hntoplinks.models.SubscriptionForm;
 import com.eguller.hntoplinks.models.SubscriptionPage;
+import com.eguller.hntoplinks.repository.StoryRepository;
 import com.eguller.hntoplinks.repository.SubscriberRepository;
 import com.eguller.hntoplinks.repository.SubscriptionRepository;
 import com.eguller.hntoplinks.services.EmailService;
 import com.eguller.hntoplinks.services.RecaptchaVerifier;
 import com.eguller.hntoplinks.services.StatisticsService;
-import com.eguller.hntoplinks.services.StoryCacheService;
 import com.eguller.hntoplinks.services.SubscriptionService;
-import com.eguller.hntoplinks.util.DateUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,8 +34,7 @@ import org.springframework.web.context.annotation.RequestScope;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -51,11 +47,9 @@ import java.util.stream.Stream;
 public class ApplicationController {
   private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  private static final int                 MAX_PAGES      = 10;
-  private static final int                 STORY_PER_PAGE = 30;
-  private final        HttpServletRequest  httpServletRequest;
-  private final        StoryCacheService   storyCacheService;
-  private final        SubscriptionService subscriptionService;
+  private static final int                MAX_PAGES      = 10;
+  private static final int                STORY_PER_PAGE = 30;
+  private final        HttpServletRequest httpServletRequest;
 
   private final StatisticsService statisticsService;
 
@@ -67,19 +61,20 @@ public class ApplicationController {
 
   private final SubscriberRepository subscriberRepository;
 
+  private final StoryRepository storyRepository;
+
 
   @Value("${hntoplinks.captcha.enabled}")
   private boolean captchaEnabled;
 
-  public ApplicationController(HttpServletRequest httpServletRequest, StoryCacheService storyCacheService, SubscriptionService subscriptionService, StatisticsService statisticsService, SubscriberRepository subscriberRepository, SubscriptionRepository subscriptionRepository, RecaptchaVerifier recaptchaVerifier, EmailService emailService) {
+  public ApplicationController(HttpServletRequest httpServletRequest, SubscriptionService subscriptionService, StatisticsService statisticsService, SubscriberRepository subscriberRepository, SubscriptionRepository subscriptionRepository, RecaptchaVerifier recaptchaVerifier, EmailService emailService, StoryRepository storyRepository) {
     this.httpServletRequest     = httpServletRequest;
-    this.storyCacheService      = storyCacheService;
-    this.subscriptionService    = subscriptionService;
     this.subscriptionRepository = subscriptionRepository;
     this.subscriberRepository   = subscriberRepository;
     this.statisticsService      = statisticsService;
     this.recaptchaVerifier      = recaptchaVerifier;
     this.emailService           = emailService;
+    this.storyRepository        = storyRepository;
   }
 
 
@@ -176,11 +171,11 @@ public class ApplicationController {
       var subscriberOpt = subscriberRepository.findBySubsUUID(subscriptionId);
       subscriberOpt.ifPresent((subscriber) -> {
         subscriptionFormBuilder
-        .email(subscriber.getEmail())
-        .selectedPeriods(
-          subscriber.getSubscriptionList().stream()
-            .map(subscription -> subscription.getPeriod()).collect(Collectors.toList())
-        );
+          .email(subscriber.getEmail())
+          .selectedPeriods(
+            subscriber.getSubscriptionList().stream()
+              .map(subscription -> subscription.getPeriod()).collect(Collectors.toSet())
+          );
       });
 
     }
@@ -193,10 +188,9 @@ public class ApplicationController {
   @GetMapping("/unsubscribe/{id}")
   public String unsubscribe_Get(Model model, @PathVariable(value = "id") String subscriptionId) {
     var unsubscribePage = Page.pageBuilder().title("Unsubscribe").build();
-    var numberOfUsers = subscriberRepository.deleteBySubsUUID(subscriptionId);
-    if (numberOfUsers > 0) {
-      statisticsService.userUnsubscribed();
-    }
+    var subscriberEntityOptional = subscriberRepository.findBySubsUUID(subscriptionId);
+    subscriberEntityOptional.ifPresent(subscriber -> subscriberRepository.delete(subscriber));
+
     model.addAttribute("page", unsubscribePage);
     return view("unsubscribe");
   }
@@ -211,9 +205,10 @@ public class ApplicationController {
     subscriberOpt.ifPresent((subscriber) -> {
       subscriptionFormBuilder
         .email(subscriber.getEmail())
+        .subsUUID(subscriber.getSubsUUID())
         .selectedPeriods(
           subscriber.getSubscriptionList().stream()
-            .map(subscription -> subscription.getPeriod()).collect(Collectors.toList())
+            .map(subscription -> subscription.getPeriod()).collect(Collectors.toSet())
         );
     });
 
@@ -257,38 +252,62 @@ public class ApplicationController {
 
     var subscriber = subscriberRepository.findByEmail(subscriptionForm.getEmail().toLowerCase()).or(() -> {
       var newSubscriber = new SubscriberEntity();
-      newSubscriber.setTimeZone(subscriptionForm.getGRecaptchaResponse());
+      newSubscriber.setTimeZone(subscriptionForm.getTimeZone());
       newSubscriber.setActivated(true);
-      newSubscriber.setSubsUUID(UUID.randomUUID().toString());
+      newSubscriber.setActivationDate(LocalDateTime.now());
+
       newSubscriber.setEmail(subscriptionForm.getEmail());
-      newSubscriber.setSubscriptionDate(LocalDate.now());
+      newSubscriber.setSubscriptionDate(LocalDateTime.now());
+
+      var subscriberUUID = UUID.randomUUID().toString();
+      newSubscriber.setSubsUUID(subscriberUUID);
       return Optional.of(newSubscriber);
     }).get();
 
-    if (subscriber.getSubsUUID().equalsIgnoreCase(subscriptionForm.getSubsUUID()) || !StringUtils.hasLength(subscriptionForm.getSubsUUID())) {
-      //find removed subscriptions
-      var existingSubscriptions = subscriber.getSubscriptionList()
-        .stream()
-        .filter(subscription -> subscriptionForm.getSelectedPeriods().contains(subscription.getPeriod()))
-        .toList();
-
-
-      var newSubscriptions = subscriptionForm.getSelectedPeriods()
-        .stream()
-        .filter(period -> !subscriber.hasSubscription(period))
-        .map(period -> subscriber.createNewSubscription(period))
-        .toList();
-
-      var subscriptions = Stream.concat(existingSubscriptions.stream(), newSubscriptions.stream()).toList();
-      subscriber.setSubscriptionList(subscriptions);
-      subscriberRepository.save(subscriber);
-    }
-
-    if (subscriptionForm.getSubsUUID() == null) {
+    if (subscriber.isNew()) {
       subscriptionPageBuilder.message("You have subscribed.");
+      subscriptionForm.setSubsUUID(subscriber.getSubsUUID());
+      emailService.sendSubscriptionEmail(subscriber);
     } else {
       subscriptionPageBuilder.message("Subscription has been updated.");
+      if (!subscriber.getSubsUUID().equalsIgnoreCase(subscriptionForm.getSubsUUID())) {
+        model.addAttribute("page", subscriptionPageBuilder.build());
+        return view("subscription");
+      }
     }
+
+    subscriberRepository.save(subscriber);
+
+    //find removed subscriptions
+    var existingSubscriptions = subscriber.getSubscriptionList()
+      .stream()
+      .filter(subscription -> subscriptionForm.getSelectedPeriods().contains(subscription.getPeriod()))
+      .toList();
+
+
+    var newSubscriptions = subscriptionForm.getSelectedPeriods()
+      .stream()
+      .filter(period -> !subscriber.hasSubscription(period))
+      .map(period -> subscriber.createNewSubscription(period))
+      .map(subscriptionEntity -> {
+        subscriptionEntity.setSubscriberId(subscriber.getId());
+        return subscriptionEntity;
+      })
+      .toList();
+
+    var subscriptions = Stream.concat(existingSubscriptions.stream(), newSubscriptions.stream());
+    var subscriptionsList = subscriptions.map(subscriptionEntity -> {
+      subscriptionRepository.save(subscriptionEntity);
+      return subscriptionEntity;
+    }).toList();
+
+    var deletedSubscriptions = subscriber.getSubscriptionList().stream()
+      .filter(subscriptionEntity -> !subscriptionForm.getSelectedPeriods().contains(subscriptionEntity.getPeriod()));
+    deletedSubscriptions.forEach(deletedSubscription -> subscriptionRepository.delete(deletedSubscription));
+
+    subscriber.setSubscriptionList(subscriptionsList);
+
+
     model.addAttribute("page", subscriptionPageBuilder.build());
     return view("subscription");
   }
@@ -297,15 +316,15 @@ public class ApplicationController {
     var _page = page == null ? 1 : page;
     List<StoryEntity> storyList;
     if (PageTab.today == pageTab) {
-      storyList = storyCacheService.getDailyTop();
+      storyList = storyRepository.readDailyTop();
     } else if (PageTab.week == pageTab) {
-      storyList = storyCacheService.getWeeklTop();
+      storyList = storyRepository.readWeeklyTop();
     } else if (PageTab.month == pageTab) {
-      storyList = storyCacheService.getMonthlyTop();
+      storyList = storyRepository.readMonthlyTop();
     } else if (PageTab.year == pageTab) {
-      storyList = storyCacheService.getYearlyTop();
+      storyList = storyRepository.readyAnnuallyTop();
     } else {
-      storyList = storyCacheService.getAllTimeTop();
+      storyList = storyRepository.readAllTimeTop();
     }
 
     int from = Math.min(storyList.size() - 1, (_page - 1) * STORY_PER_PAGE);

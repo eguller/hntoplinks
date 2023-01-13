@@ -9,7 +9,7 @@
     <td class="title"><a target="_blank" th:href="@{${story.url}}" th:text="${story.title}"></a>
       <th:block th:if="${story.hasComhead()}">
         <a class="comhead" target="_blank" th:href="@{https://news.ycombinator.com/from(site=${story.comhead})}"
-           th:text="'(' + ${story.hasComhead} + ')'"></a>
+           th:text="'(' + ${story.comhead} + ')'"></a>
       </th:block>
     </td>
   </tr>

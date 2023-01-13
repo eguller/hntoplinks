@@ -1,14 +1,11 @@
 package com.eguller.hntoplinks.jobs;
 
+import com.eguller.hntoplinks.models.EmailTarget;
+import com.eguller.hntoplinks.repository.SubscriberRepository;
 import com.eguller.hntoplinks.repository.SubscriptionRepository;
-import com.eguller.hntoplinks.services.EmailService;
-import com.eguller.hntoplinks.services.StatisticsService;
-import com.eguller.hntoplinks.services.StoryCacheService;
 import com.eguller.hntoplinks.services.SubscriptionService;
-import com.eguller.hntoplinks.services.TemplateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -19,32 +16,22 @@ import java.util.stream.Collectors;
 @Component
 
 public class SendMailJob {
-  private static final Logger                 logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-  @Autowired
-  private              SubscriptionRepository subscriptionRepository;
+  private static final Logger               logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+  private final        SubscriberRepository subscriberRepository;
+  private final        SubscriptionService  subscriptionService;
 
-  @Autowired
-  private EmailService emailService;
-
-  @Autowired
-  private StoryCacheService storyCacheService;
-
-  @Autowired
-  private TemplateService templateService;
-
-  @Autowired
-  private StatisticsService statisticsService;
-
-  @Autowired
-  SubscriptionService subscriptionService;
+  public SendMailJob(SubscriberRepository subscriberRepository, SubscriptionService subscriptionService) {
+    this.subscriberRepository = subscriberRepository;
+    this.subscriptionService  = subscriptionService;
+  }
 
   @Scheduled(initialDelay = 5, fixedDelay = 15, timeUnit = TimeUnit.MINUTES)
   public void sendEmail() {
-    var subscriptionsToSendEmail = subscriptionRepository.findSubscriptionsByExpiredNextSendDate();
-    var updatedSubscriptions = subscriptionsToSendEmail.stream()
-      .map(subscription -> subscriptionService.sendSubscriptionEmail(subscription))
-      .collect(Collectors.toSet());
-    subscriptionRepository.saveAll(updatedSubscriptions);
+    var subscribersToSendEmail = subscriberRepository.findSubscriptionsByExpiredNextSendDate();
+    subscribersToSendEmail.stream()
+      .flatMap(subscriber -> subscriber.getSubscriptionList().stream()
+        .map(subscriptionEntity -> new EmailTarget(subscriber, subscriptionEntity))
+      ).forEach(emailTarget -> subscriptionService.sendSubscriptionEmail(emailTarget));
   }
 
   /*

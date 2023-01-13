@@ -1,45 +1,55 @@
 package com.eguller.hntoplinks.services;
 
-import com.eguller.hntoplinks.entities.Period;
-import com.eguller.hntoplinks.entities.StoryEntity;
-import com.eguller.hntoplinks.entities.SubscriptionEntity;
+import com.eguller.hntoplinks.models.EmailTarget;
+import com.eguller.hntoplinks.repository.StoryRepository;
+import com.eguller.hntoplinks.repository.SubscriberRepository;
+import com.eguller.hntoplinks.repository.SubscriptionRepository;
 import com.eguller.hntoplinks.services.subscription.DailySubscriptionEmailTask;
 import com.eguller.hntoplinks.services.subscription.MonthlySubscriptionEmailTask;
 import com.eguller.hntoplinks.services.subscription.SubscriptionEmailTask;
 import com.eguller.hntoplinks.services.subscription.WeeklySubscriptionEmailTask;
 import com.eguller.hntoplinks.services.subscription.YearlySubscriptionEmailTask;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.lang.invoke.MethodHandles;
 
 @Service
 public class SubscriptionService {
-  @Autowired
-  private StoryCacheService    storyCacheService;
-  @Autowired
-  private EmailProviderService emailProviderService;
-  @Autowired
-  private TemplateService      templateService;
+  private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
+  private final StoryRepository      storyRepository;
+  private final EmailProviderService emailProviderService;
+  private final TemplateService        templateService;
+  private final SubscriptionRepository subscriptionRepository;
 
-  public SubscriptionEntity sendSubscriptionEmail(SubscriptionEntity subscription) {
-    var task = createTask(subscription);
-    task.execute();
-    return subscription;
+  public SubscriptionService(StoryRepository storyRepository, EmailProviderService emailProviderService, TemplateService templateService, SubscriptionRepository subscriberRepository) {
+    this.storyRepository      = storyRepository;
+    this.emailProviderService   = emailProviderService;
+    this.templateService        = templateService;
+    this.subscriptionRepository = subscriberRepository;
   }
 
-  private SubscriptionEmailTask createTask(SubscriptionEntity subscription) {
-    SubscriptionEmailTask task = null;
-    if (Period.DAILY == subscription.getPeriod()) {
-      task = new DailySubscriptionEmailTask(templateService, subscription, emailProviderService, storyCacheService);
-    } else if (Period.WEEKLY == subscription.getPeriod()) {
-      task = new WeeklySubscriptionEmailTask(templateService, subscription, emailProviderService, storyCacheService);
-    } else if (Period.MONTHLY == subscription.getPeriod()) {
-      task = new MonthlySubscriptionEmailTask(templateService, subscription, emailProviderService, storyCacheService);
-    } else if (Period.YEARLY == subscription.getPeriod()) {
-      task = new YearlySubscriptionEmailTask(templateService, subscription, emailProviderService, storyCacheService);
+
+  public void sendSubscriptionEmail(EmailTarget emailTarget) {
+    try {
+      var task = createTask(emailTarget);
+      task.execute();
+      this.subscriptionRepository.save(emailTarget.subscription());
+    } catch (Exception ex) {
+      logger.error("Sending email has failed. subsUUID={}, period={}".formatted(emailTarget.subscriber().getSubsUUID(), emailTarget.subscription().getPeriod()), ex);
     }
+  }
+
+  private SubscriptionEmailTask createTask(EmailTarget emailTarget) {
+    var task = switch (emailTarget.subscription().getPeriod()) {
+      case WEEKLY -> new WeeklySubscriptionEmailTask(templateService, emailTarget, emailProviderService, storyRepository);
+      case MONTHLY -> new MonthlySubscriptionEmailTask(templateService, emailTarget, emailProviderService, storyRepository);
+      case YEARLY -> new YearlySubscriptionEmailTask(templateService, emailTarget, emailProviderService, storyRepository);
+      default -> new DailySubscriptionEmailTask(templateService, emailTarget, emailProviderService, storyRepository);
+    };
+
     return task;
   }
 }

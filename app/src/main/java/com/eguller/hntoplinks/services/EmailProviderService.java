@@ -9,12 +9,7 @@ import lombok.Singular;
 import java.util.Set;
 
 public interface EmailProviderService {
-  Response send(Email mail);
+  void send(Email mail);
 
-  @Builder
-  @Getter
-  class Response {
-    @Singular("failed")
-    Set<String> failed;
-  }
+
 }

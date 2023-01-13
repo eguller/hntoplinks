@@ -23,9 +23,9 @@ public class EmailService {
     emailProviderService.send(email);
   }
 
-  public EmailProviderService.Response sendTopLinksEmail(TopLinksEmail topLinksEmail) {
+  public void sendTopLinksEmail(TopLinksEmail topLinksEmail) {
     var email = topLinksEmail.createEmail();
-    return emailProviderService.send(email);
+    emailProviderService.send(email);
   }
 
 }

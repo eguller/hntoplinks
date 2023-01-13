@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.jdbc.core.mapping.AggregateReference;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
@@ -14,15 +15,11 @@ import java.util.function.Function;
 
 @Data
 @Table("subscription")
-@ToString(exclude = {"subscriber"})
 @EqualsAndHashCode(of = {"id"})
 public class SubscriptionEntity implements HnEntity {
   @Id
   @Column("id")
   private Long      id;
-
-  @Column("subscriber_id")
-  private Long subscriberId;
 
   @Column("period")
   private Period period;
@@ -30,6 +27,8 @@ public class SubscriptionEntity implements HnEntity {
   @Column("next_send_date")
   LocalDateTime nextSendDate;
 
+  @Column("subscriber_id")
+  private Long subscriberId;
 
   private static Function<LocalDateTime, Boolean> isSubscriptionExpired = localDateTime -> {
     var expired = (localDateTime == null || LocalDateTime.now().isAfter(localDateTime));

@@ -131,7 +131,7 @@ public class HnStory {
 
   public StoryEntity toStory() {
     StoryEntity story = new StoryEntity();
-    story.setId(this.getId());
+    story.setHnid(this.getId());
     story.setComment(this.getKids().size());
     story.setTitle(this.getTitle());
     story.setUrl(this.getUrl());

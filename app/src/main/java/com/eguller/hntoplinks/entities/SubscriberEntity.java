@@ -4,12 +4,14 @@ import com.eguller.hntoplinks.util.DateUtils;
 import lombok.Data;
 import lombok.ToString;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.jdbc.core.mapping.AggregateReference;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.data.relational.core.mapping.Table;
 
 import javax.xml.catalog.Catalog;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +31,10 @@ public class SubscriberEntity implements HnEntity {
   private String subsUUID;
 
   @Column("subscription_date")
-  private LocalDate subscriptionDate;
+  private LocalDateTime subscriptionDate;
+
+  @Column("activation_date")
+  private LocalDateTime activationDate;
 
   @Column("timezone")
   private String timeZone = ZoneId.systemDefault().getId();
@@ -37,12 +42,11 @@ public class SubscriberEntity implements HnEntity {
   @Column("activated")
   private boolean activated = true;
 
-  @MappedCollection(idColumn = "id", keyColumn = "subscriber_id")
+  @MappedCollection(idColumn = "subscriber_id", keyColumn = "id")
   private List<SubscriptionEntity> subscriptionList = new ArrayList<>();
 
   public SubscriptionEntity createNewSubscription(Period period) {
     SubscriptionEntity subscriptionEntity = new SubscriptionEntity();
-    subscriptionEntity.setSubscriberId(this.id);
     subscriptionEntity.setPeriod(period);
     var nextSendDate = switch (period) {
       case DAILY -> DateUtils.tomorrow_7_AM(DateUtils.zoneOf(timeZone));
@@ -80,5 +84,9 @@ public class SubscriberEntity implements HnEntity {
       .map(subscription -> subscription.getPeriod())
       .anyMatch(p -> p == period);
     return exist;
+  }
+
+  public boolean isNew(){
+    return id == null;
   }
 }

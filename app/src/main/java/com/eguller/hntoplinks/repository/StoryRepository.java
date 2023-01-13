@@ -62,11 +62,7 @@ public class StoryRepository {
     var stories = storyRepositoryDelegate.findTop300ByOrderByPointsDesc();
     return stories;
   }
-
-  public int deleteExpiredStories(LocalDateTime yesterday, LocalDateTime lastWeek, LocalDateTime lastMonth, LocalDateTime lastYear) {
-    return storyRepositoryDelegate.deleteExpiredStories(yesterday, lastWeek, lastMonth, lastYear);
-  }
-
+  
   public Optional<StoryEntity> findByHnid(long hnid) {
     return storyRepositoryDelegate.findByHnid(hnid);
   }
