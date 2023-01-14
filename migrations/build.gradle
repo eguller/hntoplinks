@@ -1,0 +1,6 @@
+plugins {
+  id 'java'
+}
+
+group = 'com.eguller.hntoplinks'
+version = '0.0.1-SNAPSHOT'

@@ -1,0 +1,34 @@
+plugins {
+  id 'scala'
+  id 'application'
+}
+
+group = 'com.eguller.hntoplinks'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '17'
+
+repositories {
+    mavenCentral()
+}
+
+application {
+  mainClass = 'org.hntoplinks.crawler.App'
+}
+
+ext {
+  scalaVersion = "3.2.1"
+}
+
+dependencies {
+  implementation(project(":migrations"))
+  implementation "org.scala-lang:scala3-library_3:$scalaVersion"
+  implementation "com.typesafe:config:1.4.2"
+  implementation "com.h2database:h2:2.1.214"
+  implementation "org.scalikejdbc:scalikejdbc_3:4.0.0"
+  implementation 'com.softwaremill.sttp.client3:core_3:3.8.8'
+  implementation 'com.softwaremill.sttp.client3:upickle_3:3.8.8'
+  implementation 'org.json4s:json4s-native_3:4.0.6'
+  runtimeOnly "ch.qos.logback:logback-classic:1.4.5"
+  runtimeOnly 'org.postgresql:postgresql:42.3.1'
+  testImplementation "org.scalatest:scalatest_$scalaVersion:$scalaVersion"
+}

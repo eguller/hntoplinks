@@ -1,2 +1,5 @@
 rootProject.name = 'hntoplinks'
+include 'migrations'
+include 'crawler'
 include 'app'
+
