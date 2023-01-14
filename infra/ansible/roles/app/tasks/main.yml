@@ -64,7 +64,7 @@
     enabled: yes
     daemon_reload: yes
     state: restarted
-  when: service_config.changed
+  when: service_config.changed or app_file.changed
 
 - name: run hntoplinks service
   ansible.builtin.systemd:
