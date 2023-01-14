@@ -5,6 +5,7 @@ import com.eguller.hntoplinks.models.EmailTarget;
 import com.eguller.hntoplinks.repository.StoryRepository;
 import com.eguller.hntoplinks.services.EmailProviderService;
 import com.eguller.hntoplinks.services.TemplateService;
+import com.eguller.hntoplinks.util.DateUtils;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -17,6 +18,12 @@ public class MonthlySubscriptionEmailTask extends SubscriptionEmailTask {
     super(templateService, emailTarget, emailProviderService);
     this.storyRepository = storyRepository;
 
+  }
+
+  @Override
+  protected LocalDateTime getNextSendDate() {
+    var nextSendDate = DateUtils.firstDayOfNextMonth_7_AM(emailTarget.subscriber().getTimeZoneObj());
+    return nextSendDate;
   }
 
   @Override

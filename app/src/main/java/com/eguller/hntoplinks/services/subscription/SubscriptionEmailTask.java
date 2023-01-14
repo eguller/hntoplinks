@@ -8,6 +8,7 @@ import com.eguller.hntoplinks.services.EmailProviderService;
 import com.eguller.hntoplinks.services.TemplateService;
 import lombok.AllArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @AllArgsConstructor
@@ -24,14 +25,17 @@ public abstract class SubscriptionEmailTask {
     var subject = getSubject();
     var stories = getStories();
     var maxStoryCount = getMaxStoryCount();
-    var topStories = stories.subList(0, Math.min(stories.size() - 1, getMaxStoryCount()));
+    var topStories = stories.subList(0, Math.min(stories.size() - 1, maxStoryCount));
     var content = templateService.generateTopEmail(subject, emailTarget.subscriber(), topStories);
     var email = Email.builder()
       .subject("[hntoplinks] - " + subject)
       .to(emailTarget.subscriber().getEmail())
       .html(content).build();
     emailProviderService.send(email);
+    emailTarget.subscription().setNextSendDate(getNextSendDate());
   }
+
+  protected abstract LocalDateTime getNextSendDate();
 
   protected abstract String getSubject();
 

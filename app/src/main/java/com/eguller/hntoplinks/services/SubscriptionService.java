@@ -38,7 +38,7 @@ public class SubscriptionService {
       task.execute();
       this.subscriptionRepository.save(emailTarget.subscription());
     } catch (Exception ex) {
-      logger.error("Sending email has failed. subsUUID={}, period={}".formatted(emailTarget.subscriber().getSubsUUID(), emailTarget.subscription().getPeriod()), ex);
+      logger.error("Sending email has failed. subsUUID=%s, period=%s".formatted(emailTarget.subscriber().getSubsUUID(), emailTarget.subscription().getPeriod()), ex);
     }
   }
 
