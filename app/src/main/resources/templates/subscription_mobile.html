@@ -2,35 +2,35 @@
       xmlns:th="http://www.thymeleaf.org"
 >
 <div layout:fragment="content">
-  <form id="subscribe" method="POST" th:action="@{/subscribe}">
+  <form id="subscribe" method="POST" th:action="@{/subscribe}" th:object="${subscriptionForm}">
     <fieldset data-role="controlgroup">
       <label for="subscription.daily">Daily Top Links</label>
-      <input id="subscription.daily" name="subscription.daily" type="checkbox" th:checked="${page.subscriptionForm.daily}"/>
+      <input id="subscription.daily" type="checkbox" th:field="*{selectedPeriods}" th:value="${T(com.eguller.hntoplinks.entities.Period).DAILY}"/>
 
       <label for="subscription.weekly">Weekly Top Links</label>
-      <input id="subscription.weekly" name="subscription.weekly" type="checkbox"
-             th:checked="${page.subscriptionForm.weekly}"/>
+      <input id="subscription.weekly" type="checkbox" th:field="*{selectedPeriods}" th:value="${T(com.eguller.hntoplinks.entities.Period).WEEKLY}"/>
+
 
       <label for="subscription.monthly">Monthly Top Links</label>
-      <input id="subscription.monthly" name="subscription.monthly" type="checkbox"
-             th:checked="${page.subscriptionForm.monthly}"/>
+      <input id="subscription.monthly" type="checkbox" th:field="*{selectedPeriods}" th:value="${T(com.eguller.hntoplinks.entities.Period).MONTHLY}"/>
 
       <label for="subscription.annually">Yearly Top Links</label>
-      <input id="subscription.annually" name="subscription.annually" type="checkbox"
-             th:checked="${page.subscriptionForm.yearly}"/>
+      <input id="subscription.annually" type="checkbox" th:field="*{selectedPeriods}" th:value="${T(com.eguller.hntoplinks.entities.Period).YEARLY}"/>
+
     </fieldset>
     <label class="ui-hidden-accessible" for="subscription.email">Email</label>
     <input data-clear-btn="true" id="subscription.email" name="subscription.email" placeholder="Email"
-           type="email" th:value="${page.subscription.email}"/>
+           type="email" th:field="*{email}" th:value="*{email}" />
 
-    <input name="subscription.subsUUID" type="hidden" value="${page.subscription.subsUUID}"/>
+    <input name="subscription.subsUUID" type="hidden" th:field="*{subsUUID}" th:value="*{subsUUID}"/>
+    <input type="hidden" th:field="*{timeZone}" th:value="UTC" />
     <th:block th:if="${page.captchaEnabled}">
       <div style="text-align: center;">
         <div class="g-recaptcha" data-sitekey="6LeciUUeAAAAAMixTT0VHQ3JyCih1jpz_4zRK_0b"
              data-callback="enableSubscriptionFormSubmit" style="display: inline-block;"></div>
       </div>
-      <input type="hidden" name="g-recaptcha-response" th:value="dummy">
-      <input type="hidden" name="subscription.timeZone" th:value="UTC"/>
+      <input type="hidden" name="g-recaptcha-response" th:value="dummy" />
+
     </th:block>
 
     <button class="ui-shadow ui-btn ui-corner-all" id="subscription.submit" name="subscription.submit"

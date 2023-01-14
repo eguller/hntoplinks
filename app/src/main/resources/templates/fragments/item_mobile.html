@@ -7,7 +7,7 @@
             <span style="font-size: 13px;white-space:normal;"
                   th:text="${storyIndex} + '. ' + ${story.title}"
                   th:with="storyIndex=${ (page.currentPage - 1) * page.storyPerPage + storyIndex}">Story title</span>
-      <th:block th:if="${story.hasDomain()}">
+      <th:block th:if="${story.hasComhead()}">
         <span style="font-size: 10px;" th:text="'(' + ${story.comhead} + ')'"> Domain </span>
       </th:block>
       <br>
