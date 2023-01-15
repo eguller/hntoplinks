@@ -29,13 +29,13 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @SpringBootTest(classes = {Application.class})
-@ActiveProfiles({"local"})
+@ActiveProfiles({"local", "test"})
 public class StoryServiceTest {
 
   @Autowired
   private SubscriberRepository subscriberRepository;
   @Autowired
-  private StoryRepository storyRepository;
+  private StoryRepository      storyRepository;
 
   @Autowired
   private ApplicationController applicationController;
@@ -51,8 +51,9 @@ public class StoryServiceTest {
 
   @Test
   public void test_saveStory() {
+    var randomHnId = generateRandomHnId();
     var hnStory = new StoryEntity();
-    hnStory.setHnid(1L);
+    hnStory.setHnid(randomHnId);
     hnStory.setComhead("hntoplinks.com");
     hnStory.setUser("eguller");
     hnStory.setUrl("https://www.hntoplinks.com");
@@ -64,11 +65,11 @@ public class StoryServiceTest {
 
     storyRepository.saveStories(List.of(hnStory));
 
-    var savedEntity = storyRepository.findByHnid(1L);
+    var savedEntity = storyRepository.findByHnid(randomHnId);
     Assertions.assertNotNull(savedEntity);
 
     var hnStoryUpdated = new StoryEntity();
-    hnStoryUpdated.setHnid(1L);
+    hnStoryUpdated.setHnid(randomHnId);
     hnStoryUpdated.setComhead("hntoplinks.com");
     hnStoryUpdated.setUser("eguller");
     hnStoryUpdated.setUrl("https://www.hntoplinks.com");
@@ -80,7 +81,7 @@ public class StoryServiceTest {
 
     storyRepository.saveStories(List.of(hnStoryUpdated));
 
-    var updatedEntity = storyRepository.findByHnid(1L);
+    var updatedEntity = storyRepository.findByHnid(randomHnId);
 
     Assertions.assertEquals(savedEntity.get().getId(), updatedEntity.get().getId());
 
@@ -93,7 +94,7 @@ public class StoryServiceTest {
   public void test_sendDailyEmail() {
     var storyTitle = "Daily Mail Test - " + UUID.randomUUID();
     var hnStory = new StoryEntity();
-    hnStory.setHnid((new Random().nextLong(Long.MAX_VALUE)));
+    hnStory.setHnid(generateRandomHnId());
     hnStory.setPoints((new Random().nextInt(Integer.MAX_VALUE)));
     hnStory.setComment((new Random().nextInt(Integer.MAX_VALUE)));
     hnStory.setTitle(storyTitle);
@@ -112,10 +113,6 @@ public class StoryServiceTest {
     subscriber.getSubscriptionList().add(subscription);
 
     test_PeriodicEmail(hnStory, subscriber);
-
-    var email = mockEmailStore.getLastMail(emailAddress);
-    Assertions.assertTrue(email.isPresent());
-    Assertions.assertTrue(email.get().getHtml().contains(hnStory.getTitle()));
   }
 
   @Test
@@ -138,12 +135,47 @@ public class StoryServiceTest {
     subscriber.setEmail(emailAddress);
     subscriber.setTimeZone("UTC");
 
+
+    var weeklySubscription = new SubscriptionEntity();
+    weeklySubscription.setPeriod(Period.WEEKLY);
+    weeklySubscription.setNextSendDate(LocalDateTime.now().minusDays(1));
+    subscriber.getSubscriptionList().add(weeklySubscription);
+
+    test_PeriodicEmail(hnStory, subscriber);
+  }
+
+  @Test
+  public void send_daily_and_weekly_email() {
+    var storyTitle = "Daily and Weekly Mail Test - " + UUID.randomUUID();
+
+    var hnStory = new StoryEntity();
+    hnStory.setHnid((new Random().nextLong(Long.MAX_VALUE)));
+    hnStory.setPoints((new Random().nextInt(Integer.MAX_VALUE)));
+    hnStory.setComment((new Random().nextInt(Integer.MAX_VALUE)));
+    hnStory.setTitle(storyTitle);
+    hnStory.setUrl("https://daily_and_weekly.mail.test.hntoplinks.com");
+    hnStory.setDate(LocalDateTime.now().minusHours(5));
+    hnStory.setLastUpdate(LocalDateTime.now().minusDays(5));
+    hnStory.setUser("daily_and_weekly_mail_test_user");
+
+    var emailAddress = "test_daily_and_weekly_mail1@hntoplinks.com";
+
+    var subscriber = new SubscriberEntity();
+    subscriber.setEmail(emailAddress);
+    subscriber.setTimeZone("UTC");
+
+    var dailySubscription = new SubscriptionEntity();
+    dailySubscription.setPeriod(Period.DAILY);
+    dailySubscription.setNextSendDate(LocalDateTime.now().minusDays(1));
+    subscriber.getSubscriptionList().add(dailySubscription);
+
     var subscription = new SubscriptionEntity();
     subscription.setPeriod(Period.WEEKLY);
     subscription.setNextSendDate(LocalDateTime.now().minusDays(1));
     subscriber.getSubscriptionList().add(subscription);
 
     test_PeriodicEmail(hnStory, subscriber);
+
   }
 
   @Test
@@ -212,6 +244,7 @@ public class StoryServiceTest {
     var subscriptionForm = subscriptionFormBuilder.build();
     var model = new ExtendedModelMap();
     applicationController.subscribe_Post(subscriptionForm, model);
+    mockEmailStore.reset(subscriber.getEmail());
 
     var subscriberUUID = ((SubscriptionPage) model.get("page")).getSubscriptionForm().getSubsUUID();
     var savedSubscriber = subscriberRepository.findBySubsUUID(subscriberUUID);
@@ -229,6 +262,17 @@ public class StoryServiceTest {
     var email = mockEmailStore.getLastMail(subscriber.getEmail());
     Assertions.assertTrue(email.isPresent());
     stories.forEach(story -> Assertions.assertTrue(email.get().getHtml().contains(story.getTitle())));
+    var emailCount = mockEmailStore.emailCount(subscriber.getEmail());
+
+    //1 extra email is subscribe_Post (subscription email)
+    Assertions.assertEquals(subscriber.getSubscriptionList().size(), emailCount);
+    mockEmailStore.reset();
+
+    sendMailJob.sendEmail();
+    emailCount = mockEmailStore.emailCount(subscriber.getEmail());
+    //subscription emails sent in previous step. It should not send again.
+    Assertions.assertEquals(0, emailCount);
+
   }
 
   @Test
@@ -253,5 +297,9 @@ public class StoryServiceTest {
 
     Assertions.assertTrue(activeUserEmail.isPresent());
     Assertions.assertFalse(inactiveUserEmail.isPresent());
+  }
+
+  private Long generateRandomHnId() {
+    return new Random().nextLong(1000, Integer.MAX_VALUE);
   }
 }

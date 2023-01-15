@@ -28,7 +28,7 @@ public class MonthlySubscriptionEmailTask extends SubscriptionEmailTask {
 
   @Override
   protected String getSubject() {
-    String lmString = DateTimeFormatter.ofPattern("dd MMMM").format(LocalDateTime.now().minusMonths(1).atZone(emailTarget.subscriber().getTimeZoneObj()));
+    String lmString = DateTimeFormatter.ofPattern("MMMM YYYY").format(LocalDateTime.now().minusMonths(1).atZone(emailTarget.subscriber().getTimeZoneObj()));
     return lmString + " - Best of Last Month";
   }
 
