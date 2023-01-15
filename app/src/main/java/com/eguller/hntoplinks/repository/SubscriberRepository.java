@@ -19,14 +19,13 @@ public interface SubscriberRepository extends CrudRepository<SubscriberEntity, L
 
   long deleteBySubsUUID(String subscriptionId);
 
-  @Query("""
+    @Query("""
      select * from
-     subscriber
-     inner join subscription
-     on subscriber.id = subscription.subscriber_id
-     where
-     subscriber.activated = true and
-     subscription.next_send_date < now()
+     subscriber where
+     subscriber.activated = true
+     and
+     id in
+     (select distinct subscriber_id from subscription where next_send_date < now())
     """)
   List<SubscriberEntity> findSubscriptionsByExpiredNextSendDate();
 }

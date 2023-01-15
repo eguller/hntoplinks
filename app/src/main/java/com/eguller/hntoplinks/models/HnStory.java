@@ -134,7 +134,7 @@ public class HnStory {
     story.setHnid(this.getId());
     story.setComment(this.getKids().size());
     story.setTitle(this.getTitle());
-    story.setUrl(this.getUrl());
+    story.setUrl(this.getUrl() == null ? "https://news.ycombinator.com/item?id=%s".formatted(this.getId()) : this.getUrl());
     story.setComhead(this.getDomainName());
     story.setUser(this.getBy());
     story.setPoints(this.getScore());

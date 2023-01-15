@@ -17,13 +17,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.ui.ExtendedModelMap;
 
 @SpringBootTest(classes = {Application.class})
-@ActiveProfiles({"local"})
+@ActiveProfiles({"local", "test"})
 public class SubscriptionServiceTest {
   @Autowired
   private ApplicationController applicationController;
-
-  @Autowired
-  private SubscriptionRepository subscriptionRepository;
 
   @Autowired
   private SubscriberRepository subscriberRepository;
