@@ -1,12 +1,9 @@
 package com.eguller.hntoplinks.entities;
 
 
-import com.eguller.hntoplinks.util.DateUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.jdbc.core.mapping.AggregateReference;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
@@ -45,7 +42,9 @@ public class SubscriptionEntity implements HnEntity {
     this.id = id;
   }
 
-
+  public boolean isExpired(){
+    return isSubscriptionExpired.apply(nextSendDate);
+  }
 
 }
 
