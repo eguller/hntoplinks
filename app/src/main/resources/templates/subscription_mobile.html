@@ -37,7 +37,9 @@
             th:disabled="${page.captchaEnabled}" onclick="submitSubscriptionForm();"
             type="submit">Submit
     </button>
-
+    <th:block th:if="${page instanceof T(com.eguller.hntoplinks.models.SubscriptionPage) and page.captchaEnabled == true}">
+      <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    </th:block>
   </form>
   <th:block th:if="${page.hasMessages()}">
     <ul class="green">

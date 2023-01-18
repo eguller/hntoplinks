@@ -88,6 +88,9 @@
             </tr>
           </th:block>
         </table>
+        <th:block th:if="${page instanceof T(com.eguller.hntoplinks.models.SubscriptionPage) and page.captchaEnabled == true}">
+          <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+        </th:block>
       </form>
     </td>
   </tr>
