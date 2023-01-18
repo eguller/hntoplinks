@@ -8,6 +8,8 @@
         th:href="@{{images}/favicon.ico(images=${@environment.getProperty('hntoplinks.images')})}">
   <link crossorigin="anonymous" media="all" rel="stylesheet"
         th:href="@{{stylesheets}/common.css(stylesheets=${@environment.getProperty('hntoplinks.stylesheets')})}">
+  <link crossorigin="anonymous" media="screen" rel="stylesheet"
+        th:href="@{{stylesheets}/mobile.css(stylesheets=${@environment.getProperty('hntoplinks.stylesheets')})}">
 
   <th:block
     th:if="${page instanceof T(com.eguller.hntoplinks.models.SubscriptionPage) and page.captchaEnabled == true}">
@@ -39,6 +41,16 @@
   </div>
 </div>
 <script type="text/javascript">
+
+  var onloadCallback = function() {
+        // Renders the HTML element with id 'example1' as a reCAPTCHA widget.
+        // The id of the reCAPTCHA widget is assigned to 'widgetId1'.
+        widgetId1 = grecaptcha.render('example1', {
+          'sitekey' : 'your_site_key',
+          'theme' : 'light'
+        });
+
+
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-7030369-6']);
   _gaq.push(['_trackPageview']);
