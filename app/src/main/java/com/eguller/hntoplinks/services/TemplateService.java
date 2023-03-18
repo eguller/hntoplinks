@@ -62,7 +62,7 @@ public class TemplateService {
   @Builder
   @Data
   private static class SubscriptionEmailData {
-    private String            baseUrl;
+    private String baseUrl;
     private String unsubscribeUrl;
   }
 }
