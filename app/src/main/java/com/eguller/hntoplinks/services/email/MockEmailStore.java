@@ -1,4 +1,4 @@
-package com.eguller.hntoplinks.services;
+package com.eguller.hntoplinks.services.email;
 
 import com.eguller.hntoplinks.models.Email;
 import com.eguller.hntoplinks.models.TopLinksEmail;
