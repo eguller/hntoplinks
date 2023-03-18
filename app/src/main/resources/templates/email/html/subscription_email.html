@@ -10,6 +10,6 @@ You will receive Hacker News Top Links emails periodically. <br/> <br/>
 If you did not subscribe, please click <br/>
 <a th:href="@{${data.unsubscribeUrl}}" th:text="${data.unsubscribeUrl}" target="_blank"></a> <br/>
 to unsubscribe. <br/><br/>
-Best wishes, <a th:href="@{${data.baseUrl}}" target="_blank">hntoplinks.com</a>
+Best wishes, <a th:href="@{${data.baseUrl}}" th:text="hntoplinks.com" target="_blank"></a>
 </body>
 </html>
