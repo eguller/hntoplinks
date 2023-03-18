@@ -4,7 +4,6 @@ import com.eguller.hntoplinks.models.Email;
 import com.eguller.hntoplinks.services.EmailProviderService;
 import jakarta.mail.Authenticator;
 import jakarta.mail.Message;
-import jakarta.mail.MessagingException;
 import jakarta.mail.PasswordAuthentication;
 import jakarta.mail.Session;
 import jakarta.mail.Transport;
@@ -13,7 +12,6 @@ import jakarta.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.invoke.MethodHandles;
 import java.util.Date;
 import java.util.Properties;
@@ -63,11 +61,5 @@ public abstract class SmtpEmailService implements EmailProviderService {
     } catch (Exception ex) {
       throw new RuntimeException("Email could not be sent.", ex);
     }
-
-  }
-
-  private void send() throws UnsupportedEncodingException, MessagingException {
-
-
   }
 }
