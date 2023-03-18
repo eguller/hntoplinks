@@ -49,4 +49,6 @@ jobs:
             --extra-vars postgres_db_user_password=${{ secrets.POSTGRES_DB_USER_PASSWORD }}
             --extra-vars hntoplinks_db_user_password=${{ secrets.HNTOPLINKS_DB_USER_PASSWORD }}
             --extra-vars sendgrid_api_key=${{ secrets.SENDGRID_API_KEY }}
+            --extra-vars sendpulse_username=${{ secrets.SENDPULSE_USERNAME }}
+            --extra-vars sendpulse_password=${{ secrets.SENDPULSE_PASSWORD }}
             --extra-vars captcha_secret=${{ secrets.CAPTCHA_SECRET }}
