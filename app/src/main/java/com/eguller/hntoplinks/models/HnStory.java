@@ -91,7 +91,8 @@ public class HnStory {
             title.startsWith("Ask HN: ") ||
               title.startsWith("Show HN: ") ||
               title.startsWith("Help HN: ") ||
-              title.startsWith("Poll: ")
+              title.startsWith("Poll: ") ||
+              title.startsWith("Launch HN: ")
           )
         ) {
           logger.warn("Url is null {}", id);
