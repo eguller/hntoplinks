@@ -1,7 +1,8 @@
-package com.eguller.hntoplinks.services;
+package com.eguller.hntoplinks.services.email;
 
 import com.eguller.hntoplinks.models.Email;
 
+import com.eguller.hntoplinks.services.EmailProviderService;
 import com.sendgrid.Content;
 import com.sendgrid.Mail;
 import com.sendgrid.Method;
@@ -18,11 +19,11 @@ import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 
 @Service
-@ConditionalOnProperty(value = "hntoplinks.email-provider", havingValue = "sendgrid", matchIfMissing = false)
+@ConditionalOnProperty(value = "hntoplinks.mail.provider", havingValue = "sendgrid")
 public class SendGridEmailProviderService implements EmailProviderService {
   private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  @Value("${hntoplinks.sendgrid.api-key}")
+  @Value("${hntoplinks.mail.sendgrid.api-key}")
   private String apiKey;
 
   @Value("${hntoplinks.mail.from}")

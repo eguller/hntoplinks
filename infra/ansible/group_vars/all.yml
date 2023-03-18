@@ -9,6 +9,8 @@ hntoplinks_db_user: "hntoplinks"
 postgres_db_user_password: "{{ lookup('ansible.builtin.env', 'POSTGRES_DB_USER_PASSWORD', default='dummy') }}"
 hntoplinks_db_user_password: "{{ lookup('ansible.builtin.env', 'HNTOPLINKS_DB_USER_PASSWORD', default='dummy') }}"
 sendgrid_api_key: "{{ lookup('ansible.builtin.env', 'SENDGRID_API_KEY', default='dummy') }}"
+sendpulse_username: "{{ lookup('ansible.builtin.env', 'SENDPULSE_USERNAME', default='dummy') }}"
+sendpulse_password: "{{ lookup('ansible.builtin.env', 'SENDPULSE_PASSWORD', default='dummy') }}"
 captcha_secret: "{{ lookup('ansible.builtin.env', 'CAPTCHA_SECRET', default='dummy') }}"
 
 

@@ -1,6 +1,8 @@
-package com.eguller.hntoplinks.services;
+package com.eguller.hntoplinks.services.email;
 
 import com.eguller.hntoplinks.models.Email;
+import com.eguller.hntoplinks.services.EmailProviderService;
+import com.eguller.hntoplinks.services.email.MockEmailStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +12,7 @@ import org.springframework.stereotype.Service;
 import java.lang.invoke.MethodHandles;
 
 @Service
-@ConditionalOnProperty(value = "hntoplinks.email-provider", havingValue = "mock", matchIfMissing = false)
+@ConditionalOnProperty(value = "hntoplinks.email-provider", havingValue = "mock")
 public class MockEmailProviderService implements EmailProviderService {
   private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   @Autowired

@@ -25,6 +25,7 @@ public class TemplateService {
 
   public String generateSubscriptionEmail(SubscriberEntity subscriber) {
     var subscriptionEmailData = SubscriptionEmailData.builder()
+      .baseUrl(hntoplinksBaseUrl)
       .unsubscribeUrl(hntoplinksBaseUrl + "/unsubscribe/" + subscriber.getSubsUUID()).build();
     final Context ctx = new Context(Locale.ENGLISH);
     ctx.setVariable("data", subscriptionEmailData);
@@ -50,16 +51,18 @@ public class TemplateService {
   @Builder
   @Data
   private static class TopEmailData {
-    private String      subject;
+    private String            subject;
     private List<StoryEntity> storyList;
-    private String      unsubscribeUrl;
-    private String      updateSubscriptionUrl;
+    private String            baseUrl;
+    private String            unsubscribeUrl;
+    private String            updateSubscriptionUrl;
 
   }
 
   @Builder
   @Data
   private static class SubscriptionEmailData {
+    private String            baseUrl;
     private String unsubscribeUrl;
   }
 }

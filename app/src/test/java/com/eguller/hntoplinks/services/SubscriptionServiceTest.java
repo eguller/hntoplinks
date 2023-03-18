@@ -7,7 +7,7 @@ import com.eguller.hntoplinks.entities.Period;
 import com.eguller.hntoplinks.models.Email;
 import com.eguller.hntoplinks.models.SubscriptionPage;
 import com.eguller.hntoplinks.repository.SubscriberRepository;
-import com.eguller.hntoplinks.repository.SubscriptionRepository;
+import com.eguller.hntoplinks.services.email.MockEmailStore;
 import com.eguller.hntoplinks.util.SubscriptionUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
