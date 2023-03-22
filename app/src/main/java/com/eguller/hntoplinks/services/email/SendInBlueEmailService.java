@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 @Service
 @ConditionalOnProperty(value = "hntoplinks.mail.provider", havingValue = "sendinblue")
 public class SendInBlueEmailService extends SmtpEmailService {
-  public SendInBlueEmailService(SendPulseSmtpConfig config) {
+  public SendInBlueEmailService(SendInBlueSmtpConfig config) {
     super(config);
   }
 }
