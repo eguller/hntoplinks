@@ -86,17 +86,7 @@ public class HnStory {
   public String getDomainName() {
     try {
       if (url == null) {
-        if (title != null &&
-          !(
-            title.startsWith("Ask HN: ") ||
-              title.startsWith("Show HN: ") ||
-              title.startsWith("Help HN: ") ||
-              title.startsWith("Poll: ") ||
-              title.startsWith("Launch HN: ") ||
-              title.startsWith("Tell HN: ") ||
-              title.startsWith("Meet HN:")
-          )
-        ) {
+        if (title != null && !title.matches(".* HN: ")) {
           logger.warn("Url is null {}", id);
         }
         return "";
