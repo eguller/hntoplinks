@@ -16,7 +16,7 @@ public class StoryRepository {
     this.storyRepositoryDelegate = storyRepositoryDelegate;
   }
 
-  public void saveStories(List<StoryEntity> hnStoryLis
+  public void saveStories(List<StoryEntity> hnStoryList) {
     var storyIds = hnStoryList.stream().map(story -> story.getHnid()).collect(Collectors.toList());
     var existingStories = storyRepositoryDelegate.findByHnidIn(storyIds);
     var existingStoriesMap = existingStories.stream()
