@@ -11,6 +11,8 @@ Environment=LOGGING_FILE_NAME="{{ app_log_path }}/{{ app_name }}.log"
 Environment=SENDGRID_API_KEY={{ sendgrid_api_key }}
 Environment=SENDPULSE_USERNAME={{ sendpulse_username }}
 Environment=SENDPULSE_PASSWORD={{ sendpulse_password }}
+Environment=SENDINBLUE_USERNAME={{ sendinblue_username }}
+Environment=SENDINBLUE_PASSWORD={{ sendinblue_password }}
 Environment=CAPTCHA_SECRET={{ captcha_secret }}
 ExecStart=/usr/bin/java -Xms128m -Xmx512m -XX:OnOutOfMemoryError="kill -9 %p" -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath={{ app_path }}/dumps -Dserver.port={{ app_port }} -jar hntoplinks.jar
 User=hntoplinks

@@ -51,4 +51,6 @@ jobs:
             --extra-vars sendgrid_api_key=${{ secrets.SENDGRID_API_KEY }}
             --extra-vars sendpulse_username=${{ secrets.SENDPULSE_USERNAME }}
             --extra-vars sendpulse_password=${{ secrets.SENDPULSE_PASSWORD }}
+            --extra-vars sendinblue_username=${{ secrets.SENDINBLUE_USERNAME }}
+            --extra-vars sendinblue_password=${{ secrets.SENDINBLUE_PASSWORD }}
             --extra-vars captcha_secret=${{ secrets.CAPTCHA_SECRET }}
