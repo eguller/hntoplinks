@@ -16,7 +16,7 @@ public class StoryRepository {
     this.storyRepositoryDelegate = storyRepositoryDelegate;
   }
 
-  public void saveStories(List<StoryEntity> hnStoryList) {
+  public void saveStories(List<StoryEntity> hnStoryLis
     var storyIds = hnStoryList.stream().map(story -> story.getHnid()).collect(Collectors.toList());
     var existingStories = storyRepositoryDelegate.findByHnidIn(storyIds);
     var existingStoriesMap = existingStories.stream()
@@ -62,7 +62,7 @@ public class StoryRepository {
     var stories = storyRepositoryDelegate.findTop300ByOrderByPointsDesc();
     return stories;
   }
-  
+
   public Optional<StoryEntity> findByHnid(long hnid) {
     return storyRepositoryDelegate.findByHnid(hnid);
   }
