@@ -1,4 +1,5 @@
-function enableSubscriptionFormSubmit(){
+function gRecaptchaCallback(response){
+  document.getElementById("gRecaptchaResponse").value = response;
   document.getElementsByName("subscription.submit")[0].disabled = false;
 }
 

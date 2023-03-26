@@ -8,11 +8,8 @@
         th:href="@{{images}/favicon.ico(images=${@environment.getProperty('hntoplinks.images')})}">
   <link crossorigin="anonymous" media="all" rel="stylesheet"
         th:href="@{{stylesheets}/common.css(stylesheets=${@environment.getProperty('hntoplinks.stylesheets')})}">
-
-  <th:block
-    th:if="${page instanceof T(com.eguller.hntoplinks.models.SubscriptionPage) and page.captchaEnabled == true}">
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-  </th:block>
+  <link crossorigin="anonymous" media="screen" rel="stylesheet"
+        th:href="@{{stylesheets}/mobile.css(stylesheets=${@environment.getProperty('hntoplinks.stylesheets')})}">
 
   <link href="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.css" rel="stylesheet"/>
   <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
@@ -55,6 +52,5 @@
   })();
 
 </script>
-
 </body>
 </html>

@@ -34,6 +34,12 @@ dependencies {
   implementation group: 'org.springframework.mobile', name: 'spring-mobile-device', version: '1.1.5.RELEASE'
   implementation 'commons-validator:commons-validator:1.7'
   implementation 'com.sendgrid:sendgrid-java:4.0.1'
+  implementation 'jakarta.mail:jakarta.mail-api:2.1.1'
+  implementation 'jakarta.activation:jakarta.activation-api:2.1.1'
+  implementation 'com.sun.activation:jakarta.activation:2.0.1'
+  implementation 'org.eclipse.angus:angus-activation:2.0.0'
+  implementation 'org.eclipse.angus:angus-mail:2.0.1'
+  implementation 'org.eclipse.angus:jakarta.mail:2.0.1'
   implementation(project(":migrations"))
 
   compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.22'

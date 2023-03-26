@@ -27,9 +27,9 @@
     <th:block th:if="${page.captchaEnabled}">
       <div style="text-align: center;">
         <div class="g-recaptcha" data-sitekey="6LeciUUeAAAAAMixTT0VHQ3JyCih1jpz_4zRK_0b"
-             data-callback="enableSubscriptionFormSubmit" style="display: inline-block;"></div>
+             data-callback="gRecaptchaCallback" data-size="normal"></div>
       </div>
-      <input type="hidden" name="g-recaptcha-response" th:value="dummy" />
+      <input type="hidden" id="gRecaptchaResponse" name="gRecaptchaResponse" th:value="dummy" />
 
     </th:block>
 
@@ -37,7 +37,9 @@
             th:disabled="${page.captchaEnabled}" onclick="submitSubscriptionForm();"
             type="submit">Submit
     </button>
-
+    <th:block th:if="${page instanceof T(com.eguller.hntoplinks.models.SubscriptionPage) and page.captchaEnabled == true}">
+      <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    </th:block>
   </form>
   <th:block th:if="${page.hasMessages()}">
     <ul class="green">

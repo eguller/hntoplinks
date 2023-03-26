@@ -1,5 +1,6 @@
 package com.eguller.hntoplinks.services;
 
+import com.eguller.hntoplinks.entities.SubscriptionEntity;
 import com.eguller.hntoplinks.models.EmailTarget;
 import com.eguller.hntoplinks.repository.StoryRepository;
 import com.eguller.hntoplinks.repository.SubscriberRepository;
@@ -33,6 +34,11 @@ public class SubscriptionService {
 
 
   public void sendSubscriptionEmail(EmailTarget emailTarget) {
+    //do not send email if it is not yet expired.
+    if(!emailTarget.subscription().isExpired()){
+      return;
+    }
+
     try {
       var task = createTask(emailTarget);
       task.execute();

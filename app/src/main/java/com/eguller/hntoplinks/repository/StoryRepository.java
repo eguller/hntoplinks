@@ -62,7 +62,7 @@ public class StoryRepository {
     var stories = storyRepositoryDelegate.findTop300ByOrderByPointsDesc();
     return stories;
   }
-  
+
   public Optional<StoryEntity> findByHnid(long hnid) {
     return storyRepositoryDelegate.findByHnid(hnid);
   }

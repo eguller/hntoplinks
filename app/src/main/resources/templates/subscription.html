@@ -16,43 +16,46 @@
           <tr>
             <td class="cright">Daily Top Links</td>
             <td class="cleft">
-              <input type="checkbox" th:field="*{selectedPeriods}" th:value="${T(com.eguller.hntoplinks.entities.Period).DAILY}"/>
+              <input type="checkbox" th:field="*{selectedPeriods}"
+                     th:value="${T(com.eguller.hntoplinks.entities.Period).DAILY}"/>
             </td>
           </tr>
           <tr>
             <td class="cright">Weekly Top Links</td>
             <td class="cleft">
-              <input type="checkbox" th:field="*{selectedPeriods}" th:value="${T(com.eguller.hntoplinks.entities.Period).WEEKLY}"/>
+              <input type="checkbox" th:field="*{selectedPeriods}"
+                     th:value="${T(com.eguller.hntoplinks.entities.Period).WEEKLY}"/>
             </td>
           </tr>
           <tr>
             <td class="cright">Monthly Top Links</td>
             <td class="cleft">
-              <input type="checkbox" th:field="*{selectedPeriods}" th:value="${T(com.eguller.hntoplinks.entities.Period).MONTHLY}"/>
+              <input type="checkbox" th:field="*{selectedPeriods}"
+                     th:value="${T(com.eguller.hntoplinks.entities.Period).MONTHLY}"/>
             </td>
           </tr>
           <tr>
             <td class="cright">Annually Top Links</td>
             <td class="cleft">
-              <input type="checkbox" th:field="*{selectedPeriods}" th:value="${T(com.eguller.hntoplinks.entities.Period).YEARLY}"/>
+              <input type="checkbox" th:field="*{selectedPeriods}"
+                     th:value="${T(com.eguller.hntoplinks.entities.Period).YEARLY}"/>
             </td>
           </tr>
           <tr>
             <td class="cright">Email</td>
             <td class="cleft">
-              <input style="width: 160px;" type="text" th:field="*{email}" th:value="*{email}" />
+              <input style="width: 160px;" type="text" th:field="*{email}" th:value="*{email}"/>
             </td>
           </tr>
           <tr>
             <td class="cright" colspan="2" style="padding-bottom: 5px; padding-top: 5px;">
-              <button name="submit" type="submit" value="Submit" th:disabled="${page.captchaEnabled}"
+              <button id="subscription.submit" name="subscription.submit" type="submit" value="Submit"
+                      th:disabled="${page.captchaEnabled}"
                       onclick="submitSubscriptionForm();">Submit
               </button>
               <input type="hidden" th:field="*{subsUUID}" th:value="*{subsUUID}">
-              <input type="hidden" th:field="*{timeZone}" th:value="UTC" />
-              <th:block th:unless="${page.captchaEnabled}">
-                <input type="hidden" name="g-recaptcha-response" th:field="*{gRecaptchaResponse}">
-              </th:block>
+              <input type="hidden" th:field="*{timeZone}" th:value="UTC"/>
+              <input type="hidden" id="gRecaptchaResponse" name="gRecaptchaResponse" th:field="*{gRecaptchaResponse}">
             </td>
           </tr>
 
@@ -83,11 +86,15 @@
             <tr>
               <td class="cright" colspan="2">
                 <div class="g-recaptcha" data-sitekey="6LeciUUeAAAAAMixTT0VHQ3JyCih1jpz_4zRK_0b"
-                     data-callback="enableSubscriptionFormSubmit"></div>
+                     data-callback="gRecaptchaCallback"></div>
               </td>
             </tr>
           </th:block>
         </table>
+        <th:block
+          th:if="${page instanceof T(com.eguller.hntoplinks.models.SubscriptionPage) and page.captchaEnabled == true}">
+          <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+        </th:block>
       </form>
     </td>
   </tr>
