@@ -20,7 +20,7 @@ repositories {
 
 bootJar {
   mainClass = 'com.eguller.hntoplinks.Application'
-  archiveName = 'hntoplinks.jar'
+  archiveFileName = 'hntoplinks.jar'
 }
 
 dependencies {
