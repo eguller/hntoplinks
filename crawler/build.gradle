@@ -1,6 +1,7 @@
 plugins {
   id 'scala'
   id 'application'
+  id("com.github.maiflai.scalatest") version "0.32"
 }
 
 group = 'com.eguller.hntoplinks'
@@ -30,5 +31,6 @@ dependencies {
   implementation 'org.json4s:json4s-native_3:4.0.6'
   runtimeOnly "ch.qos.logback:logback-classic:1.4.5"
   runtimeOnly 'org.postgresql:postgresql:42.3.1'
-  testImplementation "org.scalatest:scalatest_$scalaVersion:$scalaVersion"
+  testImplementation 'org.scalatest:scalatest_3:3.2.10'
+  testImplementation("com.vladsch.flexmark:flexmark-all:0.62.2")
 }
