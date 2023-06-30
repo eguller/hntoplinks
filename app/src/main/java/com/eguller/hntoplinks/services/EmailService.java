@@ -2,7 +2,6 @@ package com.eguller.hntoplinks.services;
 
 import com.eguller.hntoplinks.entities.SubscriberEntity;
 import com.eguller.hntoplinks.models.Email;
-import com.eguller.hntoplinks.models.TopLinksEmail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,10 +21,4 @@ public class EmailService {
       .build();
     emailProviderService.send(email);
   }
-
-  public void sendTopLinksEmail(TopLinksEmail topLinksEmail) {
-    var email = topLinksEmail.createEmail();
-    emailProviderService.send(email);
-  }
-
 }

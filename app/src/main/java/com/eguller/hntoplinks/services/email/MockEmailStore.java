@@ -1,17 +1,13 @@
 package com.eguller.hntoplinks.services.email;
 
 import com.eguller.hntoplinks.models.Email;
-import com.eguller.hntoplinks.models.TopLinksEmail;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.annotation.ApplicationScope;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Queue;
 
 @Service
 public class MockEmailStore {
