@@ -1,5 +1,5 @@
 ---
-- hosts: "hntoplinks.com"
+- hosts: web_servers
   tasks:
     - name: "Create required directories in /etc/letsencrypt"
       file:
@@ -26,7 +26,7 @@
       executable: /bin/bash
 
   - name: "Begin Let's Encrypt challenges"
-    letsencrypt:
+    acme_certificate:
       acme_directory: "{{ acme_directory }}"
       acme_version: "{{ acme_version }}"
       account_key_src: "{{ letsencrypt_account_key }}"
