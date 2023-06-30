@@ -1,18 +1,18 @@
 ---
 - hosts: web_servers
   tasks:
-    - name: "Create required directories in /etc/letsencrypt"
-      file:
-        path: "/etc/letsencrypt/{{ item }}"
-        state: directory
-        owner: root
-        group: root
-        mode: u=rwx,g=x,o=x
-      with_items:
-      - account
-      - certs
-      - csrs
-      - keys
+  - name: "Create required directories in /etc/letsencrypt"
+    file:
+      path: "/etc/letsencrypt/{{ item }}"
+      state: directory
+      owner: root
+      group: root
+      mode: u=rwx,g=x,o=x
+    with_items:
+    - account
+    - certs
+    - csrs
+    - keys
 
   - name: "Generate a Let's Encrypt account key"
       shell: "if [ ! -f {{ letsencrypt_account_key }} ]; then openssl genrsa 4096 | sudo tee {{ letsencrypt_account_key }}; fi"
