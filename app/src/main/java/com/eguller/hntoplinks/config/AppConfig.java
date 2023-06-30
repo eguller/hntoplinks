@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.mobile.device.DeviceHandlerMethodArgumentResolver;
 import org.springframework.mobile.device.DeviceResolverHandlerInterceptor;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -21,6 +22,7 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import java.lang.invoke.MethodHandles;
+import java.nio.charset.Charset;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
@@ -59,6 +61,7 @@ public class AppConfig implements WebMvcConfigurer {
     return restTemplateBuilder
       .setConnectTimeout(Duration.of(5, ChronoUnit.SECONDS))
       .setReadTimeout(Duration.of(30, ChronoUnit.SECONDS))
+      .additionalMessageConverters(new StringHttpMessageConverter(Charset.forName("UTF-8")))
       .build();
   }
 
