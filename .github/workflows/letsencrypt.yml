@@ -1,3 +1,4 @@
+name: SSL certificate
 on: workflow_dispatch
 jobs:
   deploy:
