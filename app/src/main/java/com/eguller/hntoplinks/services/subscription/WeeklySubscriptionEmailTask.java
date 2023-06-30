@@ -27,9 +27,18 @@ public class WeeklySubscriptionEmailTask extends SubscriptionEmailTask {
 
   @Override
   protected String getSubject() {
-    String toDate = DateTimeFormatter.ofPattern("dd MMMM").format(LocalDateTime.now().minusDays(1).atZone(emailTarget.subscriber().getTimeZoneObj()));
-    String fromDate = DateTimeFormatter.ofPattern("dd MMMM").format(LocalDateTime.now().minusDays(7).atZone(emailTarget.subscriber().getTimeZoneObj()));
-    return String.format("%s - %s Weekly Top Links", fromDate, toDate);
+    var fromDate = LocalDateTime.now().minusDays(7).atZone(emailTarget.subscriber().getTimeZoneObj());
+    var toDate = LocalDateTime.now().minusDays(1).atZone(emailTarget.subscriber().getTimeZoneObj());
+
+    var fromDateStr = DateTimeFormatter.ofPattern("dd MMMM").format(fromDate);
+    var toDateStr = DateTimeFormatter.ofPattern("dd MMMM").format(toDate);
+
+    //if week is in same month, display 14 - 21 June instead of 14 June - 21 June
+    if(fromDate.getMonth().equals(toDate.getMonth())) {
+      fromDateStr = DateTimeFormatter.ofPattern("dd").format(fromDate);
+    }
+
+    return String.format("%s - %s Weekly Top Links", fromDateStr, toDateStr);
   }
 
   @Override
