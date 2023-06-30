@@ -1,2 +1,4 @@
 service_template_file_name: "hntoplinks-test.service.j2"
-nginx_server_name: "localhost"
+
+domain_name: localhost
+nginx_server_name: "{{ domain_name }}"

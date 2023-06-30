@@ -1,2 +1,14 @@
 service_template_file_name: "hntoplinks-prod.service.j2"
-nginx_server_name: "hntoplinks.com www.hntoplinks.com"
+domain_name: hntoplinks.com
+nginx_server_name: "{{ domain_name }} www.{{ domain_name }}"
+
+acme_challenge_type: http-01
+acme_directory: https://acme-v02.api.letsencrypt.org/directory
+acme_version: 2
+acme_email: certificate-reminders@hntoplinks.com
+letsencrypt_dir: /etc/letsencrypt
+letsencrypt_keys_dir: /etc/letsencrypt/keys
+letsencrypt_csrs_dir: /etc/letsencrypt/csrs
+letsencrypt_certs_dir: /etc/letsencrypt/certs
+letsencrypt_account_key: /etc/letsencrypt/account/account.key
+

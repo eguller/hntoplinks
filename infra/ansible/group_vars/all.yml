@@ -13,4 +13,6 @@ sendpulse_username: "{{ lookup('ansible.builtin.env', 'SENDPULSE_USERNAME', defa
 sendpulse_password: "{{ lookup('ansible.builtin.env', 'SENDPULSE_PASSWORD', default='dummy') }}"
 captcha_secret: "{{ lookup('ansible.builtin.env', 'CAPTCHA_SECRET', default='dummy') }}"
 
+nginx_public_html_path: "/var/www/{{ domain_name }}/public_html"
+
 

@@ -1,8 +1,10 @@
 server {
     listen       80;
     listen       [::]:80;
-    
+
     server_name {{ nginx_server_name }};
+
+    root {{ nginx_public_html_path }};
 
     location / {
         proxy_set_header Host $host;
