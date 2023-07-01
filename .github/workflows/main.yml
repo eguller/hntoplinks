@@ -56,3 +56,4 @@ jobs:
             --extra-vars sendinblue_username=${{ secrets.SENDINBLUE_USERNAME }}
             --extra-vars sendinblue_password=${{ secrets.SENDINBLUE_PASSWORD }}
             --extra-vars captcha_secret=${{ secrets.CAPTCHA_SECRET }}
+            --extra-vars admin_email=${{ secrets.ADMIN_EMAIL }}
