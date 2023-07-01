@@ -11,7 +11,7 @@
     ansible.builtin.yum:
       name:
         - kernel-modules
-      when: ansible_distribution == 'Fedora'
+    when: ansible_distribution == 'Fedora'
 
   - name: install certbot
     community.general.snap:
