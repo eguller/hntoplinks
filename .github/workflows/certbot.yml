@@ -1,0 +1,19 @@
+name: Certbot
+on: workflow_dispatch
+jobs:
+  create-certificate:
+    concurrency: prod_environment
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run playbook
+        uses: dawidd6/action-ansible-playbook@v2
+        with:
+          # Required, playbook filepath
+          playbook: certbot.yml
+          # Optional, directory where playbooks live
+          directory: ./infra/ansible
+          # Optional, SSH private key
+          key: ${{secrets.SSH_PRIVATE_KEY}}
+          options: |
+            --inventory prod.yml

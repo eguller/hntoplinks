@@ -1,0 +1,21 @@
+---
+- hosts: web_servers
+  tasks:
+  - name: install snapd
+    ansible.builtin.yum:
+      name:
+        - snapd
+
+  - name: install certbot
+    community.general.snap:
+      name: certbot
+      classic: true
+
+  - name: Create certbot symbolic link
+    ansible.builtin.file:
+      src: /snap/bin/certbot
+      dest: /usr/bin/certbot
+      state: link
+
+  - name: "retrieve certificate"
+    shell: "certbot certonly --nginx"
