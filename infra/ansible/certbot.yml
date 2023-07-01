@@ -31,4 +31,4 @@
       state: link
 
   - name: "retrieve certificate"
-    shell: "certbot certonly"
+    shell: "certbot certonly -c /etc/letsencrypt/{{ domain_name }}.cli.ini"

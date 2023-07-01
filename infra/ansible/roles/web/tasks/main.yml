@@ -33,8 +33,8 @@
 
 - name: upload certbot configuration
   ansible.builtin.template:
-    src: cli.ini.j2
-    dest: /etc/letsencrypt/cli.ini
+    src: "{{ domain_name }}.cli.ini.j2"
+    dest: /etc/letsencrypt/{{ domain_name }}.cli.ini
 
 - name: reload nginx configuration
   ansible.builtin.systemd:
