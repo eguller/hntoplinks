@@ -11,13 +11,13 @@
     state: yes
     persistent: yes
 
-  - name: "Create .well-known/acme-challenge directory"
-    file:
-      path: {{ nginx_public_html_path }}/.well-known/acme-challenge
-      state: directory
-      owner: root
-      group: root
-      mode: u=rwx,g=rx,o=rx
+- name: "Create .well-known/acme-challenge directory"
+  file:
+    path: {{ nginx_public_html_path }}/.well-known/acme-challenge
+    state: directory
+    owner: root
+    group: root
+    mode: u=rwx,g=rx,o=rx
 
 - name: upload nginx configuration file
   ansible.builtin.template:
