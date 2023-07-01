@@ -5,13 +5,14 @@ server {
     server_name {{ nginx_server_name }};
 
     location /.well-known/acme-challenge/ {
-        alias {{ nginx_public_html_path }}/.well-known/acme-challenge/;
+      allow all;
+      alias {{ nginx_public_html_path }}/.well-known/acme-challenge/;
     }
 
     location / {
-        root {{ nginx_public_html_path }};
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_pass http://localhost:{{ app_port }};
+      root {{ nginx_public_html_path }};
+      proxy_set_header Host $host;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_pass http://localhost:{{ app_port }};
     }
 }
