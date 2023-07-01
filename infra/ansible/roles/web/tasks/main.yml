@@ -12,7 +12,7 @@
     persistent: yes
 
 - name: "Create .well-known/acme-challenge directory"
-  file:
+  ansible.builtin.file:
     path: {{ nginx_public_html_path }}/.well-known/acme-challenge
     state: directory
     owner: root
