@@ -13,6 +13,12 @@
         - kernel-modules
     when: ansible_distribution == 'Fedora'
 
+  - name: Create snap symbolic link
+    ansible.builtin.file:
+      src: /var/lib/snapd/snap
+      dest: /snap
+      state: link
+
   - name: install certbot
     community.general.snap:
       name: certbot
