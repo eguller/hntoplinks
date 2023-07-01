@@ -31,4 +31,4 @@
       state: link
 
   - name: "retrieve certificate"
-    shell: "certbot certonly --nginx"
+    shell: "certbot certonly"
