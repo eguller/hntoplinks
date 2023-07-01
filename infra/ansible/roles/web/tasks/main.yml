@@ -13,7 +13,7 @@
 
 - name: "Create .well-known/acme-challenge directory"
   ansible.builtin.file:
-    path: {{ nginx_public_html_path }}/.well-known/acme-challenge
+    path: "{{ nginx_public_html_path }}/.well-known/acme-challenge"
     state: directory
     owner: root
     group: root
