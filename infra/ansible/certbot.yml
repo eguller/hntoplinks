@@ -6,6 +6,13 @@
       name:
         - snapd
 
+  # https://snapcraft.io/docs/installing-snap-on-fedora
+  - name: install kernel-modules
+    ansible.builtin.yum:
+      name:
+        - kernel-modules
+      when: ansible_distribution == 'Fedora'
+
   - name: install certbot
     community.general.snap:
       name: certbot
