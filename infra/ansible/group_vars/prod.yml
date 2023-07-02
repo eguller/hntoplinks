@@ -1,6 +1,5 @@
 service_template_file_name: "hntoplinks-prod.service.j2"
 domain_name: hntoplinks.com
-nginx_server_name: "{{ domain_name }} www.{{ domain_name }}"
 
 acme_challenge_type: http-01
 acme_directory: https://acme-v02.api.letsencrypt.org/directory
