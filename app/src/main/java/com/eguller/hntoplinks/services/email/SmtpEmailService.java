@@ -48,7 +48,6 @@ public abstract class SmtpEmailService implements EmailProviderService {
       //set message headers
       msg.addHeader("Content-type", "text/html; charset=UTF-8");
       msg.addHeader("format", "flowed");
-      msg.addHeader("Content-Transfer-Encoding", "8bit");
 
       msg.setFrom(new InternetAddress(smtpConfig.from(), "Hacker News Top Links"));
       msg.setReplyTo(InternetAddress.parse(smtpConfig.from(), false));
