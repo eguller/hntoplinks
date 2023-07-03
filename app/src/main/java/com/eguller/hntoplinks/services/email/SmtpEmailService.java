@@ -52,7 +52,7 @@ public abstract class SmtpEmailService implements EmailProviderService {
       msg.setFrom(new InternetAddress(smtpConfig.from(), "Hacker News Top Links"));
       msg.setReplyTo(InternetAddress.parse(smtpConfig.from(), false));
       msg.setSubject(mail.getSubject(), "UTF-8");
-      msg.setContent(mail.getHtml(), "text/html");
+      msg.setContent(mail.getHtml(), "text/html; charset=UTF-8");
       msg.setSentDate(new Date());
 
       msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(mail.getTo(), false));
