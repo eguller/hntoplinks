@@ -96,7 +96,7 @@ public class ApplicationController {
   public String today(Model model, @PathVariable(value = "page") Integer page) {
     var storyPage = getStoryPage(PageTab.today, page);
     model.addAttribute("page", storyPage);
-    model.addAttribute("httpServletRequest.requestURI", httpServletRequest.getRequestURI());
+    model.addAttribute("httpServletRequest_requestURI", httpServletRequest.getRequestURI());
     return view("index");
   }
 
@@ -109,7 +109,7 @@ public class ApplicationController {
   public String week(Model model, @PathVariable(value = "page") Integer page) {
     var storyPage = getStoryPage(PageTab.week, page);
     model.addAttribute("page", storyPage);
-    model.addAttribute("httpServletRequest.requestURI", httpServletRequest.getRequestURI());
+    model.addAttribute("httpServletRequest_requestURI", httpServletRequest.getRequestURI());
     return view("index");
   }
 
@@ -122,7 +122,7 @@ public class ApplicationController {
   public String month(Model model, @PathVariable(value = "page") Integer page) {
     var storyPage = getStoryPage(PageTab.month, page);
     model.addAttribute("page", storyPage);
-    model.addAttribute("httpServletRequest.requestURI", httpServletRequest.getRequestURI());
+    model.addAttribute("httpServletRequest_requestURI", httpServletRequest.getRequestURI());
     return view("index");
   }
 
@@ -135,7 +135,7 @@ public class ApplicationController {
   public String year(Model model, @PathVariable(value = "page") Integer page) {
     var storyPage = getStoryPage(PageTab.year, page);
     model.addAttribute("page", storyPage);
-    model.addAttribute("httpServletRequest.requestURI", httpServletRequest.getRequestURI());
+    model.addAttribute("httpServletRequest_requestURI", httpServletRequest.getRequestURI());
     return view("index");
   }
 
@@ -148,7 +148,7 @@ public class ApplicationController {
   public String all(Model model, @PathVariable(value = "page") Integer page) {
     var storyPage = getStoryPage(PageTab.all, page);
     model.addAttribute("page", storyPage);
-    model.addAttribute("httpServletRequest.requestURI", httpServletRequest.getRequestURI());
+    model.addAttribute("httpServletRequest_requestURI", httpServletRequest.getRequestURI());
     return view("index");
   }
 
@@ -156,7 +156,7 @@ public class ApplicationController {
   public String about(Model model) {
     var aboutPage = Page.pageBuilder().title("About").build();
     model.addAttribute("page", aboutPage);
-    model.addAttribute("httpServletRequest.requestURI", httpServletRequest.getRequestURI());
+    model.addAttribute("httpServletRequest_requestURI", httpServletRequest.getRequestURI());
     return view("about");
   }
 
@@ -165,7 +165,7 @@ public class ApplicationController {
     var statistics = statisticsService.readStatistics();
     StatsPage statsPage = StatsPage.builder().title("Statistics").statistics(statistics).build();
     model.addAttribute("page", statsPage);
-    model.addAttribute("httpServletRequest.requestURI", httpServletRequest.getRequestURI());
+    model.addAttribute("httpServletRequest_requestURI", httpServletRequest.getRequestURI());
     return view("statistics");
   }
 
@@ -188,7 +188,7 @@ public class ApplicationController {
     var subscriptionPage = subscriptionPageBuilder.subscriptionForm(subscriptionFormBuilder.build()).build();
     model.addAttribute("page", subscriptionPage);
     model.addAttribute("subscriptionForm", subscriptionPage.getSubscriptionForm());
-    model.addAttribute("httpServletRequest.requestURI", httpServletRequest.getRequestURI());
+    model.addAttribute("httpServletRequest_requestURI", httpServletRequest.getRequestURI());
     return view("subscription");
   }
 
@@ -199,7 +199,7 @@ public class ApplicationController {
     subscriberEntityOptional.ifPresent(subscriber -> subscriberRepository.delete(subscriber));
 
     model.addAttribute("page", unsubscribePage);
-    model.addAttribute("httpServletRequest.requestURI", httpServletRequest.getRequestURI());
+    model.addAttribute("httpServletRequest_requestURI", httpServletRequest.getRequestURI());
     return view("unsubscribe");
   }
 
@@ -223,14 +223,14 @@ public class ApplicationController {
     var subscriptionPage = subscriptionPageBuilder.subscriptionForm(subscriptionFormBuilder.build()).build();
     model.addAttribute("page", subscriptionPage);
     model.addAttribute("subscriptionForm", subscriptionPage.getSubscriptionForm());
-    model.addAttribute("httpServletRequest.requestURI", httpServletRequest.getRequestURI());
+    model.addAttribute("httpServletRequest_requestURI", httpServletRequest.getRequestURI());
     return view("subscription");
   }
 
 
   @PostMapping("/subscribe")
   public String subscribe_Post(@ModelAttribute("subscriptionForm") SubscriptionForm subscriptionForm, Model model) {
-    model.addAttribute("httpServletRequest.requestURI", httpServletRequest.getRequestURI());
+    model.addAttribute("httpServletRequest_requestURI", httpServletRequest.getRequestURI());
 
     var subscriptionPageBuilder = SubscriptionPage.builder();
     subscriptionPageBuilder.subscriptionForm(subscriptionForm);
