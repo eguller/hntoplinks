@@ -15,12 +15,12 @@ import com.eguller.hntoplinks.services.EmailService;
 import com.eguller.hntoplinks.services.RecaptchaVerifier;
 import com.eguller.hntoplinks.services.StatisticsService;
 import com.eguller.hntoplinks.services.SubscriptionService;
+import com.eguller.hntoplinks.springframework.mobile.device.DeviceUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mobile.device.Device;
-import org.springframework.mobile.device.DeviceUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.annotation.RequestScope;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -47,7 +47,6 @@ import java.util.stream.Stream;
 public class ApplicationController {
   private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  private static final int                MAX_PAGES      = 10;
   private static final int                STORY_PER_PAGE = 30;
   private final        HttpServletRequest httpServletRequest;
 
@@ -97,6 +96,7 @@ public class ApplicationController {
   public String today(Model model, @PathVariable(value = "page") Integer page) {
     var storyPage = getStoryPage(PageTab.today, page);
     model.addAttribute("page", storyPage);
+    model.addAttribute("httpServletRequest.requestURI", httpServletRequest.getRequestURI());
     return view("index");
   }
 
@@ -109,6 +109,7 @@ public class ApplicationController {
   public String week(Model model, @PathVariable(value = "page") Integer page) {
     var storyPage = getStoryPage(PageTab.week, page);
     model.addAttribute("page", storyPage);
+    model.addAttribute("httpServletRequest.requestURI", httpServletRequest.getRequestURI());
     return view("index");
   }
 
@@ -121,6 +122,7 @@ public class ApplicationController {
   public String month(Model model, @PathVariable(value = "page") Integer page) {
     var storyPage = getStoryPage(PageTab.month, page);
     model.addAttribute("page", storyPage);
+    model.addAttribute("httpServletRequest.requestURI", httpServletRequest.getRequestURI());
     return view("index");
   }
 
@@ -133,6 +135,7 @@ public class ApplicationController {
   public String year(Model model, @PathVariable(value = "page") Integer page) {
     var storyPage = getStoryPage(PageTab.year, page);
     model.addAttribute("page", storyPage);
+    model.addAttribute("httpServletRequest.requestURI", httpServletRequest.getRequestURI());
     return view("index");
   }
 
@@ -145,6 +148,7 @@ public class ApplicationController {
   public String all(Model model, @PathVariable(value = "page") Integer page) {
     var storyPage = getStoryPage(PageTab.all, page);
     model.addAttribute("page", storyPage);
+    model.addAttribute("httpServletRequest.requestURI", httpServletRequest.getRequestURI());
     return view("index");
   }
 
@@ -152,6 +156,7 @@ public class ApplicationController {
   public String about(Model model) {
     var aboutPage = Page.pageBuilder().title("About").build();
     model.addAttribute("page", aboutPage);
+    model.addAttribute("httpServletRequest.requestURI", httpServletRequest.getRequestURI());
     return view("about");
   }
 
@@ -160,6 +165,7 @@ public class ApplicationController {
     var statistics = statisticsService.readStatistics();
     StatsPage statsPage = StatsPage.builder().title("Statistics").statistics(statistics).build();
     model.addAttribute("page", statsPage);
+    model.addAttribute("httpServletRequest.requestURI", httpServletRequest.getRequestURI());
     return view("statistics");
   }
 
@@ -182,6 +188,7 @@ public class ApplicationController {
     var subscriptionPage = subscriptionPageBuilder.subscriptionForm(subscriptionFormBuilder.build()).build();
     model.addAttribute("page", subscriptionPage);
     model.addAttribute("subscriptionForm", subscriptionPage.getSubscriptionForm());
+    model.addAttribute("httpServletRequest.requestURI", httpServletRequest.getRequestURI());
     return view("subscription");
   }
 
@@ -192,6 +199,7 @@ public class ApplicationController {
     subscriberEntityOptional.ifPresent(subscriber -> subscriberRepository.delete(subscriber));
 
     model.addAttribute("page", unsubscribePage);
+    model.addAttribute("httpServletRequest.requestURI", httpServletRequest.getRequestURI());
     return view("unsubscribe");
   }
 
@@ -215,12 +223,15 @@ public class ApplicationController {
     var subscriptionPage = subscriptionPageBuilder.subscriptionForm(subscriptionFormBuilder.build()).build();
     model.addAttribute("page", subscriptionPage);
     model.addAttribute("subscriptionForm", subscriptionPage.getSubscriptionForm());
+    model.addAttribute("httpServletRequest.requestURI", httpServletRequest.getRequestURI());
     return view("subscription");
   }
 
 
   @PostMapping("/subscribe")
   public String subscribe_Post(@ModelAttribute("subscriptionForm") SubscriptionForm subscriptionForm, Model model) {
+    model.addAttribute("httpServletRequest.requestURI", httpServletRequest.getRequestURI());
+
     var subscriptionPageBuilder = SubscriptionPage.builder();
     subscriptionPageBuilder.subscriptionForm(subscriptionForm);
     subscriptionPageBuilder.captchaEnabled(captchaEnabled);

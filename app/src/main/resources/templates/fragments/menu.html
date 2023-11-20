@@ -68,12 +68,12 @@
                             </th:block>
                         </span>
                         <span class="pagetop right">
-                            <th:block th:if="${#httpServletRequest.requestURI == '/subscribe'}">
+                            <th:block th:if="${httpServletRequest.requestURI == '/subscribe'}">
                                 <span class="topsel">
                                     <a href="/subscribe">Subscribe</a>
                                 </span>
                             </th:block>
-                            <th:block th:if="${#httpServletRequest.requestURI != '/subscribe'}">
+                            <th:block th:if="${httpServletRequest.requestURI != '/subscribe'}">
                                 <a href="/subscribe">Subscribe</a>
                             </th:block>
                         </span>
