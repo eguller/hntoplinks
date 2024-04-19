@@ -9,8 +9,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.mobile.device.DeviceHandlerMethodArgumentResolver;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.SchedulingConfigurer;
+import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
+import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -28,11 +32,13 @@ import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 @Configuration
-@EnableScheduling
 @EnableAsync
-public class AppConfig implements WebMvcConfigurer {
+@EnableScheduling
+public class AppConfig implements WebMvcConfigurer, SchedulingConfigurer {
   private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 
@@ -89,4 +95,20 @@ public class AppConfig implements WebMvcConfigurer {
     templateResolver.setCacheable(false);
     return templateResolver;
   }
+
+  @Override
+  public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
+    taskRegistrar.setScheduler(taskExecutor());
+  }
+
+  @Bean(destroyMethod = "shutdown")
+  public Executor taskExecutor() {
+    return Executors.newScheduledThreadPool(5);
+  }
+
+  @Bean
+  public TaskScheduler taskScheduler() {
+    return new ConcurrentTaskScheduler();
+  }
+
 }

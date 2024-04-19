@@ -1,13 +1,12 @@
 create table if not exists items
 (
-  id             uuid primary key default gen_random_uuid(),
-  hnid           bigint       not null,
-  story_type     varchar(255) not null,
-  author         varchar(255) not null,
-  created_at     timestamp             default current_timestamp,
-  url            text         not null,
-  score          int          not null default 0,
-  title          text         not null,
-  comments_count int          not null default 0,
-  version        bigint       not null default 0
+  id          bigint not null,
+  by          varchar(255),
+  descendants int       not null default 0,
+  score       int       not null default 0,
+  time        timestamptz default current_timestamp,
+  title       text,
+  type        varchar(255),
+  url         text,
+  CONSTRAINT item_id_key UNIQUE (id)
 );

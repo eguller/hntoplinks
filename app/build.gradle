@@ -38,7 +38,7 @@ bootJar {
 
 ext {
   springBootVersion = '3.1.5'
-  springWebVersion = '6.0.13'
+  springWebVersion = '6.1.1'
   lombokVersion = '1.18.22'
 }
 
@@ -47,6 +47,8 @@ dependencies {
   implementation "org.springframework.boot:spring-boot-starter-data-jdbc:${springBootVersion}"
   implementation "org.springframework.boot:spring-boot-starter-thymeleaf:${springBootVersion}"
   implementation "org.springframework.boot:spring-boot-starter-web:${springBootVersion}"
+  implementation "org.springframework:spring-core:${springWebVersion}"
+  implementation "org.springframework:spring-context:${springWebVersion}"
   implementation "org.springframework:spring-webmvc:${springWebVersion}"
   implementation "org.springframework:spring-web:${springWebVersion}"
   implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.0.0'

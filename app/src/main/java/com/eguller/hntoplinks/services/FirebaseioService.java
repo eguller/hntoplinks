@@ -1,17 +1,23 @@
 package com.eguller.hntoplinks.services;
 
+import com.eguller.hntoplinks.entities.Item;
 import com.eguller.hntoplinks.models.HnStory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 @Service
 public class FirebaseioService {
@@ -24,6 +30,11 @@ public class FirebaseioService {
 
   public FirebaseioService(RestTemplate restTemplate) {
     this.restTemplate = restTemplate;
+  }
+
+  private RestClient.Builder restClient() {
+    var restClientBuilder = RestClient.builder().baseUrl(firebaseIoBaseUrl);
+    return restClientBuilder;
   }
 
   public List<HnStory> readBestStories() {
@@ -54,5 +65,60 @@ public class FirebaseioService {
       logger.error("Top stories cannot be retrieved. status=" + topStories.getStatusCodeValue());
     }
     return storyList;
+  }
+
+  public Long getMaxItem() {
+    var maxItem = restClient().build().get().uri("/maxitem.json").retrieve().body(Long.class);
+    return maxItem;
+  }
+
+  public Item readItem(Long itemId) {
+    var item = restClient().build().get().uri("/item/" + itemId + ".json").retrieve().body(Item.class);
+    return item;
+  }
+
+  public List<Item> readItems(List<Long> itemIds) {
+    try {
+      var items = itemIds.stream().map(itemId -> readItem(itemId)).collect(Collectors.toList());
+      return items;
+    } catch (Exception ex) {
+      ex.printStackTrace();
+      return Collections.emptyList();
+    }
+  }
+
+  public List<Item> readBestStoriesNew() {
+    var bestStoryIds = readBestStoryIds();
+    var bestStories = readItems(bestStoryIds);
+    return bestStories;
+  }
+
+  public List<Item> readTopStoriesNew() {
+    var topStoryIds = readTopStoryIds();
+    var topStories = readItems(topStoryIds);
+    return topStories;
+  }
+
+  public List<Item> readNewStoriesNew() {
+    var newStoryIds = readNewStoryIds();
+    var newStories = readItems(newStoryIds);
+    return newStories;
+  }
+
+  private List<Long> readBestStoryIds() {
+    return readStoryIds("/beststories.json");
+  }
+
+  private List<Long> readTopStoryIds() {
+    return readStoryIds("/topstories.json");
+  }
+
+  private List<Long> readNewStoryIds() {
+    return readStoryIds("/newstories.json");
+  }
+
+  private List<Long> readStoryIds(String endpoint) {
+    var storyIds = restClient().build().get().uri(endpoint).retrieve().body(new ParameterizedTypeReference<List<Long>>(){});
+    return storyIds;
   }
 }

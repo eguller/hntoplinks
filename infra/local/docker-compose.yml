@@ -1,10 +1,11 @@
-version: "3.9"
 services:
   app:
-    build: .
+    image: hntoplinks:latest
     ports:
       - "8067:8080"
     environment:
+      - JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:26773
+      - PROFILE=localdocker
       - DATABASE_USERNAME=sa
       - DATABASE_PASSWORD=sa
       - DATABASE_NAME=hntoplinks
@@ -15,7 +16,7 @@ services:
   db:
     image: postgres:13.5
     ports:
-      - "15432:5432"
+      - "15433:5432"
     environment:
       - POSTGRES_PASSWORD=sa
       - POSTGRES_USER=sa
