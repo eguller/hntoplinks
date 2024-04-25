@@ -29,7 +29,9 @@ public class ItemRepository {
             time,
             title,
             type,
-            url
+            url,
+            parent,
+            dead
           )
           VALUES
           (
@@ -40,7 +42,9 @@ public class ItemRepository {
             :time,
             :title,
             :type,
-            :url
+            :url,
+            :parent,
+            :dead
           )
           ON CONFLICT (id)
           DO
@@ -52,17 +56,21 @@ public class ItemRepository {
                 time = :time,
                 title = :title,
                 type = :type,
-                url = :url
+                url = :url,
+                parent = :parent,
+                dead = :dead
         """,
       new MapSqlParameterSource()
         .addValue("id", item.getId())
         .addValue("by", item.getBy())
-        .addValue("descendants", item.getDescendants() == null ? 0 : item.getDescendants())
-        .addValue("score", item.getScore() == null ? 0 : item.getScore())
+        .addValue("descendants", item.getDescendants())
+        .addValue("score", item.getScore())
         .addValue("time", Timestamp.from(Instant.ofEpochSecond(item.getTime())))
         .addValue("title", item.getTitle())
         .addValue("type", item.getType())
         .addValue("url", item.getUrl())
+        .addValue("parent", item.getParent())
+        .addValue("dead", item.isDead())
     );
   }
 }

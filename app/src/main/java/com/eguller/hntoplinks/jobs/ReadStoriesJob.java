@@ -10,6 +10,7 @@ import com.eguller.hntoplinks.services.StatisticsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.TaskScheduler;
@@ -48,6 +49,9 @@ public class ReadStoriesJob {
 
   private TaskScheduler taskScheduler;
 
+  @Value("${hntoplinks.read-all-stories.cron.enabled}")
+  private boolean readAllStoriesCronEnabled;
+
   @Autowired
   public ReadStoriesJob(FirebaseioService firebaseioService,
                         StoryRepository storyRepository,
@@ -66,56 +70,58 @@ public class ReadStoriesJob {
 
   @EventListener(ContextRefreshedEvent.class)
   public void init() {
-    readAllStories();
-  }
-
-  @Scheduled(fixedDelay = 5, timeUnit = TimeUnit.MINUTES)
-  public void doJob() {
-    var topStories = firebaseioService.readTopStories();
-    saveStories(topStories);
-    var bestStories = firebaseioService.readBestStories();
-    saveStories(bestStories);
-    //statisticsService.updateLastHnUpdate();
-  }
-
-  private void saveStories(List<HnStory> hnStoryList) {
-    logger.info("Stories read from firebase. numberOfStories={}", hnStoryList.size());
-    var storyList = hnStoryList.stream().map(hnStory -> hnStory.toStory()).collect(Collectors.toList());
-    storyRepository.saveStories(storyList);
-  }
-
-  //@Scheduled(fixedDelay = 10, initialDelay = 1, timeUnit = TimeUnit.SECONDS)
-  public void readAllStories() {
-    var maxItem = firebaseioService.getMaxItem();
-    var lastItem = checkPointRepository.getLastItem();
-    if (maxItem - lastItem > READ_ITEMS_BATCH_SIZE) {
-      for (var i = lastItem; i <= maxItem; i++) {
-        var item = firebaseioService.readItem(i);
-        if (item != null) {
-          itemRepository.save(item);
-        }
-        checkPointRepository.saveStoriesCheckPoint(i);
-        if (i - lastItem > READ_ITEMS_BATCH_SIZE) {
-          break;
-        }
-        taskScheduler.schedule(() -> readAllStories(), Instant.now());
-      }
-    } else {
-      taskScheduler.schedule(() -> readAllStories(), Instant.now().plus(20, ChronoUnit.SECONDS));
+    if (readAllStoriesCronEnabled) {
+      readAllStories();
     }
   }
 
-  @Scheduled(fixedDelay = 5, timeUnit = TimeUnit.MINUTES)
-  public void readTopStories() {
-    var topStories = firebaseioService.readTopStoriesNew();
-    var bestStories = firebaseioService.readBestStoriesNew();
-    var newStories = firebaseioService.readNewStoriesNew();
-    Stream.of(topStories, bestStories, newStories).flatMap(List::stream).forEach(item -> {
-        if (item != null) {
-          itemRepository.save(item);
-        }
-      }
-    );
-  }
+    @Scheduled(cron = "${hntoplinks.top-stories.cron}")
+    public void doJob () {
+      var topStories = firebaseioService.readTopStories();
+      saveStories(topStories);
+      var bestStories = firebaseioService.readBestStories();
+      saveStories(bestStories);
+      //statisticsService.updateLastHnUpdate();
+    }
 
-}
+    private void saveStories (List < HnStory > hnStoryList) {
+      logger.info("Stories read from firebase. numberOfStories={}", hnStoryList.size());
+      var storyList = hnStoryList.stream().map(hnStory -> hnStory.toStory()).collect(Collectors.toList());
+      storyRepository.saveStories(storyList);
+    }
+
+    //@Scheduled(fixedDelay = 10, initialDelay = 1, timeUnit = TimeUnit.SECONDS)
+    public void readAllStories () {
+      var maxItem = firebaseioService.getMaxItem();
+      var lastItem = checkPointRepository.getLastItem();
+      if (maxItem - lastItem > READ_ITEMS_BATCH_SIZE) {
+        for (var i = lastItem; i <= maxItem; i++) {
+          var item = firebaseioService.readItem(i);
+          if (item != null) {
+            itemRepository.save(item);
+          }
+          checkPointRepository.saveStoriesCheckPoint(i);
+          if (i - lastItem > READ_ITEMS_BATCH_SIZE) {
+            break;
+          }
+          taskScheduler.schedule(() -> readAllStories(), Instant.now());
+        }
+      } else {
+        taskScheduler.schedule(() -> readAllStories(), Instant.now().plus(20, ChronoUnit.SECONDS));
+      }
+    }
+
+    @Scheduled(cron = "${hntoplinks.top-stories.cron}")
+    public void readTopStories () {
+      var topStories = firebaseioService.readTopStoriesNew();
+      var bestStories = firebaseioService.readBestStoriesNew();
+      var newStories = firebaseioService.readNewStoriesNew();
+      Stream.of(topStories, bestStories, newStories).flatMap(List::stream).forEach(item -> {
+          if (item != null) {
+            itemRepository.save(item);
+          }
+        }
+      );
+    }
+
+  }

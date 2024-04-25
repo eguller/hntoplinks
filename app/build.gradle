@@ -69,6 +69,8 @@ dependencies {
   runtimeOnly 'org.postgresql:postgresql:42.6.0'
   annotationProcessor "org.springframework.boot:spring-boot-configuration-processor:${springBootVersion}"
   testImplementation "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
+  testImplementation "org.testcontainers:postgresql:1.19.7"
+
 }
 
 test {

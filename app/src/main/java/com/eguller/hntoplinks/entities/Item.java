@@ -1,35 +1,26 @@
 package com.eguller.hntoplinks.entities;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Item {
   private Long id;
   private String by;
-  private Integer descendants;
-  private Integer score;
+  @Builder.Default
+  private int descendants = 0;
+  @Builder.Default
+  private int score = 0;
   private Long time;
   private String title;
   private String type;
   private String url;
-
-  public Integer getDescendants() {
-    var nonNull = descendants == null ? 0 : descendants;
-    if (nonNull < 0) {
-      return 0;
-    } else {
-      return nonNull;
-    }
-  }
-
-  public Integer getScore() {
-    var nonNull = score == null ? 0 : score;
-    if (nonNull < 0) {
-      return 0;
-    } else {
-      return nonNull;
-    }
-  }
+  private Long parent;
+  private boolean dead;
 }

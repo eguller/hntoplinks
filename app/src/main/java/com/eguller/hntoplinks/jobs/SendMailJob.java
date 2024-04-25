@@ -22,7 +22,7 @@ public class SendMailJob {
     this.subscriptionService  = subscriptionService;
   }
 
-  @Scheduled(cron = "${hntoplinks.top-stories.cron}")
+  @Scheduled(cron = "${hntoplinks.send-stories-email.cron}")
   public void sendEmail() {
     var subscribersToSendEmail = subscriberRepository.findSubscriptionsByExpiredNextSendDate();
     subscribersToSendEmail.stream()
