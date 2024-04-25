@@ -14,7 +14,6 @@ import com.eguller.hntoplinks.repository.StoryRepository;
 import com.eguller.hntoplinks.repository.SubscriberRepository;
 import com.eguller.hntoplinks.services.email.MockEmailStore;
 import com.eguller.hntoplinks.util.DbUtil;
-import com.eguller.hntoplinks.util.HntoplinksPostgresqlContainer;
 import com.eguller.hntoplinks.util.SubscriptionUtil;
 import org.junit.ClassRule;
 import org.junit.jupiter.api.AfterAll;
