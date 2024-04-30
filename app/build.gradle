@@ -1,7 +1,19 @@
+
 plugins {
-  id 'org.springframework.boot' version '2.6.2'
+  id 'org.springframework.boot' version '3.1.5'
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
   id 'java'
+  id 'idea'
+}
+
+apply plugin: 'java'
+
+
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
 }
 
 group = 'com.eguller.hntoplinks'
@@ -24,15 +36,24 @@ bootJar {
 
 }
 
+ext {
+  springBootVersion = '3.1.5'
+  springWebVersion = '6.1.1'
+  lombokVersion = '1.18.22'
+}
+
+
 dependencies {
-  implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
-  implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-  implementation 'org.springframework.boot:spring-boot-starter-web'
-  implementation group: 'org.springframework', name: 'spring-webmvc', version: '5.3.14'
-  implementation group: 'org.springframework', name: 'spring-web', version: '5.3.14'
-  implementation group: 'nz.net.ultraq.thymeleaf', name: 'thymeleaf-layout-dialect', version: '3.0.0'
-  implementation 'org.flywaydb:flyway-core'
-  implementation group: 'org.springframework.mobile', name: 'spring-mobile-device', version: '1.1.5.RELEASE'
+  implementation "org.springframework.boot:spring-boot-starter-data-jdbc:${springBootVersion}"
+  implementation "org.springframework.boot:spring-boot-starter-thymeleaf:${springBootVersion}"
+  implementation "org.springframework.boot:spring-boot-starter-web:${springBootVersion}"
+  implementation "org.springframework:spring-core:${springWebVersion}"
+  implementation "org.springframework:spring-context:${springWebVersion}"
+  implementation "org.springframework:spring-webmvc:${springWebVersion}"
+  implementation "org.springframework:spring-web:${springWebVersion}"
+  implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.0.0'
+  implementation 'org.flywaydb:flyway-core:9.22.3'
+  implementation 'org.springframework.mobile:spring-mobile-device:1.1.5.RELEASE'
   implementation 'commons-validator:commons-validator:1.7'
   implementation 'com.sendgrid:sendgrid-java:4.0.1'
   implementation 'jakarta.mail:jakarta.mail-api:2.1.1'
@@ -42,13 +63,14 @@ dependencies {
   implementation 'org.eclipse.angus:angus-mail:2.0.1'
   implementation 'org.eclipse.angus:jakarta.mail:2.0.1'
 
-  compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.22'
-  annotationProcessor 'org.projectlombok:lombok:1.18.22'
-  developmentOnly 'org.springframework.boot:spring-boot-devtools'
-  runtimeOnly 'com.h2database:h2'
-  runtimeOnly 'org.postgresql:postgresql'
-  annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-  testImplementation 'org.springframework.boot:spring-boot-starter-test'
+  compileOnly "org.projectlombok:lombok:${lombokVersion}"
+  annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+  developmentOnly "org.springframework.boot:spring-boot-devtools:${springBootVersion}"
+  runtimeOnly 'org.postgresql:postgresql:42.6.0'
+  annotationProcessor "org.springframework.boot:spring-boot-configuration-processor:${springBootVersion}"
+  testImplementation "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
+  testImplementation "org.testcontainers:postgresql:1.19.7"
+
 }
 
 test {

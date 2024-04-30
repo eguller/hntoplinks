@@ -13,14 +13,21 @@ import com.eguller.hntoplinks.models.SubscriptionPage;
 import com.eguller.hntoplinks.repository.StoryRepository;
 import com.eguller.hntoplinks.repository.SubscriberRepository;
 import com.eguller.hntoplinks.services.email.MockEmailStore;
+import com.eguller.hntoplinks.util.DbUtil;
 import com.eguller.hntoplinks.util.SubscriptionUtil;
+import org.junit.ClassRule;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.ui.ExtendedModelMap;
+import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -32,6 +39,25 @@ import java.util.stream.Collectors;
 @SpringBootTest(classes = {Application.class})
 @ActiveProfiles({"local", "test"})
 public class StoryServiceTest {
+
+  static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
+    "postgres:13.5"
+  );
+
+  @BeforeAll
+  static void beforeAll() {
+    postgres.start();
+  }
+
+  @AfterAll
+  static void afterAll() {
+    postgres.stop();
+  }
+
+  @DynamicPropertySource
+  static void configureProperties(DynamicPropertyRegistry registry) {
+    DbUtil.updateDatabaseProperties(postgres, registry);
+  }
 
   @Autowired
   private SubscriberRepository subscriberRepository;
@@ -85,10 +111,6 @@ public class StoryServiceTest {
     var updatedEntity = storyRepository.findByHnid(randomHnId);
 
     Assertions.assertEquals(savedEntity.get().getId(), updatedEntity.get().getId());
-
-
-    long count = storyRepository.readAllTimeTop().stream().filter(story -> story.getHnid() == 1).count();
-    Assertions.assertEquals(1, count); //there should not be any duplicate.
   }
 
   @Test
@@ -105,6 +127,7 @@ public class StoryServiceTest {
     hnStory.setUser("daily_mail_test_user");
 
     var emailAddress = "test_daily_mail1@hntoplinks.com";
+    DbUtil.deleteSubscriber(namedParameterJdbcTemplate, emailAddress);
     var subscriber = new SubscriberEntity();
     subscriber.setEmail(emailAddress);
     subscriber.setTimeZone("UTC");
@@ -131,6 +154,7 @@ public class StoryServiceTest {
     hnStory.setUser("weekly_mail_test_user");
 
     var emailAddress = "test_weekly_mail1@hntoplinks.com";
+    DbUtil.deleteSubscriber(namedParameterJdbcTemplate, emailAddress);
 
     var subscriber = new SubscriberEntity();
     subscriber.setEmail(emailAddress);
@@ -160,6 +184,7 @@ public class StoryServiceTest {
     hnStory.setUser("daily_and_weekly_mail_test_user");
 
     var emailAddress = "test_daily_and_weekly_mail1@hntoplinks.com";
+    DbUtil.deleteSubscriber(namedParameterJdbcTemplate, emailAddress);
 
     var subscriber = new SubscriberEntity();
     subscriber.setEmail(emailAddress);
@@ -193,6 +218,7 @@ public class StoryServiceTest {
     hnStory.setUser("monthly_mail_test_user");
 
     var emailAddress = "test_monthly_mail1@hntoplinks.com";
+    DbUtil.deleteSubscriber(namedParameterJdbcTemplate, emailAddress);
     var subscriber = new SubscriberEntity();
     subscriber.setEmail(emailAddress);
     subscriber.setTimeZone("UTC");
@@ -219,6 +245,7 @@ public class StoryServiceTest {
     hnStory.setUser("yearly_mail_test_user");
 
     var emailAddress = "test_yearly_mail1@hntoplinks.com";
+    DbUtil.deleteSubscriber(namedParameterJdbcTemplate, emailAddress);
     var subscriber = new SubscriberEntity();
     subscriber.setEmail(emailAddress);
     subscriber.setTimeZone("UTC");

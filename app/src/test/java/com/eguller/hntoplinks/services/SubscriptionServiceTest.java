@@ -8,17 +8,43 @@ import com.eguller.hntoplinks.models.Email;
 import com.eguller.hntoplinks.models.SubscriptionPage;
 import com.eguller.hntoplinks.repository.SubscriberRepository;
 import com.eguller.hntoplinks.services.email.MockEmailStore;
+import com.eguller.hntoplinks.util.DbUtil;
 import com.eguller.hntoplinks.util.SubscriptionUtil;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.ui.ExtendedModelMap;
+import org.testcontainers.containers.PostgreSQLContainer;
 
 @SpringBootTest(classes = {Application.class})
 @ActiveProfiles({"local", "test"})
 public class SubscriptionServiceTest {
+  static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
+    "postgres:13.5"
+  );
+
+  @BeforeAll
+  static void beforeAll() {
+    postgres.start();
+  }
+
+  @AfterAll
+  static void afterAll() {
+    postgres.stop();
+  }
+
+  @DynamicPropertySource
+  static void configureProperties(DynamicPropertyRegistry registry) {
+    DbUtil.updateDatabaseProperties(postgres, registry);
+  }
+
   @Autowired
   private ApplicationController applicationController;
 
@@ -26,12 +52,17 @@ public class SubscriptionServiceTest {
   private SubscriberRepository subscriberRepository;
 
   @Autowired
+  private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+  @Autowired
   private MockEmailStore mockEmailStore;
 
   @Test
   public void test_subscribe() {
     var emailAddress = "test_subscribe1@hntoplinks.com";
-    SubscriptionUtil.subscribeDailyNew(this.applicationController, emailAddress);
+    DbUtil.deleteSubscriber(namedParameterJdbcTemplate, emailAddress);
+    var model =
+      SubscriptionUtil.subscribeDailyNew(this.applicationController, emailAddress);
 
     var subscriptionEntity = subscriberRepository.findByEmail(emailAddress);
     Assertions.assertEquals(emailAddress, subscriptionEntity.get().getEmail());

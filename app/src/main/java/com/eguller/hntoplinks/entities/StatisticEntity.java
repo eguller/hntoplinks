@@ -1,17 +1,13 @@
 package com.eguller.hntoplinks.entities;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.Table;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
-@Table("statistic")
+@AllArgsConstructor
+@NoArgsConstructor
 public class StatisticEntity implements HnEntity {
-  @Id
-  @Column("id")
   private Long   id;
-  @Column("stat_key")
   private String statKey;
-  @Column("stat_value")
   private String statValue;
 
   public Long getId() {
