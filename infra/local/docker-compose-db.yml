@@ -1,6 +1,6 @@
 services:
   hntoplinks-db:
-    image: postgres:13.5
+    image: postgres:14.3
     ports:
       - "15432:5432"
     environment:

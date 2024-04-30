@@ -3,7 +3,7 @@
 >
 
 <table bgcolor=#f6f6ef border=0 cellpadding=0 cellspacing=0 layout:fragment="content" width="85%">
-  <tr th:insert="fragments/menu.html :: menu">
+  <tr th:insert="~{fragments/menu.html :: menu}">
 
   </tr>
   <tr style="height: 10px"></tr>
@@ -12,7 +12,7 @@
       <table border=0 cellpadding=0 cellspacing=0>
         <th:block th:each="story,iterStat : ${page.storyList}">
           <th:block
-            th:insert="fragments/item.html :: item(story=${story}, page=${page}, storyIndex=${ (page.currentPage - 1) * page.storyPerPage + iterStat.count})"/>
+            th:insert="~{fragments/item.html :: item(story=${story}, page=${page}, storyIndex=${ (page.currentPage - 1) * page.storyPerPage + iterStat.count})}"/>
         </th:block>
         <th:block th:if="${page.hasMoreStories}">
           <tr style="height:5px"></tr>
@@ -33,6 +33,6 @@
       </table>
     </td>
   </tr>
-  <tr th:replace="fragments/footer.html :: footer"/>
+  <tr th:replace="~{fragments/footer.html :: footer}"/>
 </table>
 </html>
