@@ -3,7 +3,7 @@ Description=hntoplinks app service
 
 [Service]
 WorkingDirectory={{ app_path }}
-Environment=PROFILE=prod
+Environment=SPRING_PROFILES_ACTIVE=prod
 Environment=DATABASE_HOST={{ database_host }}
 Environment=DATABASE_NAME={{ hntoplinks_db_name }}
 Environment=DATABASE_USERNAME={{ hntoplinks_db_user }}
