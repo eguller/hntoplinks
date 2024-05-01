@@ -65,7 +65,7 @@ public class ItemRepository {
         .addValue("by", item.getBy())
         .addValue("descendants", item.getDescendants())
         .addValue("score", item.getScore())
-        .addValue("time", Timestamp.from(Instant.ofEpochSecond(item.getTime())))
+        .addValue("time", item.getTime() != null ? Timestamp.from(Instant.ofEpochSecond(item.getTime())) : null)
         .addValue("title", item.getTitle())
         .addValue("type", item.getType())
         .addValue("url", item.getUrl())
