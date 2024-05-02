@@ -29,7 +29,8 @@ public class CheckPointRepository {
         UPDATE
           checkpoints
         SET
-          checkpoint = :checkpoint
+          checkpoint = :checkpoint,
+          last_updated = now()
         WHERE
           name='stories'
         """, Map.ofEntries(
