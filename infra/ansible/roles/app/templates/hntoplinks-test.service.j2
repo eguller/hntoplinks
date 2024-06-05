@@ -12,7 +12,7 @@ Environment=LOGGING_FILE_NAME="{{ app_log_path }}/{{ app_name }}.log"
 Environment=HNTOPLINKS_BASE_URL=http://localhost:8080
 Environment=HNTOPLINKS_CAPTCHA_ENABLED=false
 Environment=HNTOPLINKS_EMAIL_PROVIDER=mock
-ExecStart=/usr/bin/java -Xms128m -Xmx512m -XX:OnOutOfMemoryError="kill -9 %p" -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath={{ app_path }}/dumps -Dserver.port={{ app_port }} -jar hntoplinks.jar
+ExecStart=/usr/bin/java -Xms128m -Xmx512m -XX:OnOutOfMemoryError="kill -9 %p" -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath={{ app_path }}/dumps -Dserver.port={{ app_port }} -Dspring.jdbc.getParameterType.ignore=true -jar hntoplinks.jar
 User=hntoplinks
 Group=app
 Type=simple
