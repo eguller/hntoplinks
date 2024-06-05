@@ -57,14 +57,12 @@ public class ReadStoriesJob {
   @Autowired
   public ReadStoriesJob(FirebaseioService firebaseioService,
                         StoryRepository storyRepository,
-                        StatisticsService statisticsService,
                         ItemRepository itemsRepository,
                         CheckPointRepository checkPointRepository,
                         TaskScheduler taskScheduler
   ) {
     this.firebaseioService    = firebaseioService;
     this.storyRepository      = storyRepository;
-    this.statisticsService    = statisticsService;
     this.itemRepository       = itemsRepository;
     this.checkPointRepository = checkPointRepository;
     this.taskScheduler        = taskScheduler;
