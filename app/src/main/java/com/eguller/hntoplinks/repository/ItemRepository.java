@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.Set;
 
 @Repository
 public class ItemRepository {
@@ -17,7 +18,6 @@ public class ItemRepository {
   }
 
   public void save(Item item) {
-
     template.update(
       """
           INSERT INTO items
@@ -60,17 +60,70 @@ public class ItemRepository {
                 parent = :parent,
                 dead = :dead
         """,
-      new MapSqlParameterSource()
-        .addValue("id", item.getId())
-        .addValue("by", item.getBy())
-        .addValue("descendants", item.getDescendants())
-        .addValue("score", item.getScore())
-        .addValue("time", item.getTime() != null ? Timestamp.from(Instant.ofEpochSecond(item.getTime())) : null)
-        .addValue("title", item.getTitle())
-        .addValue("type", item.getType())
-        .addValue("url", item.getUrl())
-        .addValue("parent", item.getParent())
-        .addValue("dead", item.isDead())
+      itemToSqlParameterSource(item)
+    );
+  }
+
+  private static MapSqlParameterSource itemToSqlParameterSource(Item item) {
+    return new MapSqlParameterSource()
+      .addValue("id", item.getId())
+      .addValue("by", item.getBy())
+      .addValue("descendants", item.getDescendants())
+      .addValue("score", item.getScore())
+      .addValue("time", item.getTime() != null ? Timestamp.from(Instant.ofEpochSecond(item.getTime())) : null)
+      .addValue("title", item.getTitle())
+      .addValue("type", item.getType())
+      .addValue("url", item.getUrl())
+      .addValue("parent", item.getParent())
+      .addValue("dead", item.isDead());
+  }
+
+  public void batchSave(Set<Item> items) {
+    var batchArgs = items.stream().map(item -> itemToSqlParameterSource(item)
+    ).toArray(MapSqlParameterSource[]::new);
+    template.batchUpdate(
+      """
+          INSERT INTO items
+          (
+            id,
+            by,
+            descendants,
+            score,
+            time,
+            title,
+            type,
+            url,
+            parent,
+            dead
+          )
+          VALUES
+          (
+            :id,
+            :by,
+            :descendants,
+            :score,
+            :time,
+            :title,
+            :type,
+            :url,
+            :parent,
+            :dead
+          )
+          ON CONFLICT (id)
+          DO
+            UPDATE
+              SET
+                by = :by,
+                descendants = :descendants,
+                score = :score,
+                time = :time,
+                title = :title,
+                type = :type,
+                url = :url,
+                parent = :parent,
+                dead = :dead
+        """,
+      batchArgs
     );
   }
 }

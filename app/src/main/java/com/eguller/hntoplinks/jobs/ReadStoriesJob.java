@@ -1,6 +1,7 @@
 package com.eguller.hntoplinks.jobs;
 
 
+import com.eguller.hntoplinks.entities.Item;
 import com.eguller.hntoplinks.models.HnStory;
 import com.eguller.hntoplinks.repository.CheckPointRepository;
 import com.eguller.hntoplinks.repository.ItemRepository;
@@ -23,6 +24,7 @@ import java.lang.invoke.MethodHandles;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Future;
@@ -94,9 +96,9 @@ public class ReadStoriesJob {
       var lastItem = checkPointRepository.getLastItem();
       if (maxItem - lastItem > READ_ITEMS_BATCH_SIZE) {
 
-        var futureMap = new HashMap<Long, Future<Long>>();
+        var futureMap = new HashMap<Long, Future<Item>>();
         for (var i = lastItem; i <= maxItem; i++) {
-          var future = readAndSaveStory(i);
+          var future = firebaseioService.readItemAsync(i);
           futureMap.put(i,future);
 
           if (i - lastItem > READ_ITEMS_BATCH_SIZE) {
@@ -104,14 +106,19 @@ public class ReadStoriesJob {
           }
 
         }
-        var checkPoint = futureMap.entrySet().stream().map(entry -> {
+
+        var items = futureMap.entrySet().stream().map(entry -> {
           try {
            return entry.getValue().get();
           } catch (Exception e) {
             logger.error("Error reading story {}", entry.getKey(), e);
-            return -1L;
+            return null;
           }
-        }).filter(i -> i > -1).sorted().reduce((first, second) -> second);
+        }).filter(item -> item != null).collect(Collectors.toSet());
+
+        itemRepository.batchSave(items);
+
+        var checkPoint = items.stream().map(Item::getId).sorted().reduce((first, second) -> second);
 
         checkPoint.ifPresentOrElse(c -> {
           checkPointRepository.saveStoriesCheckPoint(c);
@@ -129,6 +136,12 @@ public class ReadStoriesJob {
         itemRepository.save(story);
       }
       return new AsyncResult<>(storyId);
+    }
+
+    @Async
+    Future<Item> readStory(Long storyId) {
+      var story = firebaseioService.readItem(storyId);
+      return new AsyncResult<>(story);
     }
 
     @Scheduled(cron = "${hntoplinks.top-stories.cron}")

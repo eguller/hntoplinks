@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,17 +26,14 @@ public class FirebaseioService {
   private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final RestTemplate restTemplate;
+  private final RestClient fireBaseRestClient;
 
   @Value("${hntoplinks.firebaseio-url}")
   private String firebaseIoBaseUrl;
 
-  public FirebaseioService(RestTemplate restTemplate) {
+  public FirebaseioService(RestTemplate restTemplate, RestClient fireBaseRestClient) {
     this.restTemplate = restTemplate;
-  }
-
-  private RestClient.Builder restClient() {
-    var restClientBuilder = RestClient.builder().baseUrl(firebaseIoBaseUrl);
-    return restClientBuilder;
+    this.fireBaseRestClient = fireBaseRestClient;
   }
 
   public List<HnStory> readBestStories() {
@@ -68,12 +67,12 @@ public class FirebaseioService {
   }
 
   public Long getMaxItem() {
-    var maxItem = restClient().build().get().uri("/maxitem.json").retrieve().body(Long.class);
+    var maxItem = fireBaseRestClient.get().uri("/maxitem.json").retrieve().body(Long.class);
     return maxItem;
   }
 
   public Item readItem(Long itemId) {
-    var item = restClient().build().get().uri("/item/" + itemId + ".json").retrieve().body(Item.class);
+    var item = fireBaseRestClient.get().uri("/item/" + itemId + ".json").retrieve().body(Item.class);
     return item;
   }
 
@@ -85,6 +84,12 @@ public class FirebaseioService {
       ex.printStackTrace();
       return Collections.emptyList();
     }
+  }
+
+  @Async
+  public Future<Item> readItemAsync(Long itemId) {
+    var item = readItem(itemId);
+    return CompletableFuture.completedFuture(item);
   }
 
   public List<Item> readBestStoriesNew() {
@@ -118,7 +123,7 @@ public class FirebaseioService {
   }
 
   private List<Long> readStoryIds(String endpoint) {
-    var storyIds = restClient().build().get().uri(endpoint).retrieve().body(new ParameterizedTypeReference<List<Long>>(){});
+    var storyIds = fireBaseRestClient.get().uri(endpoint).retrieve().body(new ParameterizedTypeReference<List<Long>>(){});
     return storyIds;
   }
 }
