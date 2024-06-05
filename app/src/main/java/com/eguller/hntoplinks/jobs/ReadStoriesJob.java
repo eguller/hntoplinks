@@ -14,13 +14,18 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -81,7 +86,6 @@ public class ReadStoriesJob {
       saveStories(topStories);
       var bestStories = firebaseioService.readBestStories();
       saveStories(bestStories);
-      //statisticsService.updateLastHnUpdate();
     }
 
     private void saveStories (List < HnStory > hnStoryList) {
@@ -90,25 +94,46 @@ public class ReadStoriesJob {
       storyRepository.saveStories(storyList);
     }
 
-    //@Scheduled(fixedDelay = 10, initialDelay = 1, timeUnit = TimeUnit.SECONDS)
     public void readAllStories () {
       var maxItem = firebaseioService.getMaxItem();
       var lastItem = checkPointRepository.getLastItem();
       if (maxItem - lastItem > READ_ITEMS_BATCH_SIZE) {
+
+        var futureMap = new HashMap<Long, Future<Long>>();
         for (var i = lastItem; i <= maxItem; i++) {
-          var item = firebaseioService.readItem(i);
-          if (item != null) {
-            itemRepository.save(item);
-          }
-          checkPointRepository.saveStoriesCheckPoint(i);
+          var future = readAndSaveStory(i);
+          futureMap.put(i,future);
+
           if (i - lastItem > READ_ITEMS_BATCH_SIZE) {
             break;
           }
-          taskScheduler.schedule(() -> readAllStories(), Instant.now());
+
         }
+        var checkPoint = futureMap.entrySet().stream().map(entry -> {
+          try {
+           return entry.getValue().get();
+          } catch (Exception e) {
+            logger.error("Error reading story {}", entry.getKey(), e);
+            return -1L;
+          }
+        }).filter(i -> i > -1).sorted().reduce((first, second) -> second);
+
+        checkPoint.ifPresentOrElse(c -> {
+          checkPointRepository.saveStoriesCheckPoint(c);
+            taskScheduler.schedule(() -> readAllStories(), Instant.now());
+        }, () -> taskScheduler.schedule(() -> readAllStories(), Instant.now().plus(20, ChronoUnit.SECONDS)));
       } else {
         taskScheduler.schedule(() -> readAllStories(), Instant.now().plus(20, ChronoUnit.SECONDS));
       }
+    }
+
+    @Async
+    Future<Long> readAndSaveStory(Long storyId) {
+      var story = firebaseioService.readItem(storyId);
+      if (story != null) {
+        itemRepository.save(story);
+      }
+      return new AsyncResult<>(storyId);
     }
 
     @Scheduled(cron = "${hntoplinks.top-stories.cron}")
