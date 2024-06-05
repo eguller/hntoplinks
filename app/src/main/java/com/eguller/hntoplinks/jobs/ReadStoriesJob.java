@@ -39,14 +39,11 @@ import java.util.stream.Stream;
 public class ReadStoriesJob {
   private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  private static final long READ_ITEMS_BATCH_SIZE = 10;
+  private static final long READ_ITEMS_BATCH_SIZE = 20;
 
   private final FirebaseioService firebaseioService;
 
   private StoryRepository storyRepository;
-
-  private StatisticsService statisticsService;
-
 
   private ItemRepository itemRepository;
 
