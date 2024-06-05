@@ -96,6 +96,7 @@ public class ReadStoriesJob {
       var lastItem = checkPointRepository.getLastItem();
       if (maxItem - lastItem > READ_ITEMS_BATCH_SIZE) {
 
+        var start = System.currentTimeMillis();
         var futureMap = new HashMap<Long, Future<Item>>();
         for (var i = lastItem; i <= maxItem; i++) {
           var future = firebaseioService.readItemAsync(i);
@@ -107,6 +108,7 @@ public class ReadStoriesJob {
 
         }
 
+
         var items = futureMap.entrySet().stream().map(entry -> {
           try {
            return entry.getValue().get();
@@ -115,9 +117,11 @@ public class ReadStoriesJob {
             return null;
           }
         }).filter(item -> item != null).collect(Collectors.toSet());
-
+        var readItemsTook = System.currentTimeMillis() - start;
+        start = System.currentTimeMillis();
         itemRepository.batchSave(items);
-
+        var saveItemsTook = System.currentTimeMillis() - start;
+        logger.info("Read items took {} ms, save items took {} ms", readItemsTook, saveItemsTook);
         var checkPoint = items.stream().map(Item::getId).sorted().reduce((first, second) -> second);
 
         checkPoint.ifPresentOrElse(c -> {
