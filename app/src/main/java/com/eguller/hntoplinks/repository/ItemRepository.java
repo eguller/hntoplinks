@@ -1,12 +1,15 @@
 package com.eguller.hntoplinks.repository;
 
 import com.eguller.hntoplinks.entities.Item;
+import com.eguller.hntoplinks.models.Interval;
+import com.eguller.hntoplinks.util.DbUtils;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.List;
 import java.util.Set;
 
 @Repository
@@ -124,6 +127,100 @@ public class ItemRepository {
                 dead = :dead
         """,
       batchArgs
+    );
+  }
+
+  public List<Item> findByIntervalSortByScore(Interval interval) {
+    return findByIntervalSortByScore(interval, 30, 0);
+  }
+
+  public List<Item> findByIntervalSortByScore(Interval interval, int page) {
+    return findByIntervalSortByScore(interval, 30, 1);
+  }
+
+  public List<Item> findByIntervalSortByScore(Interval interval, int limit, int page) {
+    return template.query(
+      """
+          SELECT
+            id,
+            by,
+            descendants,
+            score,
+            time,
+            title,
+            type,
+            url,
+            parent,
+            dead
+          FROM
+            items
+          WHERE
+            time BETWEEN :from AND :to
+            AND type NOT IN ('comment')
+          ORDER BY
+            score DESC
+          LIMIT :limit
+          OFFSET :offset
+        """,
+      new MapSqlParameterSource()
+        .addValue("from", interval.from())
+        .addValue("to", interval.to())
+        .addValue("limit", limit)
+        .addValue("offset", DbUtils.pageToOffset(page, limit)),
+      (rs, rowNum) -> new Item(
+        rs.getLong("id"),
+        rs.getString("by"),
+        rs.getInt("descendants"),
+        rs.getInt("score"),
+        rs.getTimestamp("time").getTime(),
+        rs.getString("title"),
+        rs.getString("type"),
+        rs.getString("url"),
+        rs.getLong("parent"),
+        rs.getBoolean("dead")
+      )
+    );
+  }
+
+  public List<Item> findAllSortByScore(int limit, int page) {
+    return template.query(
+      """
+          SELECT
+            id,
+            by,
+            descendants,
+            score,
+            time,
+            title,
+            type,
+            url,
+            parent,
+            dead
+          FROM
+            items
+          WHERE
+            type NOT IN ('comment')
+          ORDER BY
+            score DESC
+          LIMIT :limit
+          OFFSET :offset
+        """,
+      new MapSqlParameterSource()
+        .addValue("limit", limit)
+        .addValue("offset", DbUtils.pageToOffset(page, limit))
+      ,
+      (rs, rowNum) -> new Item(
+        rs.getLong("id"),
+        rs.getString("by"),
+        rs.getInt("descendants"),
+        rs.getInt("score"),
+        rs.getTimestamp("time").getTime(),
+        rs.getString("title"),
+        rs.getString("type"),
+        rs.getString("url"),
+        rs.getLong("parent"),
+        rs.getBoolean("dead")
+      )
     );
   }
 }

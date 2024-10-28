@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HN Top Links - Popular Stories from Hacker News</title>
+  <link crossorigin="anonymous" media="all" rel="stylesheet"
+        th:href="@{{stylesheets}/base.css(stylesheets=${@environment.getProperty('hntoplinks.stylesheets')})}">
+  <link crossorigin="anonymous" media="all" rel="stylesheet"
+        th:href="@{{stylesheets}/layout.css(stylesheets=${@environment.getProperty('hntoplinks.stylesheets')})}">
+
+  <link crossorigin="anonymous" media="all" rel="stylesheet"
+        th:href="@{{stylesheets}/components.css(stylesheets=${@environment.getProperty('hntoplinks.stylesheets')})}">
+  <link crossorigin="anonymous" media="all" rel="stylesheet"
+        th:href="@{{stylesheets}/stories.css(stylesheets=${@environment.getProperty('hntoplinks.stylesheets')})}">
+</head>
+
+<body>
+<header>
+  <div class="header-content">
+    <a href="/" class="logo">HN Top Links</a>
+    <nav>
+      <a href="/" th:classappend="${page.navigation.activeMenu == 'day'} ? 'active'">Today</a>
+      <a href="/v2/week" th:classappend="${page.navigation.activeMenu == 'week'} ? 'active'">This Week</a>
+      <a href="/v2/month" th:classappend="${page.navigation.activeMenu == 'month'} ? 'active'">This Month</a>
+      <a href="/v2/year" th:classappend="${page.navigation.activeMenu == 'year'} ? 'active'">This Year</a>
+      <a href="/v2/all" th:classappend="${page.navigation.activeMenu == 'all'} ? 'active'">All</a>
+      <span class="nav-separator">|</span>
+      <a href="/subscribe" th:classappend="${page.navigation.activeMenu == 'subscribe'} ? 'active'">Subscribe</a>
+    </nav>
+  </div>
+</header>
+<div class="breadcrumb">
+  <div class="breadcrumb-content">
+    <a href="/">Home</a>
+    <span class="breadcrumb-separator">/</span>
+
+    <!-- Dynamic breadcrumb based on current page -->
+    <th:block th:if="${timeframe}">
+      <a href="/top">Top Stories</a>
+      <span class="breadcrumb-separator">/</span>
+      <span class="breadcrumb-current" th:text="${timeframe == 'day' ? 'Today' :
+                                                          timeframe == 'week' ? 'This Week' :
+                                                          timeframe == 'month' ? 'This Month' :
+                                                          timeframe}">Today</span>
+    </th:block>
+
+    <!-- Archive breadcrumb -->
+    <th:block th:if="${selectedYear}">
+      <a href="/archives">Archives</a>
+      <span class="breadcrumb-separator">/</span>
+      <th:block th:if="${selectedMonth}">
+        <a th:href="@{'/year/' + ${selectedYear}}" th:text="${selectedYear}">2024</a>
+        <span class="breadcrumb-separator">/</span>
+        <span class="breadcrumb-current" th:text="${selectedMonth}">January</span>
+      </th:block>
+      <th:block th:unless="${selectedMonth}">
+        <span class="breadcrumb-current" th:text="${selectedYear}">2024</span>
+      </th:block>
+    </th:block>
+
+    <!-- Regular page breadcrumb -->
+    <th:block th:if="${pageName}">
+      <span class="breadcrumb-current" th:text="${pageName}">Page Name</span>
+    </th:block>
+  </div>
+</div>
+
+<section layout:fragment="content"/>
+
+<footer>
+  <div class="footer-content">
+    <div class="archive-nav">
+      <div class="archive-section">
+        <h3>Browse by Year</h3>
+        <div class="archive-links">
+          <a th:each="year : ${#numbers.sequence(2024, 2010)}"
+             th:href="@{'/year/' + ${year}}"
+             th:text="${year}">2024</a>
+        </div>
+      </div>
+
+      <div class="archive-section" th:if="${selectedYear}">
+        <h3 th:text="${selectedYear + ' Archives'}">2024 Archives</h3>
+        <div class="archive-links">
+          <a href="#"
+             th:each="month : ${{'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'}}"
+             th:href="@{'/archive/' + ${selectedYear} + '/' + ${monthStat.count}}"
+             th:text="${month}">January</a>
+        </div>
+      </div>
+
+      <div class="archive-section">
+        <h3>Top Stories By</h3>
+        <div class="archive-links">
+          <a href="/top/day">Today</a>
+          <a href="/top/week">This Week</a>
+          <a href="/top/month">This Month</a>
+          <a href="/top/year">This Year</a>
+          <a href="/top/all">All Time</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="copyright">
+      <p>&copy; <span th:text="${#dates.year(#dates.createNow())}">2024</span> Hacker News Top Links</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function updateQueryParam(key, value) {
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set(key, value);
+    return `${window.location.pathname}?${urlParams.toString()}`;
+  }
+</script>
+</body>
+</html>
