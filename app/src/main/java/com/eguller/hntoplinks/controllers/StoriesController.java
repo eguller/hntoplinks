@@ -3,7 +3,7 @@ package com.eguller.hntoplinks.controllers;
 import com.eguller.hntoplinks.entities.SortType;
 import com.eguller.hntoplinks.models.Interval;
 import com.eguller.hntoplinks.models.Navigation;
-import com.eguller.hntoplinks.models.Page2;
+import com.eguller.hntoplinks.models.Page;
 import com.eguller.hntoplinks.models.StoriesContent;
 import com.eguller.hntoplinks.repository.ItemsRepository;
 import com.eguller.hntoplinks.util.DateUtils;
@@ -28,8 +28,18 @@ public class StoriesController {
   }
 
   @GetMapping("/")
-  public String index(Model model, @RequestParam(value = "page", defaultValue = "1") int page, @RequestParam(value = "sort", defaultValue = "upvotes") SortType sort) {
-    return today(model, page, sort);
+  public String index(Model model, @RequestParam("year") Integer year, @RequestParam("month") Integer month, @RequestParam("week") Integer week, @RequestParam("day") Integer day, @RequestParam(value = "page", defaultValue = "1") int page, @RequestParam(value = "sort", defaultValue = "upvotes") SortType sort) {
+    if (year != null && month != null && day != null) {
+      return today(model, page, sort);
+    } else if (year != null & month != null) {
+      return today(model, page, sort);
+    } else if (year != null && week != null) {
+      return today(model, page, sort);
+    } else if (year != null) {
+      return today(model, page, sort);
+    } else {
+      return today(model, page, sort);
+    }
   }
 
   @GetMapping("/today")
@@ -47,7 +57,7 @@ public class StoriesController {
       .activeMenu("day")
       .build();
 
-    var pageModel = Page2.builder()
+    var pageModel = Page.builder()
       .title("Best of today")
       .navigation(navigation)
       .content(storiesContent)
@@ -71,7 +81,7 @@ public class StoriesController {
       .activeMenu("week")
       .build();
 
-    var pageModel = Page2.builder()
+    var pageModel = Page.builder()
       .title("Best of the week")
       .navigation(navigation)
       .content(storiesContent)
@@ -96,7 +106,7 @@ public class StoriesController {
       .activeMenu("month")
       .build();
 
-    var pageModel = Page2.builder()
+    var pageModel = Page.builder()
       .title("Best of the  month")
       .navigation(navigation)
       .content(storiesContent)
@@ -120,7 +130,7 @@ public class StoriesController {
       .activeMenu("year")
       .build();
 
-    var pageModel = Page2.builder()
+    var pageModel = Page.builder()
       .title("Best of %d".formatted(LocalDate.now().getYear()))
       .navigation(navigation)
       .content(storiesContent)
@@ -143,7 +153,7 @@ public class StoriesController {
       .activeMenu("all")
       .build();
 
-    var pageModel = Page2.builder()
+    var pageModel = Page.builder()
       .title("Best of All Time")
       .navigation(navigation)
       .content(storiesContent)
@@ -172,7 +182,7 @@ public class StoriesController {
       .activeMenu("all")
       .build();
 
-    var pageModel = Page2.builder()
+    var pageModel = Page.builder()
       .title("All Time")
       .navigation(navigation)
       .content(storiesContent)
@@ -201,7 +211,7 @@ public class StoriesController {
     var navigation = Navigation.builder()
       .build();
 
-    var pageModel = Page2.builder()
+    var pageModel = Page.builder()
       .title("All Time")
       .navigation(navigation)
       .content(storiesContent)
@@ -231,7 +241,7 @@ public class StoriesController {
     var navigation = Navigation.builder()
       .build();
 
-    var pageModel = Page2.builder()
+    var pageModel = Page.builder()
       .title("All Time")
       .navigation(navigation)
       .content(storiesContent)
@@ -262,7 +272,7 @@ public class StoriesController {
       var navigation = Navigation.builder()
         .build();
 
-      var pageModel = Page2.builder()
+      var pageModel = Page.builder()
         .title("All Time")
         .navigation(navigation)
         .content(storiesContent)
@@ -270,7 +280,7 @@ public class StoriesController {
       model.addAttribute("page", pageModel);
       return "index";
     } catch (Exception ex) {
-      return index(model, page, sort);
+      return today(model, page, sort);
     }
   }
 }

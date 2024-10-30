@@ -1,11 +1,17 @@
 package com.eguller.hntoplinks.models;
 
+import lombok.Builder;
 import lombok.Data;
-import lombok.experimental.SuperBuilder;
 
+import java.util.Map;
+
+@Builder
 @Data
-@SuperBuilder(builderMethodName = "pageBuilder")
-public class Page {
-  private String title;
-}
+public class Page<T> {
+  private String              title;
+  private Map<String, Object> metadata;
+  private T                   content;    // Specific page content
 
+  // Optional components
+  private Navigation navigation;
+}
