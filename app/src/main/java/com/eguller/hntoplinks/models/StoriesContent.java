@@ -1,6 +1,7 @@
 package com.eguller.hntoplinks.models;
 
 import com.eguller.hntoplinks.entities.Item;
+import com.eguller.hntoplinks.entities.SortType;
 import lombok.Builder;
 import lombok.Data;
 
@@ -10,7 +11,7 @@ import java.util.List;
 @Data
 public class StoriesContent {
   private List<Item> stories;
-  private String     sortBy;
-  private int currentPage;
-  private int totalPages;
+  private SortType   sortBy;
+  private int        currentPage;
+  private int        totalPages;
 }

@@ -1,6 +1,5 @@
 package com.eguller.hntoplinks.config;
 
-import com.eguller.hntoplinks.springframework.mobile.device.DeviceResolverHandlerInterceptor;
 import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,8 +7,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.mobile.device.DeviceHandlerMethodArgumentResolver;
+import org.springframework.mobile.device.DeviceResolverHandlerInterceptor;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -46,18 +47,8 @@ public class AppConfig implements WebMvcConfigurer, SchedulingConfigurer {
   private              String firebaseIoBaseUrl;
 
   @Bean
-  public DeviceResolverHandlerInterceptor deviceResolverHandlerInterceptor() {
-    return new DeviceResolverHandlerInterceptor();
-  }
-
-  @Bean
   public DeviceHandlerMethodArgumentResolver deviceHandlerMethodArgumentResolver() {
     return new DeviceHandlerMethodArgumentResolver();
-  }
-
-  @Override
-  public void addInterceptors(InterceptorRegistry registry) {
-    registry.addInterceptor(deviceResolverHandlerInterceptor());
   }
 
   @Override
@@ -118,5 +109,10 @@ public class AppConfig implements WebMvcConfigurer, SchedulingConfigurer {
   public TaskScheduler taskScheduler() {
     return new ConcurrentTaskScheduler();
   }
+
+  @Override
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addConverter(new StringToEnumConverter());
+    }
 
 }

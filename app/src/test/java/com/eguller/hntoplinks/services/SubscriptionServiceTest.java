@@ -2,7 +2,7 @@ package com.eguller.hntoplinks.services;
 
 
 import com.eguller.hntoplinks.Application;
-import com.eguller.hntoplinks.controllers.ApplicationController;
+import com.eguller.hntoplinks.controllers.StoriesController;
 import com.eguller.hntoplinks.entities.Period;
 import com.eguller.hntoplinks.models.Email;
 import com.eguller.hntoplinks.models.SubscriptionPage;
@@ -46,7 +46,7 @@ public class SubscriptionServiceTest {
   }
 
   @Autowired
-  private ApplicationController applicationController;
+  private StoriesController applicationController;
 
   @Autowired
   private SubscriberRepository subscriberRepository;

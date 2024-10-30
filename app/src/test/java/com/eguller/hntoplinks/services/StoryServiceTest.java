@@ -2,7 +2,7 @@ package com.eguller.hntoplinks.services;
 
 
 import com.eguller.hntoplinks.Application;
-import com.eguller.hntoplinks.controllers.ApplicationController;
+import com.eguller.hntoplinks.controllers.StoriesController;
 import com.eguller.hntoplinks.entities.Period;
 import com.eguller.hntoplinks.entities.StoryEntity;
 import com.eguller.hntoplinks.entities.SubscriberEntity;
@@ -15,7 +15,6 @@ import com.eguller.hntoplinks.repository.SubscriberRepository;
 import com.eguller.hntoplinks.services.email.MockEmailStore;
 import com.eguller.hntoplinks.util.DbUtil;
 import com.eguller.hntoplinks.util.SubscriptionUtil;
-import org.junit.ClassRule;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -65,7 +64,7 @@ public class StoryServiceTest {
   private StoryRepository      storyRepository;
 
   @Autowired
-  private ApplicationController applicationController;
+  private StoriesController applicationController;
 
   @Autowired
   private NamedParameterJdbcTemplate namedParameterJdbcTemplate;

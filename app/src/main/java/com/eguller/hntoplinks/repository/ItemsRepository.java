@@ -1,6 +1,7 @@
 package com.eguller.hntoplinks.repository;
 
 import com.eguller.hntoplinks.entities.Item;
+import com.eguller.hntoplinks.entities.SortType;
 import com.eguller.hntoplinks.models.Interval;
 import com.eguller.hntoplinks.util.DbUtils;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -13,10 +14,10 @@ import java.util.List;
 import java.util.Set;
 
 @Repository
-public class ItemRepository {
+public class ItemsRepository {
   private final NamedParameterJdbcTemplate template;
 
-  public ItemRepository(NamedParameterJdbcTemplate jdbcTemplate) {
+  public ItemsRepository(NamedParameterJdbcTemplate jdbcTemplate) {
     this.template = jdbcTemplate;
   }
 
@@ -130,15 +131,15 @@ public class ItemRepository {
     );
   }
 
-  public List<Item> findByIntervalSortByScore(Interval interval) {
-    return findByIntervalSortByScore(interval, 30, 0);
+  public List<Item> findByInterval(Interval interval) {
+    return findByInterval(interval, SortType.UPVOTES, 30, 0);
   }
 
-  public List<Item> findByIntervalSortByScore(Interval interval, int page) {
-    return findByIntervalSortByScore(interval, 30, 1);
+  public List<Item> findByInterval(Interval interval, int page) {
+    return findByInterval(interval, SortType.UPVOTES, 30, 1);
   }
 
-  public List<Item> findByIntervalSortByScore(Interval interval, int limit, int page) {
+  public List<Item> findByInterval(Interval interval, SortType sortBy, int limit, int page) {
     return template.query(
       """
           SELECT
@@ -158,10 +159,10 @@ public class ItemRepository {
             time BETWEEN :from AND :to
             AND type NOT IN ('comment')
           ORDER BY
-            score DESC
+            %s DESC
           LIMIT :limit
           OFFSET :offset
-        """,
+        """.formatted(getSortyTypeColumnName(sortBy)),
       new MapSqlParameterSource()
         .addValue("from", interval.from())
         .addValue("to", interval.to())
@@ -182,7 +183,14 @@ public class ItemRepository {
     );
   }
 
-  public List<Item> findAllSortByScore(int limit, int page) {
+  private String getSortyTypeColumnName(SortType sortBy) {
+    return switch (sortBy) {
+      case UPVOTES -> "score";
+      case COMMENTS -> "descendants";
+    };
+  }
+
+  public List<Item> findAll(int limit, SortType sortBy, int page) {
     return template.query(
       """
           SELECT
@@ -201,10 +209,10 @@ public class ItemRepository {
           WHERE
             type NOT IN ('comment')
           ORDER BY
-            score DESC
+            %s DESC
           LIMIT :limit
           OFFSET :offset
-        """,
+        """.formatted(getSortyTypeColumnName(sortBy)),
       new MapSqlParameterSource()
         .addValue("limit", limit)
         .addValue("offset", DbUtils.pageToOffset(page, limit))

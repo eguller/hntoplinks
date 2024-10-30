@@ -4,10 +4,9 @@ package com.eguller.hntoplinks.jobs;
 import com.eguller.hntoplinks.entities.Item;
 import com.eguller.hntoplinks.models.HnStory;
 import com.eguller.hntoplinks.repository.CheckPointRepository;
-import com.eguller.hntoplinks.repository.ItemRepository;
+import com.eguller.hntoplinks.repository.ItemsRepository;
 import com.eguller.hntoplinks.repository.StoryRepository;
 import com.eguller.hntoplinks.services.FirebaseioService;
-import com.eguller.hntoplinks.services.StatisticsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +22,9 @@ import org.springframework.stereotype.Component;
 import java.lang.invoke.MethodHandles;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -47,7 +43,7 @@ public class ReadStoriesJob {
 
   private StoryRepository storyRepository;
 
-  private ItemRepository itemRepository;
+  private ItemsRepository itemRepository;
 
   private CheckPointRepository checkPointRepository;
 
@@ -59,7 +55,7 @@ public class ReadStoriesJob {
   @Autowired
   public ReadStoriesJob(FirebaseioService firebaseioService,
                         StoryRepository storyRepository,
-                        ItemRepository itemsRepository,
+                        ItemsRepository itemsRepository,
                         CheckPointRepository checkPointRepository,
                         TaskScheduler taskScheduler
   ) {

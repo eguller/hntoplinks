@@ -22,10 +22,10 @@
     <a href="/" class="logo">HN Top Links</a>
     <nav>
       <a href="/" th:classappend="${page.navigation.activeMenu == 'day'} ? 'active'">Today</a>
-      <a href="/v2/week" th:classappend="${page.navigation.activeMenu == 'week'} ? 'active'">This Week</a>
-      <a href="/v2/month" th:classappend="${page.navigation.activeMenu == 'month'} ? 'active'">This Month</a>
-      <a href="/v2/year" th:classappend="${page.navigation.activeMenu == 'year'} ? 'active'">This Year</a>
-      <a href="/v2/all" th:classappend="${page.navigation.activeMenu == 'all'} ? 'active'">All</a>
+      <a href="/week" th:classappend="${page.navigation.activeMenu == 'week'} ? 'active'">This Week</a>
+      <a href="/month" th:classappend="${page.navigation.activeMenu == 'month'} ? 'active'">This Month</a>
+      <a href="/year" th:classappend="${page.navigation.activeMenu == 'year'} ? 'active'">This Year</a>
+      <a href="/all" th:classappend="${page.navigation.activeMenu == 'all'} ? 'active'">All</a>
       <span class="nav-separator">|</span>
       <a href="/subscribe" th:classappend="${page.navigation.activeMenu == 'subscribe'} ? 'active'">Subscribe</a>
     </nav>

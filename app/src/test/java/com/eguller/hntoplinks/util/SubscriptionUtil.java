@@ -1,6 +1,6 @@
 package com.eguller.hntoplinks.util;
 
-import com.eguller.hntoplinks.controllers.ApplicationController;
+import com.eguller.hntoplinks.controllers.StoriesController;
 import com.eguller.hntoplinks.entities.Period;
 import com.eguller.hntoplinks.models.SubscriptionForm;
 import org.springframework.ui.ExtendedModelMap;
@@ -10,11 +10,11 @@ import java.time.ZoneId;
 import java.util.Set;
 
 public class SubscriptionUtil {
-  public static Model subscribeDailyNew(ApplicationController applicationController, String emailAddress) {
+  public static Model subscribeDailyNew(StoriesController applicationController, String emailAddress) {
     return subscribe(applicationController, emailAddress, null, Period.DAILY);
   }
 
-  public static ExtendedModelMap subscribe(ApplicationController applicationController, String emailAddress, String subscriptionUuid, Period ... periods) {
+  public static ExtendedModelMap subscribe(StoriesController applicationController, String emailAddress, String subscriptionUuid, Period ... periods) {
     var subscriptionForm = SubscriptionForm.builder()
       .subsUUID(subscriptionUuid)
       .email(emailAddress)
