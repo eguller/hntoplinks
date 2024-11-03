@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 public class HnStoryTest {
   @Test
-  public void test_getDomain(){
+  public void test_getDomain() {
     var hnStory = new HnStory(null, 0, 0, 0, "Tell HN: xyz", null, null);
     var domainName = hnStory.getDomainName();
     Assertions.assertTrue(domainName.isEmpty());

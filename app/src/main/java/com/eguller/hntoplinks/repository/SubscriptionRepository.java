@@ -1,14 +1,7 @@
 package com.eguller.hntoplinks.repository;
 
-import com.eguller.hntoplinks.entities.SubscriberEntity;
-import com.eguller.hntoplinks.entities.SubscriptionEntity;
-import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
 
-import java.util.List;
+import com.eguller.hntoplinks.entities.SubscriptionEntity;
 
-public interface SubscriptionRepository extends CrudRepository<SubscriptionEntity, Long> {
-
-
-
-}
+public interface SubscriptionRepository extends CrudRepository<SubscriptionEntity, Long> {}

@@ -1,5 +1,7 @@
 package com.eguller.hntoplinks.services;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -11,16 +13,16 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Service
-@ConditionalOnProperty(value = "hntoplinks.captcha.enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(
+    value = "hntoplinks.captcha.enabled",
+    havingValue = "true",
+    matchIfMissing = true)
 public class RecaptchaVerifierImpl implements RecaptchaVerifier {
   @Value("${hntoplinks.captcha.secret}")
-  private String       captchaSecret;
-  @Autowired
-  private RestTemplate client;
+  private String captchaSecret;
+
+  @Autowired private RestTemplate client;
 
   @Override
   public boolean verify(String recaptchaResponse) {
@@ -33,7 +35,8 @@ public class RecaptchaVerifierImpl implements RecaptchaVerifier {
     map.add("response", recaptchaResponse);
 
     var request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
-    var response = client.postForEntity("https://www.google.com/recaptcha/api/siteverify", request, Map.class);
+    var response =
+        client.postForEntity("https://www.google.com/recaptcha/api/siteverify", request, Map.class);
     var success = response.getBody().get("success");
     return (success != null && (success instanceof Boolean) && ((boolean) success));
   }

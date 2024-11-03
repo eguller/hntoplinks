@@ -1,15 +1,5 @@
 package com.eguller.hntoplinks.services;
 
-
-import com.eguller.hntoplinks.Application;
-import com.eguller.hntoplinks.controllers.StoriesController;
-import com.eguller.hntoplinks.entities.Period;
-import com.eguller.hntoplinks.models.Email;
-import com.eguller.hntoplinks.models.SubscriptionPage;
-import com.eguller.hntoplinks.repository.SubscriberRepository;
-import com.eguller.hntoplinks.services.email.MockEmailStore;
-import com.eguller.hntoplinks.util.DbUtil;
-import com.eguller.hntoplinks.util.SubscriptionUtil;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -23,12 +13,20 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.ui.ExtendedModelMap;
 import org.testcontainers.containers.PostgreSQLContainer;
 
+import com.eguller.hntoplinks.Application;
+import com.eguller.hntoplinks.controllers.StoriesController;
+import com.eguller.hntoplinks.entities.Period;
+import com.eguller.hntoplinks.models.Email;
+import com.eguller.hntoplinks.models.SubscriptionPage;
+import com.eguller.hntoplinks.repository.SubscriberRepository;
+import com.eguller.hntoplinks.services.email.MockEmailStore;
+import com.eguller.hntoplinks.util.DbUtil;
+import com.eguller.hntoplinks.util.SubscriptionUtil;
+
 @SpringBootTest(classes = {Application.class})
 @ActiveProfiles({"local", "test"})
 public class SubscriptionServiceTest {
-  static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
-    "postgres:13.5"
-  );
+  static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:13.5");
 
   @BeforeAll
   static void beforeAll() {
@@ -45,24 +43,19 @@ public class SubscriptionServiceTest {
     DbUtil.updateDatabaseProperties(postgres, registry);
   }
 
-  @Autowired
-  private StoriesController applicationController;
+  @Autowired private StoriesController applicationController;
 
-  @Autowired
-  private SubscriberRepository subscriberRepository;
+  @Autowired private SubscriberRepository subscriberRepository;
 
-  @Autowired
-  private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+  @Autowired private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-  @Autowired
-  private MockEmailStore mockEmailStore;
+  @Autowired private MockEmailStore mockEmailStore;
 
   @Test
   public void test_subscribe() {
     var emailAddress = "test_subscribe1@hntoplinks.com";
     DbUtil.deleteSubscriber(namedParameterJdbcTemplate, emailAddress);
-    var model =
-      SubscriptionUtil.subscribeDailyNew(this.applicationController, emailAddress);
+    var model = SubscriptionUtil.subscribeDailyNew(this.applicationController, emailAddress);
 
     var subscriptionEntity = subscriberRepository.findByEmail(emailAddress);
     Assertions.assertEquals(emailAddress, subscriptionEntity.get().getEmail());
@@ -82,7 +75,8 @@ public class SubscriptionServiceTest {
     var model = SubscriptionUtil.subscribeDailyNew(this.applicationController, emailAddress);
     var subscriptionEntity = subscriberRepository.findByEmail(emailAddress);
     Assertions.assertEquals(emailAddress, subscriptionEntity.get().getEmail());
-    applicationController.unsubscribe_Get(new ExtendedModelMap(), subscriptionEntity.get().getSubsUUID());
+    applicationController.unsubscribe_Get(
+        new ExtendedModelMap(), subscriptionEntity.get().getSubsUUID());
     subscriptionEntity = subscriberRepository.findByEmail(emailAddress);
     Assertions.assertFalse(subscriptionEntity.isPresent());
   }
@@ -96,26 +90,41 @@ public class SubscriptionServiceTest {
     Assertions.assertTrue(subscriptionEntity.get().isSubscribedFor(Period.DAILY));
     Assertions.assertFalse(subscriptionEntity.get().isSubscribedFor(Period.WEEKLY));
 
-    SubscriptionUtil.subscribe(this.applicationController, emailAddress, ((SubscriptionPage) model.getAttribute("page")).getSubscriptionForm().getSubsUUID(), Period.DAILY, Period.WEEKLY);
+    SubscriptionUtil.subscribe(
+        this.applicationController,
+        emailAddress,
+        ((SubscriptionPage) model.getAttribute("page")).getSubscriptionForm().getSubsUUID(),
+        Period.DAILY,
+        Period.WEEKLY);
     subscriptionEntity = subscriberRepository.findByEmail(emailAddress);
     Assertions.assertTrue(subscriptionEntity.get().isSubscribedFor(Period.DAILY));
     Assertions.assertTrue(subscriptionEntity.get().isSubscribedFor(Period.WEEKLY));
 
-    SubscriptionUtil.subscribe(this.applicationController, emailAddress, ((SubscriptionPage) model.getAttribute("page")).getSubscriptionForm().getSubsUUID(), Period.DAILY, Period.WEEKLY, Period.MONTHLY, Period.YEARLY);
+    SubscriptionUtil.subscribe(
+        this.applicationController,
+        emailAddress,
+        ((SubscriptionPage) model.getAttribute("page")).getSubscriptionForm().getSubsUUID(),
+        Period.DAILY,
+        Period.WEEKLY,
+        Period.MONTHLY,
+        Period.YEARLY);
     subscriptionEntity = subscriberRepository.findByEmail(emailAddress);
     Assertions.assertTrue(subscriptionEntity.get().isSubscribedFor(Period.DAILY));
     Assertions.assertTrue(subscriptionEntity.get().isSubscribedFor(Period.WEEKLY));
     Assertions.assertTrue(subscriptionEntity.get().isSubscribedFor(Period.MONTHLY));
     Assertions.assertTrue(subscriptionEntity.get().isSubscribedFor(Period.YEARLY));
 
-    SubscriptionUtil.subscribe(this.applicationController, emailAddress, ((SubscriptionPage) model.getAttribute("page")).getSubscriptionForm().getSubsUUID(), Period.DAILY, Period.WEEKLY, Period.MONTHLY);
+    SubscriptionUtil.subscribe(
+        this.applicationController,
+        emailAddress,
+        ((SubscriptionPage) model.getAttribute("page")).getSubscriptionForm().getSubsUUID(),
+        Period.DAILY,
+        Period.WEEKLY,
+        Period.MONTHLY);
     subscriptionEntity = subscriberRepository.findByEmail(emailAddress);
     Assertions.assertTrue(subscriptionEntity.get().isSubscribedFor(Period.DAILY));
     Assertions.assertTrue(subscriptionEntity.get().isSubscribedFor(Period.WEEKLY));
     Assertions.assertTrue(subscriptionEntity.get().isSubscribedFor(Period.MONTHLY));
     Assertions.assertFalse(subscriptionEntity.get().isSubscribedFor(Period.YEARLY));
-
   }
-
-
 }

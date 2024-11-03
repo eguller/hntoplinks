@@ -1,17 +1,18 @@
 package com.eguller.hntoplinks.repository;
 
-import com.eguller.hntoplinks.entities.Item;
-import com.eguller.hntoplinks.entities.SortType;
-import com.eguller.hntoplinks.models.Interval;
-import com.eguller.hntoplinks.util.DbUtils;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.stereotype.Repository;
-
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
 import java.util.Set;
+
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.stereotype.Repository;
+
+import com.eguller.hntoplinks.entities.Item;
+import com.eguller.hntoplinks.entities.SortType;
+import com.eguller.hntoplinks.models.Interval;
+import com.eguller.hntoplinks.util.DbUtils;
 
 @Repository
 public class ItemsRepository {
@@ -23,7 +24,7 @@ public class ItemsRepository {
 
   public void save(Item item) {
     template.update(
-      """
+        """
           INSERT INTO items
           (
             id,
@@ -64,29 +65,32 @@ public class ItemsRepository {
                 parent = :parent,
                 dead = :dead
         """,
-      itemToSqlParameterSource(item)
-    );
+        itemToSqlParameterSource(item));
   }
 
   private static MapSqlParameterSource itemToSqlParameterSource(Item item) {
     return new MapSqlParameterSource()
-      .addValue("id", item.getId())
-      .addValue("by", item.getBy())
-      .addValue("descendants", item.getDescendants())
-      .addValue("score", item.getScore())
-      .addValue("time", item.getTime() != null ? Timestamp.from(Instant.ofEpochSecond(item.getTime())) : null)
-      .addValue("title", item.getTitle())
-      .addValue("type", item.getType())
-      .addValue("url", item.getUrl())
-      .addValue("parent", item.getParent())
-      .addValue("dead", item.isDead());
+        .addValue("id", item.getId())
+        .addValue("by", item.getBy())
+        .addValue("descendants", item.getDescendants())
+        .addValue("score", item.getScore())
+        .addValue(
+            "time",
+            item.getTime() != null ? Timestamp.from(Instant.ofEpochSecond(item.getTime())) : null)
+        .addValue("title", item.getTitle())
+        .addValue("type", item.getType())
+        .addValue("url", item.getUrl())
+        .addValue("parent", item.getParent())
+        .addValue("dead", item.isDead());
   }
 
   public void batchSave(Set<Item> items) {
-    var batchArgs = items.stream().map(item -> itemToSqlParameterSource(item)
-    ).toArray(MapSqlParameterSource[]::new);
+    var batchArgs =
+        items.stream()
+            .map(item -> itemToSqlParameterSource(item))
+            .toArray(MapSqlParameterSource[]::new);
     template.batchUpdate(
-      """
+        """
           INSERT INTO items
           (
             id,
@@ -127,8 +131,7 @@ public class ItemsRepository {
                 parent = :parent,
                 dead = :dead
         """,
-      batchArgs
-    );
+        batchArgs);
   }
 
   public List<Item> findByInterval(Interval interval) {
@@ -141,7 +144,7 @@ public class ItemsRepository {
 
   public List<Item> findByInterval(Interval interval, SortType sortBy, int limit, int page) {
     return template.query(
-      """
+        """
           SELECT
             id,
             by,
@@ -162,25 +165,25 @@ public class ItemsRepository {
             %s DESC
           LIMIT :limit
           OFFSET :offset
-        """.formatted(getSortyTypeColumnName(sortBy)),
-      new MapSqlParameterSource()
-        .addValue("from", interval.from())
-        .addValue("to", interval.to())
-        .addValue("limit", limit)
-        .addValue("offset", DbUtils.pageToOffset(page, limit)),
-      (rs, rowNum) -> new Item(
-        rs.getLong("id"),
-        rs.getString("by"),
-        rs.getInt("descendants"),
-        rs.getInt("score"),
-        rs.getTimestamp("time").getTime(),
-        rs.getString("title"),
-        rs.getString("type"),
-        rs.getString("url"),
-        rs.getLong("parent"),
-        rs.getBoolean("dead")
-      )
-    );
+        """
+            .formatted(getSortyTypeColumnName(sortBy)),
+        new MapSqlParameterSource()
+            .addValue("from", interval.from())
+            .addValue("to", interval.to())
+            .addValue("limit", limit)
+            .addValue("offset", DbUtils.pageToOffset(page, limit)),
+        (rs, rowNum) ->
+            new Item(
+                rs.getLong("id"),
+                rs.getString("by"),
+                rs.getInt("descendants"),
+                rs.getInt("score"),
+                rs.getTimestamp("time").getTime(),
+                rs.getString("title"),
+                rs.getString("type"),
+                rs.getString("url"),
+                rs.getLong("parent"),
+                rs.getBoolean("dead")));
   }
 
   private String getSortyTypeColumnName(SortType sortBy) {
@@ -192,7 +195,7 @@ public class ItemsRepository {
 
   public List<Item> findAll(int limit, SortType sortBy, int page) {
     return template.query(
-      """
+        """
           SELECT
             id,
             by,
@@ -212,23 +215,22 @@ public class ItemsRepository {
             %s DESC
           LIMIT :limit
           OFFSET :offset
-        """.formatted(getSortyTypeColumnName(sortBy)),
-      new MapSqlParameterSource()
-        .addValue("limit", limit)
-        .addValue("offset", DbUtils.pageToOffset(page, limit))
-      ,
-      (rs, rowNum) -> new Item(
-        rs.getLong("id"),
-        rs.getString("by"),
-        rs.getInt("descendants"),
-        rs.getInt("score"),
-        rs.getTimestamp("time").getTime(),
-        rs.getString("title"),
-        rs.getString("type"),
-        rs.getString("url"),
-        rs.getLong("parent"),
-        rs.getBoolean("dead")
-      )
-    );
+        """
+            .formatted(getSortyTypeColumnName(sortBy)),
+        new MapSqlParameterSource()
+            .addValue("limit", limit)
+            .addValue("offset", DbUtils.pageToOffset(page, limit)),
+        (rs, rowNum) ->
+            new Item(
+                rs.getLong("id"),
+                rs.getString("by"),
+                rs.getInt("descendants"),
+                rs.getInt("score"),
+                rs.getTimestamp("time").getTime(),
+                rs.getString("title"),
+                rs.getString("type"),
+                rs.getString("url"),
+                rs.getLong("parent"),
+                rs.getBoolean("dead")));
   }
 }

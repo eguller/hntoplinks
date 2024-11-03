@@ -1,14 +1,13 @@
 package com.eguller.hntoplinks.repository;
 
-import com.eguller.hntoplinks.entities.SubscriberEntity;
-import com.eguller.hntoplinks.entities.SubscriptionEntity;
-import org.springframework.data.jdbc.repository.query.Modifying;
-import org.springframework.data.jdbc.repository.query.Query;
-import org.springframework.data.repository.CrudRepository;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.data.jdbc.repository.query.Query;
+import org.springframework.data.repository.CrudRepository;
+
+import com.eguller.hntoplinks.entities.SubscriberEntity;
 
 public interface SubscriberRepository extends CrudRepository<SubscriberEntity, Long> {
   Optional<SubscriberEntity> findBySubsUUID(String subscriptionId);
@@ -19,7 +18,8 @@ public interface SubscriberRepository extends CrudRepository<SubscriberEntity, L
 
   long deleteBySubsUUID(String subscriptionId);
 
-    @Query("""
+  @Query(
+      """
      select * from
      subscriber where
      subscriber.activated = true

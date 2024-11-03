@@ -1,0 +1,100 @@
+<html layout:decorate="~{layouts/main}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+>
+
+<section class="subscription-page">
+
+  <div class="subscription-form" layout:fragment="content">
+    <h1>Subscribe to HN Top Links</h1>
+
+    <!-- Success message -->
+    <div th:if="${param.success}" class="alert alert-success">
+      Thank you for subscribing! Please check your email to confirm your subscription.
+    </div>
+
+    <!-- Confirmation success -->
+    <div th:if="${param.confirmed}" class="alert alert-success">
+      Your subscription has been confirmed! You will start receiving updates soon.
+    </div>
+
+    <!-- Error message -->
+    <div th:if="${param.error}" class="alert alert-danger">
+      An error occurred. Please try again later.
+    </div>
+
+    <form th:action="@{/subscribe}"
+          th:object="${subscription}"
+          method="post"
+          class="subscription-form">
+
+      <!-- Email field -->
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email"
+               class="form-control"
+               id="email"
+               th:field="*{email}"
+               th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'">
+        <div class="invalid-feedback"
+             th:if="${#fields.hasErrors('email')}"
+             th:errors="*{email}">
+          Email Error
+        </div>
+      </div>
+
+      <!-- Subscription options -->
+      <div class="form-group subscription-options">
+        <label class="subscription-options-label">Subscription Frequency</label>
+
+        <div class="custom-control custom-checkbox">
+          <input type="checkbox"
+                 class="custom-control-input"
+                 id="dailyEmails"
+                 th:field="*{dailyEmails}">
+          <label class="custom-control-label" for="dailyEmails">
+            Daily Updates
+          </label>
+        </div>
+
+        <div class="custom-control custom-checkbox">
+          <input type="checkbox"
+                 class="custom-control-input"
+                 id="weeklyEmails"
+                 th:field="*{weeklyEmails}">
+          <label class="custom-control-label" for="weeklyEmails">
+            Weekly Digest
+          </label>
+        </div>
+
+        <div class="custom-control custom-checkbox">
+          <input type="checkbox"
+                 class="custom-control-input"
+                 id="monthlyEmails"
+                 th:field="*{monthlyEmails}">
+          <label class="custom-control-label" for="monthlyEmails">
+            Monthly Roundup
+          </label>
+        </div>
+
+        <div class="custom-control custom-checkbox">
+          <input type="checkbox"
+                 class="custom-control-input"
+                 id="yearlyEmails"
+                 th:field="*{yearlyEmails}">
+          <label class="custom-control-label" for="yearlyEmails">
+            Yearly Review
+          </label>
+        </div>
+
+        <!-- Validation error for checkboxes -->
+        <div class="invalid-feedback d-block"
+             th:if="${#fields.hasErrors('atLeastOneSelected')}"
+             th:errors="*{atLeastOneSelected}">
+          Checkbox Error
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Subscribe</button>
+    </form>
+  </div>
+</section>

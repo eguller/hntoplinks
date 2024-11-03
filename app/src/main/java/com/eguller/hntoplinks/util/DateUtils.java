@@ -1,10 +1,5 @@
 package com.eguller.hntoplinks.util;
 
-import com.eguller.hntoplinks.models.Interval;
-import lombok.val;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.lang.invoke.MethodHandles;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -18,8 +13,16 @@ import java.time.temporal.TemporalAdjusters;
 import java.time.temporal.WeekFields;
 import java.util.Locale;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.eguller.hntoplinks.models.Interval;
+
+import lombok.val;
+
 public class DateUtils {
-  private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+  private static final Logger logger =
+      LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static String since(LocalDateTime time) {
     long yearsBetween = ChronoUnit.YEARS.between(time, LocalDateTime.now());
@@ -80,19 +83,43 @@ public class DateUtils {
   }
 
   public static LocalDateTime tomorrow_7_AM(ZoneId targetZone) {
-    return ZonedDateTime.now(targetZone).plusDays(1).withHour(7).withMinute(0).withSecond(0).withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
+    return ZonedDateTime.now(targetZone)
+        .plusDays(1)
+        .withHour(7)
+        .withMinute(0)
+        .withSecond(0)
+        .withZoneSameInstant(ZoneId.systemDefault())
+        .toLocalDateTime();
   }
 
   public static LocalDateTime nextMonday_7_AM(ZoneId targetZone) {
-    return ZonedDateTime.now(targetZone).with(TemporalAdjusters.next(DayOfWeek.MONDAY)).withHour(7).withMinute(0).withSecond(0).withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
+    return ZonedDateTime.now(targetZone)
+        .with(TemporalAdjusters.next(DayOfWeek.MONDAY))
+        .withHour(7)
+        .withMinute(0)
+        .withSecond(0)
+        .withZoneSameInstant(ZoneId.systemDefault())
+        .toLocalDateTime();
   }
 
   public static LocalDateTime firstDayOfNextMonth_7_AM(ZoneId targetZone) {
-    return ZonedDateTime.now(targetZone).with(TemporalAdjusters.firstDayOfNextMonth()).withHour(7).withMinute(0).withSecond(0).withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
+    return ZonedDateTime.now(targetZone)
+        .with(TemporalAdjusters.firstDayOfNextMonth())
+        .withHour(7)
+        .withMinute(0)
+        .withSecond(0)
+        .withZoneSameInstant(ZoneId.systemDefault())
+        .toLocalDateTime();
   }
 
   public static LocalDateTime firstDayOfNextYear_7_AM(ZoneId targetZone) {
-    return ZonedDateTime.now(targetZone).with(TemporalAdjusters.firstDayOfNextYear()).withHour(7).withMinute(0).withSecond(0).withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
+    return ZonedDateTime.now(targetZone)
+        .with(TemporalAdjusters.firstDayOfNextYear())
+        .withHour(7)
+        .withMinute(0)
+        .withSecond(0)
+        .withZoneSameInstant(ZoneId.systemDefault())
+        .toLocalDateTime();
   }
 
   public static ZoneId zoneOf(String zoneIdStr) {
@@ -153,6 +180,4 @@ public class DateUtils {
     var to = date.atTime(LocalTime.MAX);
     return new Interval(from, to);
   }
-
-
 }

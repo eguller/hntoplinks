@@ -8,16 +8,17 @@ public enum SortType {
 
   private final String value;
 
-  private static Map<String, SortType> sortTypeMap = Map.of(
-    "upvotes", UPVOTES,
-    "comments", COMMENTS
-  );
+  private static Map<String, SortType> sortTypeMap =
+      Map.of(
+          "upvotes", UPVOTES,
+          "comments", COMMENTS);
 
   SortType(String value) {
     this.value = value;
   }
+
   public static SortType fromString(String value) {
-    if(value == null) return null;
+    if (value == null) return null;
 
     return sortTypeMap.getOrDefault(value.toLowerCase(), UPVOTES);
   }

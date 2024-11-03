@@ -44,9 +44,9 @@ public class FormattingUtils {
     }
   }
 
-    public String since(long timeL) {
+  public String since(long timeL) {
     LocalDateTime time =
-    LocalDateTime.ofInstant(Instant.ofEpochMilli(timeL), ZoneId.systemDefault());
+        LocalDateTime.ofInstant(Instant.ofEpochMilli(timeL), ZoneId.systemDefault());
     long yearsBetween = ChronoUnit.YEARS.between(time, LocalDateTime.now());
     if (yearsBetween == 1) {
       return yearsBetween + " year ago";

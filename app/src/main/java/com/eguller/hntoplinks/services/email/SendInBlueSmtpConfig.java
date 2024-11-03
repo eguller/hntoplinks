@@ -13,23 +13,16 @@ public class SendInBlueSmtpConfig implements SmtpConfig {
   private final String password;
 
   public SendInBlueSmtpConfig(
-    @Value("${hntoplinks.mail.from.email}")
-    String from,
-    @Value("${hntoplinks.mail.from.name}")
-    String fromName,
-    @Value("${hntoplinks.mail.sendinblue.smtp.host}")
-    String host,
-    @Value("${hntoplinks.mail.sendinblue.smtp.port}")
-    String port,
-    @Value("${hntoplinks.mail.sendinblue.smtp.username}")
-    String username,
-    @Value("${hntoplinks.mail.sendinblue.smtp.password}")
-    String password
-  ) {
-    this.from     = from;
+      @Value("${hntoplinks.mail.from.email}") String from,
+      @Value("${hntoplinks.mail.from.name}") String fromName,
+      @Value("${hntoplinks.mail.sendinblue.smtp.host}") String host,
+      @Value("${hntoplinks.mail.sendinblue.smtp.port}") String port,
+      @Value("${hntoplinks.mail.sendinblue.smtp.username}") String username,
+      @Value("${hntoplinks.mail.sendinblue.smtp.password}") String password) {
+    this.from = from;
     this.fromName = fromName;
-    this.host     = host;
-    this.port     = port;
+    this.host = host;
+    this.port = port;
     this.username = username;
     this.password = password;
   }

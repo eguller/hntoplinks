@@ -1,11 +1,5 @@
 package com.eguller.hntoplinks.models;
 
-import com.eguller.hntoplinks.entities.StoryEntity;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.lang.invoke.MethodHandles;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -16,39 +10,40 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.eguller.hntoplinks.entities.StoryEntity;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class HnStory {
-  private static final Logger     logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-  private final        String     by;
-  private final        long       id;
-  private final        int        score;
-  private final        long       time;
-  private final        String     title;
-  private final        String     url;
-  private final        List<Long> kids;
+  private static final Logger logger =
+      LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+  private final String by;
+  private final long id;
+  private final int score;
+  private final long time;
+  private final String title;
+  private final String url;
+  private final List<Long> kids;
 
   @JsonCreator
   public HnStory(
-    @JsonProperty("by")
-    String by,
-    @JsonProperty("id")
-    long id,
-    @JsonProperty("score")
-    int score,
-    @JsonProperty("time")
-    long time,
-    @JsonProperty("title")
-    String title,
-    @JsonProperty("url")
-    String url,
-    @JsonProperty("kids")
-    List<Long> kids) {
-    this.by    = by;
-    this.id    = id;
+      @JsonProperty("by") String by,
+      @JsonProperty("id") long id,
+      @JsonProperty("score") int score,
+      @JsonProperty("time") long time,
+      @JsonProperty("title") String title,
+      @JsonProperty("url") String url,
+      @JsonProperty("kids") List<Long> kids) {
+    this.by = by;
+    this.id = id;
     this.score = score;
-    this.time  = time;
+    this.time = time;
     this.title = title;
-    this.url   = url;
-    this.kids  = kids == null ? Collections.emptyList() : kids;
+    this.url = url;
+    this.kids = kids == null ? Collections.emptyList() : kids;
   }
 
   public String getBy() {
@@ -127,14 +122,18 @@ public class HnStory {
     story.setHnid(this.getId());
     story.setComment(this.getKids().size());
     story.setTitle(this.getTitle());
-    story.setUrl(this.getUrl() == null ? "https://news.ycombinator.com/item?id=%s".formatted(this.getId()) : this.getUrl());
+    story.setUrl(
+        this.getUrl() == null
+            ? "https://news.ycombinator.com/item?id=%s".formatted(this.getId())
+            : this.getUrl());
     story.setComhead(this.getDomainName());
     story.setUser(this.getBy());
     story.setPoints(this.getScore());
-    story.setDate(LocalDateTime.ofInstant(Instant.ofEpochMilli(TimeUnit.SECONDS.toMillis(this.getTime())), ZoneId.systemDefault())
-    );
+    story.setDate(
+        LocalDateTime.ofInstant(
+            Instant.ofEpochMilli(TimeUnit.SECONDS.toMillis(this.getTime())),
+            ZoneId.systemDefault()));
     story.setLastUpdate(story.getDate());
     return story;
   }
-
 }

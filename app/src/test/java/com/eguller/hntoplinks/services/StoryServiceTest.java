@@ -1,5 +1,24 @@
 package com.eguller.hntoplinks.services;
 
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.ui.ExtendedModelMap;
+import org.testcontainers.containers.PostgreSQLContainer;
 
 import com.eguller.hntoplinks.Application;
 import com.eguller.hntoplinks.controllers.StoriesController;
@@ -15,33 +34,12 @@ import com.eguller.hntoplinks.repository.SubscriberRepository;
 import com.eguller.hntoplinks.services.email.MockEmailStore;
 import com.eguller.hntoplinks.util.DbUtil;
 import com.eguller.hntoplinks.util.SubscriptionUtil;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.ui.ExtendedModelMap;
-import org.testcontainers.containers.PostgreSQLContainer;
-
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @SpringBootTest(classes = {Application.class})
 @ActiveProfiles({"local", "test"})
 public class StoryServiceTest {
 
-  static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
-    "postgres:13.5"
-  );
+  static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:13.5");
 
   @BeforeAll
   static void beforeAll() {
@@ -58,22 +56,16 @@ public class StoryServiceTest {
     DbUtil.updateDatabaseProperties(postgres, registry);
   }
 
-  @Autowired
-  private SubscriberRepository subscriberRepository;
-  @Autowired
-  private StoryRepository      storyRepository;
+  @Autowired private SubscriberRepository subscriberRepository;
+  @Autowired private StoryRepository storyRepository;
 
-  @Autowired
-  private StoriesController applicationController;
+  @Autowired private StoriesController applicationController;
 
-  @Autowired
-  private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+  @Autowired private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-  @Autowired
-  private SendMailJob sendMailJob;
+  @Autowired private SendMailJob sendMailJob;
 
-  @Autowired
-  private MockEmailStore mockEmailStore;
+  @Autowired private MockEmailStore mockEmailStore;
 
   @Test
   public void test_saveStory() {
@@ -159,7 +151,6 @@ public class StoryServiceTest {
     subscriber.setEmail(emailAddress);
     subscriber.setTimeZone("UTC");
 
-
     var weeklySubscription = new SubscriptionEntity();
     weeklySubscription.setPeriod(Period.WEEKLY);
     weeklySubscription.setNextSendDate(LocalDateTime.now().minusDays(1));
@@ -200,7 +191,6 @@ public class StoryServiceTest {
     subscriber.getSubscriptionList().add(subscription);
 
     test_PeriodicEmail(hnStory, subscriber);
-
   }
 
   @Test
@@ -266,7 +256,10 @@ public class StoryServiceTest {
 
     var subscriptionFormBuilder = SubscriptionForm.builder();
     subscriptionFormBuilder.email(subscriber.getEmail());
-    subscriptionFormBuilder.selectedPeriods(subscriber.getSubscriptionList().stream().map(subscriptionEntity -> subscriptionEntity.getPeriod()).collect(Collectors.toSet()));
+    subscriptionFormBuilder.selectedPeriods(
+        subscriber.getSubscriptionList().stream()
+            .map(subscriptionEntity -> subscriptionEntity.getPeriod())
+            .collect(Collectors.toSet()));
 
     var subscriptionForm = subscriptionFormBuilder.build();
     var model = new ExtendedModelMap();
@@ -277,29 +270,40 @@ public class StoryServiceTest {
     var savedSubscriber = subscriberRepository.findBySubsUUID(subscriberUUID);
 
     var parameters = new HashMap<String, Object>();
-    parameters.put("nextSendDate", LocalDateTime.now().minusHours(1)); //next_send time already passed should trigger an email send.
+    parameters.put(
+        "nextSendDate",
+        LocalDateTime.now()
+            .minusHours(1)); // next_send time already passed should trigger an email send.
     parameters.put("subscriberId", savedSubscriber.get().getId());
-    namedParameterJdbcTemplate.update("update subscription set next_send_date = :nextSendDate where period = 'DAILY' and subscriber_id = :subscriberId", parameters);
-    namedParameterJdbcTemplate.update("update subscription set next_send_date = :nextSendDate where period = 'WEEKLY' and subscriber_id = :subscriberId", parameters);
-    namedParameterJdbcTemplate.update("update subscription set next_send_date = :nextSendDate where period = 'MONTHLY' and subscriber_id = :subscriberId", parameters);
-    namedParameterJdbcTemplate.update("update subscription set next_send_date = :nextSendDate where period = 'YEARLY' and subscriber_id = :subscriberId", parameters);
+    namedParameterJdbcTemplate.update(
+        "update subscription set next_send_date = :nextSendDate where period = 'DAILY' and subscriber_id = :subscriberId",
+        parameters);
+    namedParameterJdbcTemplate.update(
+        "update subscription set next_send_date = :nextSendDate where period = 'WEEKLY' and subscriber_id = :subscriberId",
+        parameters);
+    namedParameterJdbcTemplate.update(
+        "update subscription set next_send_date = :nextSendDate where period = 'MONTHLY' and subscriber_id = :subscriberId",
+        parameters);
+    namedParameterJdbcTemplate.update(
+        "update subscription set next_send_date = :nextSendDate where period = 'YEARLY' and subscriber_id = :subscriberId",
+        parameters);
 
     sendMailJob.sendEmail();
 
     var email = mockEmailStore.getLastMail(subscriber.getEmail());
     Assertions.assertTrue(email.isPresent());
-    stories.forEach(story -> Assertions.assertTrue(email.get().getHtml().contains(story.getTitle())));
+    stories.forEach(
+        story -> Assertions.assertTrue(email.get().getHtml().contains(story.getTitle())));
     var emailCount = mockEmailStore.emailCount(subscriber.getEmail());
 
-    //1 extra email is subscribe_Post (subscription email)
+    // 1 extra email is subscribe_Post (subscription email)
     Assertions.assertEquals(subscriber.getSubscriptionList().size(), emailCount);
     mockEmailStore.reset();
 
     sendMailJob.sendEmail();
     emailCount = mockEmailStore.emailCount(subscriber.getEmail());
-    //subscription emails sent in previous step. It should not send again.
+    // subscription emails sent in previous step. It should not send again.
     Assertions.assertEquals(0, emailCount);
-
   }
 
   @Test
@@ -311,11 +315,16 @@ public class StoryServiceTest {
 
     var queryParams = new HashMap<String, String>();
     queryParams.put("email", inActiveUserEmailAddress);
-    namedParameterJdbcTemplate.update("update subscriber set activated = false where email=:email", queryParams);
+    namedParameterJdbcTemplate.update(
+        "update subscriber set activated = false where email=:email", queryParams);
 
     var parameters = new HashMap<String, Object>();
-    parameters.put("nextSendDate", LocalDateTime.now().minusHours(1)); //next_send time alread passed should trigger an email send.
-    namedParameterJdbcTemplate.update("update subscription set next_send_date = :nextSendDate", parameters);
+    parameters.put(
+        "nextSendDate",
+        LocalDateTime.now()
+            .minusHours(1)); // next_send time alread passed should trigger an email send.
+    namedParameterJdbcTemplate.update(
+        "update subscription set next_send_date = :nextSendDate", parameters);
 
     sendMailJob.sendEmail();
 

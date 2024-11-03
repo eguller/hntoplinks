@@ -1,13 +1,14 @@
 package com.eguller.hntoplinks.repository;
 
-import com.eguller.hntoplinks.entities.StoryEntity;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import com.eguller.hntoplinks.entities.StoryEntity;
 
 public interface StoryRepositoryDelegate extends CrudRepository<StoryEntity, Long> {
   Optional<StoryEntity> findByHnid(long l);
@@ -19,7 +20,8 @@ public interface StoryRepositoryDelegate extends CrudRepository<StoryEntity, Lon
   List<StoryEntity> findByHnidIn(List<Long> hnIdList);
 
   @Modifying
-  @Query("""
+  @Query(
+      """
      delete
      from item
      where item.id not in (
@@ -34,5 +36,9 @@ public interface StoryRepositoryDelegate extends CrudRepository<StoryEntity, Lon
          (select id from item order by points desc limit 500)
      )
     """)
-  int deleteExpiredStories(LocalDateTime yesterday, LocalDateTime lastWeek, LocalDateTime lastMonth, LocalDateTime lastYear);
+  int deleteExpiredStories(
+      LocalDateTime yesterday,
+      LocalDateTime lastWeek,
+      LocalDateTime lastMonth,
+      LocalDateTime lastYear);
 }

@@ -1,12 +1,13 @@
 package com.eguller.hntoplinks.repository;
 
-import com.eguller.hntoplinks.entities.StoryEntity;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
+import com.eguller.hntoplinks.entities.StoryEntity;
 
 @Service
 public class StoryRepository {
@@ -19,19 +20,22 @@ public class StoryRepository {
   public void saveStories(List<StoryEntity> hnStoryList) {
     var storyIds = hnStoryList.stream().map(story -> story.getHnid()).collect(Collectors.toList());
     var existingStories = storyRepositoryDelegate.findByHnidIn(storyIds);
-    var existingStoriesMap = existingStories.stream()
-      .collect(Collectors.toMap(storyEntity -> storyEntity.getHnid(), storyEntity -> storyEntity));
+    var existingStoriesMap =
+        existingStories.stream()
+            .collect(
+                Collectors.toMap(storyEntity -> storyEntity.getHnid(), storyEntity -> storyEntity));
 
     hnStoryList.stream()
-      .map(storyEntity -> {
-        var existingStory = existingStoriesMap.get(storyEntity.getHnid());
-        if (existingStory != null) {
-          storyEntity.setId(existingStory.getId());
-        }
-        return storyEntity;
-      })
-      .map(storyEntity -> storyRepositoryDelegate.save(storyEntity))
-      .collect(Collectors.toList());
+        .map(
+            storyEntity -> {
+              var existingStory = existingStoriesMap.get(storyEntity.getHnid());
+              if (existingStory != null) {
+                storyEntity.setId(existingStory.getId());
+              }
+              return storyEntity;
+            })
+        .map(storyEntity -> storyRepositoryDelegate.save(storyEntity))
+        .collect(Collectors.toList());
   }
 
   public List<StoryEntity> readDailyTop() {

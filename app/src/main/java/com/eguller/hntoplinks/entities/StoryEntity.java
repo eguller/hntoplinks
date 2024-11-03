@@ -1,54 +1,59 @@
 package com.eguller.hntoplinks.entities;
 
-import com.eguller.hntoplinks.util.DateUtils;
+import java.time.LocalDateTime;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 import org.springframework.util.StringUtils;
 
-import java.time.LocalDateTime;
-
+import com.eguller.hntoplinks.util.DateUtils;
 
 @Table("item")
 public class StoryEntity implements HnEntity {
   @Id
   @Column("id")
-  private Long   id;
+  private Long id;
+
   @Column("posturl")
   private String url;
+
   @Column("comhead")
   private String comhead;
 
   @Column("hnid")
-  private long          hnid;
+  private long hnid;
+
   @Column("points")
-  private int           points;
+  private int points;
+
   @Column("postdate")
   private LocalDateTime date;
+
   @Column("hnuser")
-  private String        user;
+  private String user;
+
   @Column("comment")
-  private int           comment;
+  private int comment;
+
   @Column("title")
-  private String        title;
+  private String title;
+
   @Column("lastupdate")
   private LocalDateTime lastUpdate;
 
-
-  public StoryEntity() {
-
-  }
+  public StoryEntity() {}
 
   public StoryEntity(StoryEntity source) {
-    this.id         = source.getId();
-    this.url        = source.getUrl();
-    this.comhead    = source.getComhead();
-    this.hnid       = source.getHnid();
-    this.points     = source.getPoints();
-    this.date       = source.getDate();
-    this.user       = source.getUser();
-    this.comment    = source.getComment();
-    this.title      = source.getTitle();
+    this.id = source.getId();
+    this.url = source.getUrl();
+    this.comhead = source.getComhead();
+    this.hnid = source.getHnid();
+    this.points = source.getPoints();
+    this.date = source.getDate();
+    this.user = source.getUser();
+    this.comment = source.getComment();
+    this.title = source.getTitle();
     this.lastUpdate = source.getLastUpdate();
   }
 
@@ -136,7 +141,7 @@ public class StoryEntity implements HnEntity {
     return StringUtils.hasText(this.comhead);
   }
 
-  public String getSince(){
+  public String getSince() {
     return DateUtils.since(this.date);
   }
 }
