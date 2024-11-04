@@ -8,17 +8,17 @@
     <h1>Subscribe to HN Top Links</h1>
 
     <!-- Success message -->
-    <div th:if="${param.success}" class="alert alert-success">
+    <div th:if="${page.content.success}" class="alert alert-success">
       Thank you for subscribing! Please check your email to confirm your subscription.
     </div>
 
     <!-- Confirmation success -->
-    <div th:if="${param.confirmed}" class="alert alert-success">
+    <div th:if="${page.content.confirmed}" class="alert alert-success">
       Your subscription has been confirmed! You will start receiving updates soon.
     </div>
 
     <!-- Error message -->
-    <div th:if="${param.error}" class="alert alert-danger">
+    <div th:if="${page.content.error}" class="alert alert-danger">
       An error occurred. Please try again later.
     </div>
 
