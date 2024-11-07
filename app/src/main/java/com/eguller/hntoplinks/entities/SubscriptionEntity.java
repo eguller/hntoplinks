@@ -3,6 +3,9 @@ package com.eguller.hntoplinks.entities;
 import java.time.LocalDateTime;
 import java.util.function.Function;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
@@ -11,7 +14,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
-@Table("subscription")
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Table("subscriptions")
 @EqualsAndHashCode(of = {"id"})
 public class SubscriptionEntity implements HnEntity {
   @Id
@@ -25,7 +31,7 @@ public class SubscriptionEntity implements HnEntity {
   LocalDateTime nextSendDate;
 
   @Column("subscriber_id")
-  private String subscriberId;
+  private Long subscriberId;
 
   private static Function<LocalDateTime, Boolean> isSubscriptionExpired =
       localDateTime -> {

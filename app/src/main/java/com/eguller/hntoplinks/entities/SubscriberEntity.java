@@ -5,6 +5,9 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.MappedCollection;
@@ -16,8 +19,11 @@ import lombok.Data;
 import lombok.ToString;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @ToString(exclude = {"subscriptionList"})
-@Table("subscriber")
+@Table("subscribers")
 public class SubscriberEntity implements HnEntity {
   @Id
   @Column("id")

@@ -5,15 +5,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HN Top Links - Popular Stories from Hacker News</title>
-  <link crossorigin="anonymous" media="all" rel="stylesheet"
-        th:href="@{{stylesheets}/base.css(stylesheets=${@environment.getProperty('hntoplinks.stylesheets')})}">
-  <link crossorigin="anonymous" media="all" rel="stylesheet"
-        th:href="@{{stylesheets}/layout.css(stylesheets=${@environment.getProperty('hntoplinks.stylesheets')})}">
-
-  <link crossorigin="anonymous" media="all" rel="stylesheet"
-        th:href="@{{stylesheets}/components.css(stylesheets=${@environment.getProperty('hntoplinks.stylesheets')})}">
-  <link crossorigin="anonymous" media="all" rel="stylesheet"
-        th:href="@{{stylesheets}/stories.css(stylesheets=${@environment.getProperty('hntoplinks.stylesheets')})}">
+  <!-- Include base CSS -->
+  <th:block th:replace="fragments/css :: base"/>
+  <th:block layout:fragment="page-css"/>
 </head>
 
 <body>

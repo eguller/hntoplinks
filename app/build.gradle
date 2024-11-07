@@ -76,6 +76,7 @@ dependencies {
   implementation "org.springframework:spring-context:${springWebVersion}"
   implementation "org.springframework:spring-webmvc:${springWebVersion}"
   implementation "org.springframework:spring-web:${springWebVersion}"
+  implementation "org.springframework.boot:spring-boot-starter-validation:${springBootVersion}"
   implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.0.0'
   implementation 'org.flywaydb:flyway-core:9.22.3'
   implementation 'org.springframework.mobile:spring-mobile-device:1.1.5.RELEASE'
@@ -87,6 +88,7 @@ dependencies {
   implementation 'org.eclipse.angus:angus-activation:2.0.0'
   implementation 'org.eclipse.angus:angus-mail:2.0.1'
   implementation 'org.eclipse.angus:jakarta.mail:2.0.1'
+  implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
 
   compileOnly "org.projectlombok:lombok:${lombokVersion}"
   annotationProcessor "org.projectlombok:lombok:${lombokVersion}"

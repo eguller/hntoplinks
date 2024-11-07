@@ -1,0 +1,18 @@
+<html layout:decorate="~{layouts/main}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+  <th:block layout:fragment="page-css">
+    <th:block th:replace="fragments/css :: subscribers"/>
+  </th:block>
+</head>
+
+<section class="subscription-page">
+  <div class="subscription-form" layout:fragment="content">
+    <h1>Unsubscribe</h1>
+
+    <div class="alert alert-success">
+      You have been unsubscribed.
+    </div>
+  </div>
+</section>

@@ -16,7 +16,7 @@ public interface SubscribersRepository extends CrudRepository<SubscriberEntity, 
 
   long deleteBySubscriptionDateBeforeAndActivatedIsFalse(LocalDate expiryDate);
 
-  long deleteBySubscriberId(String subscriberId);
+  void deleteBySubscriberId(String subscriberId);
 
   @Query(
       """

@@ -4,4 +4,4 @@ import org.springframework.data.repository.CrudRepository;
 
 import com.eguller.hntoplinks.entities.SubscriptionEntity;
 
-public interface SubscriptionRepository extends CrudRepository<SubscriptionEntity, Long> {}
+public interface SubscriptionsRepository extends CrudRepository<SubscriptionEntity, Long> {}

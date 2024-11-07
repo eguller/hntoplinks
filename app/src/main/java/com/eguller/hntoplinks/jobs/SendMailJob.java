@@ -19,7 +19,7 @@ public class SendMailJob {
   private final SubscriptionService subscriptionService;
 
   public SendMailJob(
-          SubscribersRepository subscriberRepository, SubscriptionService subscriptionService) {
+      SubscribersRepository subscriberRepository, SubscriptionService subscriptionService) {
     this.subscriberRepository = subscriberRepository;
     this.subscriptionService = subscriptionService;
   }

@@ -1,6 +1,11 @@
 <html layout:decorate="~{layouts/main}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       xmlns:th="http://www.thymeleaf.org"
 >
+<head>
+  <th:block layout:fragment="page-css">
+    <th:block th:replace="fragments/css :: stories"/>
+  </th:block>
+</head>
 <main layout:fragment="content">
   <div class="story-controls">
     <div class="current-view" th:text="${timeframe == 'day' ? 'Today' :
@@ -39,7 +44,7 @@
           <span th:text="${story.score}">100</span> points by
           <a th:href="@{'/user/' + ${story.by}}" th:text="${story.by}">author</a>
           <th:block th:with="time=${#fmt.since(story.time)}">
-          <span th:text="${time}">1 hour ago</span> |
+            <span th:text="${time}">1 hour ago</span> |
           </th:block>
           <a th:href="@{'/item/' + ${story.id}}" th:text="${story.descendants + ' comments'}">comments</a>
         </div>

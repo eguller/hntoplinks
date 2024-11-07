@@ -1,6 +1,9 @@
 -- V2__rename_subscriber_table_and_column.sql
 BEGIN;
 
+ALTER TABLE subscription
+    DROP CONSTRAINT fk_subscriber;
+
 -- Drop primary key and unique constraints first
 ALTER TABLE subscriber
     DROP CONSTRAINT subscriber_pkey,
@@ -18,5 +21,11 @@ ALTER TABLE subscribers
 ALTER TABLE subscribers
     ADD CONSTRAINT subscribers_pkey PRIMARY KEY (id),
     ADD CONSTRAINT subscribers_email_key UNIQUE (email);
+
+-- Re-add the foreign key constraint with new table name
+ALTER TABLE subscription
+    ADD CONSTRAINT fk_subscriber
+    FOREIGN KEY (subscriber_id)
+    REFERENCES subscribers(id);
 
 COMMIT;

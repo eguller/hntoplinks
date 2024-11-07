@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.eguller.hntoplinks.models.EmailTarget;
 import com.eguller.hntoplinks.repository.StoryRepository;
-import com.eguller.hntoplinks.repository.SubscriptionRepository;
+import com.eguller.hntoplinks.repository.SubscriptionsRepository;
 import com.eguller.hntoplinks.services.subscription.DailySubscriptionEmailTask;
 import com.eguller.hntoplinks.services.subscription.MonthlySubscriptionEmailTask;
 import com.eguller.hntoplinks.services.subscription.SubscriptionEmailTask;
@@ -23,13 +23,13 @@ public class SubscriptionService {
   private final StoryRepository storyRepository;
   private final EmailProviderService emailProviderService;
   private final TemplateService templateService;
-  private final SubscriptionRepository subscriptionRepository;
+  private final SubscriptionsRepository subscriptionRepository;
 
   public SubscriptionService(
       StoryRepository storyRepository,
       EmailProviderService emailProviderService,
       TemplateService templateService,
-      SubscriptionRepository subscriberRepository) {
+      SubscriptionsRepository subscriberRepository) {
     this.storyRepository = storyRepository;
     this.emailProviderService = emailProviderService;
     this.templateService = templateService;
@@ -50,7 +50,8 @@ public class SubscriptionService {
       logger.error(
           "Sending email has failed. subsUUID=%s, period=%s"
               .formatted(
-                  emailTarget.subscriber().getSubscriberId(), emailTarget.subscription().getPeriod()),
+                  emailTarget.subscriber().getSubscriberId(),
+                  emailTarget.subscription().getPeriod()),
           ex);
     }
   }

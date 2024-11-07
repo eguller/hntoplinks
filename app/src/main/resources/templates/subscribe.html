@@ -1,36 +1,30 @@
 <html layout:decorate="~{layouts/main}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       xmlns:th="http://www.thymeleaf.org"
 >
+<head>
+  <th:block layout:fragment="page-css">
+    <th:block th:replace="fragments/css :: subscribers"/>
+  </th:block>
+</head>
 
 <section class="subscription-page">
-
   <div class="subscription-form" layout:fragment="content">
     <h1>Subscribe to HN Top Links</h1>
 
     <!-- Success message -->
     <div th:if="${page.content.success}" class="alert alert-success">
-      Thank you for subscribing! Please check your email to confirm your subscription.
+      <span th:text="${page.content.successMessage}"></span>
     </div>
 
-    <!-- Confirmation success -->
-    <div th:if="${page.content.confirmed}" class="alert alert-success">
-      Your subscription has been confirmed! You will start receiving updates soon.
-    </div>
-
-    <!-- Error message -->
-    <div th:if="${page.content.error}" class="alert alert-danger">
-      An error occurred. Please try again later.
-    </div>
-
-    <form th:action="@{/subscribe}"
+    <form th:action="@{/subscribers}"
           th:object="${subscriptionForm}"
           method="post"
           class="subscription-form">
 
-      <input type="hidden"
-             id="subscriberId"
-             th:value="${subscriptionForm.subscriberId}"
-      >
+      <input type="hidden" th:field="*{subscriberId}">
+
+      <input type="hidden" th:field="*{timeZone}" id="timeZone">
+
       <!-- Email field -->
       <div class="form-group">
         <label for="email">Email Address</label>
@@ -48,7 +42,7 @@
 
       <!-- Subscription options -->
       <div class="form-group subscription-options">
-        <label class="subscription-options-label">Subscription Frequency</label>
+        <label class="subscription-options-label">Subscription Options</label>
 
         <div class="custom-control custom-checkbox">
           <input type="checkbox"
@@ -67,7 +61,7 @@
                  class="custom-control-input"
                  id="weeklyEmails"
                  th:field="*{selectedPeriods}"
-                 th:value="${T(com.eguller.hntoplinks.entities.Period).DAILY}"
+                 th:value="${T(com.eguller.hntoplinks.entities.Period).WEEKLY}"
           >
           <label class="custom-control-label" for="weeklyEmails">
             Weekly Digest
@@ -79,7 +73,7 @@
                  class="custom-control-input"
                  id="monthlyEmails"
                  th:field="*{selectedPeriods}"
-                 th:value="${T(com.eguller.hntoplinks.entities.Period).DAILY}"
+                 th:value="${T(com.eguller.hntoplinks.entities.Period).MONTHLY}"
           >
           <label class="custom-control-label" for="monthlyEmails">
             Monthly Roundup
@@ -91,7 +85,7 @@
                  class="custom-control-input"
                  id="yearlyEmails"
                  th:field="*{selectedPeriods}"
-                 th:value="${T(com.eguller.hntoplinks.entities.Period).DAILY}"
+                 th:value="${T(com.eguller.hntoplinks.entities.Period).YEARLY}"
           >
           <label class="custom-control-label" for="yearlyEmails">
             Yearly Review
@@ -100,13 +94,23 @@
 
         <!-- Validation error for checkboxes -->
         <div class="invalid-feedback d-block"
-             th:if="${#fields.hasErrors('atLeastOneSelected')}"
-             th:errors="*{atLeastOneSelected}">
+             th:if="${#fields.hasErrors('selectedPeriods')}"
+             th:errors="*{selectedPeriods}">
           Checkbox Error
         </div>
       </div>
 
       <button type="submit" class="btn btn-primary">Subscribe</button>
     </form>
+    <script>
+      // When document loads
+      document.addEventListener('DOMContentLoaded', function () {
+        // Get user's timezone
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+        // Set it to hidden field
+        document.getElementById('timeZone').value = timezone;
+      });
+    </script>
   </div>
 </section>

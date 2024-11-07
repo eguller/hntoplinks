@@ -57,7 +57,7 @@ public class StoryServiceTest {
   }
 
   @Autowired private SubscribersRepository subscriberRepository;
-  @Autowired private StoryRepository       storyRepository;
+  @Autowired private StoryRepository storyRepository;
 
   @Autowired private StoriesController applicationController;
 
