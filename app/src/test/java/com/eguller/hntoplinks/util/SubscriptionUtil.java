@@ -23,7 +23,7 @@ public class SubscriptionUtil {
       Period... periods) {
     var subscriptionForm =
         SubscriptionForm.builder()
-            .subsUUID(subscriptionUuid)
+            .subscriberId(subscriptionUuid)
             .email(emailAddress)
             .selectedPeriods(Set.of(periods))
             .timeZone(ZoneId.of("UTC").toString())

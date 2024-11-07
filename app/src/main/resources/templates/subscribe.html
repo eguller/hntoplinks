@@ -23,10 +23,14 @@
     </div>
 
     <form th:action="@{/subscribe}"
-          th:object="${subscription}"
+          th:object="${subscriptionForm}"
           method="post"
           class="subscription-form">
 
+      <input type="hidden"
+             id="subscriberId"
+             th:value="${subscriptionForm.subscriberId}"
+      >
       <!-- Email field -->
       <div class="form-group">
         <label for="email">Email Address</label>
@@ -50,7 +54,9 @@
           <input type="checkbox"
                  class="custom-control-input"
                  id="dailyEmails"
-                 th:field="*{dailyEmails}">
+                 th:field="*{selectedPeriods}"
+                 th:value="${T(com.eguller.hntoplinks.entities.Period).DAILY}"
+          >
           <label class="custom-control-label" for="dailyEmails">
             Daily Updates
           </label>
@@ -60,7 +66,9 @@
           <input type="checkbox"
                  class="custom-control-input"
                  id="weeklyEmails"
-                 th:field="*{weeklyEmails}">
+                 th:field="*{selectedPeriods}"
+                 th:value="${T(com.eguller.hntoplinks.entities.Period).DAILY}"
+          >
           <label class="custom-control-label" for="weeklyEmails">
             Weekly Digest
           </label>
@@ -70,7 +78,9 @@
           <input type="checkbox"
                  class="custom-control-input"
                  id="monthlyEmails"
-                 th:field="*{monthlyEmails}">
+                 th:field="*{selectedPeriods}"
+                 th:value="${T(com.eguller.hntoplinks.entities.Period).DAILY}"
+          >
           <label class="custom-control-label" for="monthlyEmails">
             Monthly Roundup
           </label>
@@ -80,7 +90,9 @@
           <input type="checkbox"
                  class="custom-control-input"
                  id="yearlyEmails"
-                 th:field="*{yearlyEmails}">
+                 th:field="*{selectedPeriods}"
+                 th:value="${T(com.eguller.hntoplinks.entities.Period).DAILY}"
+          >
           <label class="custom-control-label" for="yearlyEmails">
             Yearly Review
           </label>

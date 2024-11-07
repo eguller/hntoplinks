@@ -30,7 +30,7 @@ import com.eguller.hntoplinks.jobs.SendMailJob;
 import com.eguller.hntoplinks.models.SubscriptionForm;
 import com.eguller.hntoplinks.models.SubscriptionPage;
 import com.eguller.hntoplinks.repository.StoryRepository;
-import com.eguller.hntoplinks.repository.SubscriberRepository;
+import com.eguller.hntoplinks.repository.SubscribersRepository;
 import com.eguller.hntoplinks.services.email.MockEmailStore;
 import com.eguller.hntoplinks.util.DbUtil;
 import com.eguller.hntoplinks.util.SubscriptionUtil;
@@ -56,8 +56,8 @@ public class StoryServiceTest {
     DbUtil.updateDatabaseProperties(postgres, registry);
   }
 
-  @Autowired private SubscriberRepository subscriberRepository;
-  @Autowired private StoryRepository storyRepository;
+  @Autowired private SubscribersRepository subscriberRepository;
+  @Autowired private StoryRepository       storyRepository;
 
   @Autowired private StoriesController applicationController;
 
@@ -267,7 +267,7 @@ public class StoryServiceTest {
     mockEmailStore.reset(subscriber.getEmail());
 
     var subscriberUUID = ((SubscriptionPage) model.get("page")).getSubscriptionForm().getSubsUUID();
-    var savedSubscriber = subscriberRepository.findBySubsUUID(subscriberUUID);
+    var savedSubscriber = subscriberRepository.findBySubscriberId(subscriberUUID);
 
     var parameters = new HashMap<String, Object>();
     parameters.put(

@@ -26,8 +26,8 @@ public class SubscriberEntity implements HnEntity {
   @Column("email")
   private String email;
 
-  @Column("subsuuid")
-  private String subsUUID;
+  @Column("subscriber_id")
+  private String subscriberId;
 
   @Column("subscription_date")
   private LocalDateTime subscriptionDate;

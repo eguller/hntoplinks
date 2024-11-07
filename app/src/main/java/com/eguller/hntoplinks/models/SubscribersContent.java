@@ -10,14 +10,8 @@ import lombok.Setter;
 @Setter(AccessLevel.NONE)
 public class SubscribersContent {
   private String email;
-  @Builder.Default
-  private boolean daily = false;
-  @Builder.Default
-  private boolean weekly = false;
-  @Builder.Default
-  private boolean monthly = false;
-  @Builder.Default
-  private boolean yearly = false;
+
+  private SubscriptionForm subscriptionForm;
 
   @Builder.Default
   private boolean success = false;

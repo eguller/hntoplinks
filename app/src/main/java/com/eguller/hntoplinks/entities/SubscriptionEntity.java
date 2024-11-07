@@ -25,7 +25,7 @@ public class SubscriptionEntity implements HnEntity {
   LocalDateTime nextSendDate;
 
   @Column("subscriber_id")
-  private Long subscriberId;
+  private String subscriberId;
 
   private static Function<LocalDateTime, Boolean> isSubscriptionExpired =
       localDateTime -> {

@@ -50,7 +50,7 @@ public class SubscriptionService {
       logger.error(
           "Sending email has failed. subsUUID=%s, period=%s"
               .formatted(
-                  emailTarget.subscriber().getSubsUUID(), emailTarget.subscription().getPeriod()),
+                  emailTarget.subscriber().getSubscriberId(), emailTarget.subscription().getPeriod()),
           ex);
     }
   }

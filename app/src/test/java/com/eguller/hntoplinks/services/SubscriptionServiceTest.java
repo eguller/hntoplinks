@@ -18,7 +18,7 @@ import com.eguller.hntoplinks.controllers.StoriesController;
 import com.eguller.hntoplinks.entities.Period;
 import com.eguller.hntoplinks.models.Email;
 import com.eguller.hntoplinks.models.SubscriptionPage;
-import com.eguller.hntoplinks.repository.SubscriberRepository;
+import com.eguller.hntoplinks.repository.SubscribersRepository;
 import com.eguller.hntoplinks.services.email.MockEmailStore;
 import com.eguller.hntoplinks.util.DbUtil;
 import com.eguller.hntoplinks.util.SubscriptionUtil;
@@ -45,7 +45,7 @@ public class SubscriptionServiceTest {
 
   @Autowired private StoriesController applicationController;
 
-  @Autowired private SubscriberRepository subscriberRepository;
+  @Autowired private SubscribersRepository subscriberRepository;
 
   @Autowired private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -76,7 +76,7 @@ public class SubscriptionServiceTest {
     var subscriptionEntity = subscriberRepository.findByEmail(emailAddress);
     Assertions.assertEquals(emailAddress, subscriptionEntity.get().getEmail());
     applicationController.unsubscribe_Get(
-        new ExtendedModelMap(), subscriptionEntity.get().getSubsUUID());
+        new ExtendedModelMap(), subscriptionEntity.get().getSubscriberId());
     subscriptionEntity = subscriberRepository.findByEmail(emailAddress);
     Assertions.assertFalse(subscriptionEntity.isPresent());
   }

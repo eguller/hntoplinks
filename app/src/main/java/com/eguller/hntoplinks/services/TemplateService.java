@@ -28,7 +28,7 @@ public class TemplateService {
     var subscriptionEmailData =
         SubscriptionEmailData.builder()
             .baseUrl(hntoplinksBaseUrl)
-            .unsubscribeUrl(hntoplinksBaseUrl + "/unsubscribe/" + subscriber.getSubsUUID())
+            .unsubscribeUrl(hntoplinksBaseUrl + "/unsubscribe/" + subscriber.getSubscriberId())
             .build();
     final Context ctx = new Context(Locale.ENGLISH);
     ctx.setVariable("data", subscriptionEmailData);
@@ -43,9 +43,9 @@ public class TemplateService {
     var toplinksEmailData =
         TopEmailData.builder()
             .subject(subject)
-            .unsubscribeUrl(hntoplinksBaseUrl + "/unsubscribe/" + subscriber.getSubsUUID())
+            .unsubscribeUrl(hntoplinksBaseUrl + "/unsubscribe/" + subscriber.getSubscriberId())
             .updateSubscriptionUrl(
-                hntoplinksBaseUrl + "/update-subscription/" + subscriber.getSubsUUID())
+                hntoplinksBaseUrl + "/update-subscription/" + subscriber.getSubscriberId())
             .storyList(topEmails)
             .build();
 

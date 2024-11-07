@@ -11,7 +11,7 @@ import lombok.Data;
 @Builder
 @Data
 public class SubscriptionForm {
-  private String subsUUID;
+  private String subscriberId;
 
   @Builder.Default private String email = "";
 

@@ -8,18 +8,18 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.eguller.hntoplinks.models.EmailTarget;
-import com.eguller.hntoplinks.repository.SubscriberRepository;
+import com.eguller.hntoplinks.repository.SubscribersRepository;
 import com.eguller.hntoplinks.services.SubscriptionService;
 
 @Component
 public class SendMailJob {
   private static final Logger logger =
       LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-  private final SubscriberRepository subscriberRepository;
+  private final SubscribersRepository subscriberRepository;
   private final SubscriptionService subscriptionService;
 
   public SendMailJob(
-      SubscriberRepository subscriberRepository, SubscriptionService subscriptionService) {
+          SubscribersRepository subscriberRepository, SubscriptionService subscriptionService) {
     this.subscriberRepository = subscriberRepository;
     this.subscriptionService = subscriptionService;
   }

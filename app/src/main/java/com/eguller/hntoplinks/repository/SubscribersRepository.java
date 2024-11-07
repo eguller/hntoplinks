@@ -9,23 +9,26 @@ import org.springframework.data.repository.CrudRepository;
 
 import com.eguller.hntoplinks.entities.SubscriberEntity;
 
-public interface SubscriberRepository extends CrudRepository<SubscriberEntity, Long> {
-  Optional<SubscriberEntity> findBySubsUUID(String subscriptionId);
+public interface SubscribersRepository extends CrudRepository<SubscriberEntity, Long> {
+  Optional<SubscriberEntity> findBySubscriberId(String subscriberId);
 
   Optional<SubscriberEntity> findByEmail(String email);
 
   long deleteBySubscriptionDateBeforeAndActivatedIsFalse(LocalDate expiryDate);
 
-  long deleteBySubsUUID(String subscriptionId);
+  long deleteBySubscriberId(String subscriberId);
 
   @Query(
       """
-     select * from
-     subscriber where
-     subscriber.activated = true
-     and
-     id in
-     (select distinct subscriber_id from subscription where next_send_date < now())
+     SELECT
+       *
+     FROM
+        subscribers
+     WHERE
+        subscribers.activated = true
+     AND
+        id IN
+            (SELECT DISTINCT subscriber_id FROM subscriptions WHERE next_send_date < now())
     """)
   List<SubscriberEntity> findSubscriptionsByExpiredNextSendDate();
 }
