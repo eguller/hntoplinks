@@ -4,7 +4,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.eguller.hntoplinks.repository.SubscriptionsRepository;
+import com.eguller.hntoplinks.services.RecaptchaVerifier;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -28,18 +30,22 @@ import com.eguller.hntoplinks.repository.SubscribersRepository;
 public class SubscribersController {
   private static final String TITLE = "Subscribe to Hacker News Top Links";
 
+  @Value("${hntoplinks.captcha.enabled}")
+  private boolean captchaEnabled;
+
   private final SubscribersRepository   subscriberRepository;
   private final SubscriptionsRepository subscriptionsRepository;
-
-  public SubscribersController(SubscribersRepository subscribersRepository, SubscriptionsRepository subscriptionsRepository) {
+  private final RecaptchaVerifier recaptchaVerifier;
+  public SubscribersController(SubscribersRepository subscribersRepository, SubscriptionsRepository subscriptionsRepository, RecaptchaVerifier recaptchaVerifier) {
     this.subscriberRepository    = subscribersRepository;
     this.subscriptionsRepository = subscriptionsRepository;
+    this.recaptchaVerifier = recaptchaVerifier;
   }
 
   @GetMapping("/subscribers")
   public String subscribers(Model model) {
     var subscriptionForm = createDefaultSubscriptionForm();
-    var content = SubscribersContent.builder().subscriptionForm(subscriptionForm).build();
+    var content = SubscribersContent.builder().captchaEnabled(captchaEnabled).subscriptionForm(subscriptionForm).build();
     var page =
       Page.<SubscribersContent>builder()
         .title(TITLE)
@@ -90,7 +96,7 @@ public class SubscribersController {
               .build())
         .orElse(subscriptionFormBuilder.selectedPeriods(Set.of(Period.WEEKLY)).build());
 
-    var content = SubscribersContent.builder().subscriptionForm(subscriptionForm).build();
+    var content = SubscribersContent.builder().captchaEnabled(captchaEnabled).subscriptionForm(subscriptionForm).build();
     var page =
       Page.<SubscribersContent>builder()
         .title(TITLE)
@@ -113,8 +119,12 @@ public class SubscribersController {
   public String subscribe(@Valid @ModelAttribute SubscriptionForm subscriptionForm,
                           BindingResult bindingResult,
                           Model model) {
-
-    var content = SubscribersContent.builder().subscriptionForm(subscriptionForm).build();
+    if(captchaEnabled) {
+      if (!recaptchaVerifier.verify(subscriptionForm.getCaptchaResponse())) {
+        bindingResult.rejectValue("gRecaptchaResponse", "recaptcha.invalid", "Invalid captcha");
+      }
+    }
+    var content = SubscribersContent.builder().captchaEnabled(captchaEnabled).subscriptionForm(subscriptionForm).build();
     var page =
       Page.<SubscribersContent>builder()
         .title(TITLE)

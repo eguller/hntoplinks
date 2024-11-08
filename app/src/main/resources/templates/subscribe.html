@@ -22,8 +22,8 @@
           class="subscription-form">
 
       <input type="hidden" th:field="*{subscriberId}">
-
       <input type="hidden" th:field="*{timeZone}" id="timeZone">
+      <input type="hidden" th:field="*{captchaResponse}" id="captchaResponse">
 
       <!-- Email field -->
       <div class="form-group">
@@ -92,6 +92,13 @@
           </label>
         </div>
 
+        <th:block th:if="${page.content.captchaEnabled}">
+          <div class="custom-control">
+            <div class="g-recaptcha" data-sitekey="6LeciUUeAAAAAMixTT0VHQ3JyCih1jpz_4zRK_0b"
+                 data-callback="gRecaptchaCallback"></div>
+          </div>
+        </th:block>
+
         <!-- Validation error for checkboxes -->
         <div class="invalid-feedback d-block"
              th:if="${#fields.hasErrors('selectedPeriods')}"
@@ -100,7 +107,7 @@
         </div>
       </div>
 
-      <button type="submit" class="btn btn-primary">Subscribe</button>
+      <button type="submit" class="btn btn-primary" disabled>Subscribe</button>
     </form>
     <script>
       // When document loads
@@ -112,5 +119,13 @@
         document.getElementById('timeZone').value = timezone;
       });
     </script>
+    <th:block th:if="${page.content.captchaEnabled}">
+      <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+      <script>
+        function gRecaptchaCallback(response) {
+          document.querySelector('.subscription-form button').removeAttribute('disabled');
+          document.getElementById('captchaResponse').value = response;
+        }
+      </script>
   </div>
 </section>

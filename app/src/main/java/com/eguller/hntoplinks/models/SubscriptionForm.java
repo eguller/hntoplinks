@@ -10,7 +10,6 @@ import com.eguller.hntoplinks.entities.Period;
 
 import com.eguller.hntoplinks.entities.SubscriberEntity;
 import com.eguller.hntoplinks.entities.SubscriptionEntity;
-import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
 import lombok.Data;
@@ -20,14 +19,17 @@ import lombok.Data;
 public class SubscriptionForm {
   private String subscriberId;
 
-  @Builder.Default private String email = "";
+  @Builder.Default
+  private String email = "";
 
-  private String gRecaptchaResponse;
+  private String captchaResponse;
 
-  @Builder.Default private String timeZone = "UTC";
+  @Builder.Default
+  private String timeZone = "UTC";
 
   @NotEmpty(message = "Please select at least one subscription period")
-  @Builder.Default private Set<Period> selectedPeriods = new HashSet<>();
+  @Builder.Default
+  private Set<Period> selectedPeriods = new HashSet<>();
 
   public SubscriberEntity toSubscriberEntity() {
     return SubscriberEntity.builder()

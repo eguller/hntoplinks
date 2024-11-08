@@ -155,6 +155,23 @@ nav a.active {
   color: #721c24;
 }
 
+/* Add these styles for disabled buttons */
+.btn:disabled,
+.btn[disabled] {
+    opacity: 0.65;
+    cursor: not-allowed;
+    background-color: #cccccc;
+    border-color: #cccccc;
+    pointer-events: none;
+}
+
+/* Hover state for disabled */
+.btn:disabled:hover,
+.btn[disabled]:hover {
+    background-color: #cccccc;
+    border-color: #cccccc;
+}
+
 .btn-primary {
   background-color: var(--primary-color);
   border-color: var(--primary-color);

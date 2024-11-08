@@ -12,6 +12,10 @@ public class SubscribersContent {
 
   private SubscriptionForm subscriptionForm;
 
-  @Builder.Default private boolean success = false;
-  private String successMessage;
+  @Builder.Default
+  private boolean success = false;
+  private String  successMessage;
+
+  @Builder.Default
+  private boolean captchaEnabled = true;
 }
