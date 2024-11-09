@@ -5,6 +5,7 @@ import java.util.List;
 import com.eguller.hntoplinks.entities.Item;
 import com.eguller.hntoplinks.entities.SortType;
 
+import com.eguller.hntoplinks.util.StoriesUtils;
 import lombok.Builder;
 import lombok.Data;
 
@@ -15,4 +16,7 @@ public class StoriesContent {
   private SortType sortBy;
   private int currentPage;
   private int totalPages;
+
+  @Builder.Default
+  private int storiesPerPage = StoriesUtils.PAGE_SIZE;
 }

@@ -29,34 +29,8 @@
   <div class="breadcrumb-content">
     <a href="/">Home</a>
     <span class="breadcrumb-separator">/</span>
-
-    <!-- Dynamic breadcrumb based on current page -->
-    <th:block th:if="${timeframe}">
-      <a href="/top">Top Stories</a>
-      <span class="breadcrumb-separator">/</span>
-      <span class="breadcrumb-current" th:text="${timeframe == 'day' ? 'Today' :
-                                                          timeframe == 'week' ? 'This Week' :
-                                                          timeframe == 'month' ? 'This Month' :
-                                                          timeframe}">Today</span>
-    </th:block>
-
-    <!-- Archive breadcrumb -->
-    <th:block th:if="${selectedYear}">
-      <a href="/archives">Archives</a>
-      <span class="breadcrumb-separator">/</span>
-      <th:block th:if="${selectedMonth}">
-        <a th:href="@{'/year/' + ${selectedYear}}" th:text="${selectedYear}">2024</a>
-        <span class="breadcrumb-separator">/</span>
-        <span class="breadcrumb-current" th:text="${selectedMonth}">January</span>
-      </th:block>
-      <th:block th:unless="${selectedMonth}">
-        <span class="breadcrumb-current" th:text="${selectedYear}">2024</span>
-      </th:block>
-    </th:block>
-
-    <!-- Regular page breadcrumb -->
-    <th:block th:if="${pageName}">
-      <span class="breadcrumb-current" th:text="${pageName}">Page Name</span>
+    <th:block th:each="breadcrumb, iterStat : ${page.navigation.breadcrumbs}">
+      <a href="${breadcrumb.url}">${breadcrumb.title}</a>
     </th:block>
   </div>
 </div>
@@ -69,9 +43,10 @@
       <div class="archive-section">
         <h3>Browse by Year</h3>
         <div class="archive-links">
-          <a th:each="year : ${#numbers.sequence(2024, 2010)}"
-             th:href="@{'/year/' + ${year}}"
-             th:text="${year}">2024</a>
+          <a th:each="year : ${#numbers.sequence(2024, 2006)}"
+             th:href="@{/(year=${year})}"
+             th:text="${year}"
+            th:class="${page.selectedYear != null and page.selectedYear == year} ? 'active'">2024</a>
         </div>
       </div>
 
@@ -86,7 +61,7 @@
       </div>
 
       <div class="archive-section">
-        <h3>Top Stories By</h3>
+        <h3>Browse By Month</h3>
         <div class="archive-links">
           <a href="/top/day">Today</a>
           <a href="/top/week">This Week</a>

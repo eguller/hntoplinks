@@ -74,7 +74,8 @@ footer {
   transition: background-color 0.2s;
 }
 
-.archive-links a:hover {
+.archive-links a:hover,
+.archive-links a.active {
   background-color: rgba(255, 153, 102, 0.1);
   color: var(--primary-color);
 }

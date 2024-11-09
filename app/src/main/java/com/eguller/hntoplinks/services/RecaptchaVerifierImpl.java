@@ -15,8 +15,8 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 @ConditionalOnProperty(
-    value = "hntoplinks.captcha.enabled",
-    havingValue = "true",
+    value = "hntoplinks.captcha.impl",
+    havingValue = "google",
     matchIfMissing = true)
 public class RecaptchaVerifierImpl implements RecaptchaVerifier {
   @Value("${hntoplinks.captcha.secret}")

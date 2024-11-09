@@ -162,7 +162,9 @@ public class ItemsRepository {
             time BETWEEN :from AND :to
             AND type NOT IN ('comment')
           ORDER BY
-            %s DESC
+            %s DESC,
+            %s DESC,
+            time DESC
           LIMIT :limit
           OFFSET :offset
         """
@@ -186,10 +188,10 @@ public class ItemsRepository {
                 rs.getBoolean("dead")));
   }
 
-  private String getSortyTypeColumnName(SortType sortBy) {
+  private String[] getSortyTypeColumnName(SortType sortBy) {
     return switch (sortBy) {
-      case UPVOTES -> "score";
-      case COMMENTS -> "descendants";
+      case UPVOTES -> new String[] {"score", "descendants"};
+      case COMMENTS -> new String[] {"descendants", "score"};
     };
   }
 

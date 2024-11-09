@@ -121,7 +121,7 @@ public class SubscribersController {
                           Model model) {
     if(captchaEnabled) {
       if (!recaptchaVerifier.verify(subscriptionForm.getCaptchaResponse())) {
-        bindingResult.rejectValue("gRecaptchaResponse", "recaptcha.invalid", "Invalid captcha");
+        bindingResult.rejectValue("captchaResponse", "recaptcha.invalid", "Invalid captcha");
       }
     }
     var content = SubscribersContent.builder().captchaEnabled(captchaEnabled).subscriptionForm(subscriptionForm).build();

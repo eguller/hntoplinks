@@ -16,12 +16,12 @@
     </div>
     <div class="view-toggle">
       <input type="radio" id="upvotes" name="view" value="upvotes"
-             th:checked="${page.content.sortBy == T(com.eguller.hntoplinks.entities.SortType).UPVOTES}"
+             th:checked="${T(com.eguller.hntoplinks.entities.SortType).UPVOTES.getValue().equals(page.content.sortBy.getValue())}"
              onchange="window.location.href = this.checked ? updateQueryParam('sort', 'upvotes') : null">
       <label for="upvotes">Most Upvoted</label>
 
       <input type="radio" id="comments" name="view" value="comments"
-             th:checked="${page.content.sortBy == T(com.eguller.hntoplinks.entities.SortType).COMMENTS}"
+             th:checked="${T(com.eguller.hntoplinks.entities.SortType).COMMENTS.getValue().equals(page.content.sortBy.getValue())}"
              onchange="window.location.href = this.checked ? updateQueryParam('sort', 'comments') : null">
       <label for="comments">Most Commented</label>
     </div>
@@ -29,7 +29,7 @@
 
   <div class="stories">
     <div th:each="story, iterStat : ${page.content.stories}" class="story">
-      <span class="story-rank" th:text="${iterStat.count}">1.</span>
+      <span class="story-rank" th:text="${((page.content.currentPage - 1) * page.content.storiesPerPage) + iterStat.count} + '.'">1.</span>
       <div class="story-content">
         <div>
           <a th:href="${story.url}" class="story-title" th:text="${story.title}">Story Title</a>
@@ -42,20 +42,20 @@
         </div>
         <div class="story-meta">
           <span th:text="${story.score}">100</span> points by
-          <a th:href="@{'/user/' + ${story.by}}" th:text="${story.by}">author</a>
+          <a th:href="@{https://news.ycombinator.com/user(id=${story.by})}" th:text="${story.by}">author</a>
           <th:block th:with="time=${#fmt.since(story.time)}">
             <span th:text="${time}">1 hour ago</span> |
           </th:block>
-          <a th:href="@{'/item/' + ${story.id}}" th:text="${story.descendants + ' comments'}">comments</a>
+          <a th:href="@{https://news.ycombinator.com/item(id=${story.id})}" th:text="${story.descendants + ' comments'}">comments</a>
         </div>
       </div>
     </div>
   </div>
 
   <div class="pagination" th:if="${page.content.totalPages > 1}">
-    <a th:if="${page.content.currentPage > 1}" th:href="@{${'/page/' + (page.content.currentPage - 1)}}">&laquo;
+    <a th:if="${page.content.currentPage > 1}" th:href="@{${page.currentPath}(page=${page.content.currentPage - 1})}">&laquo;
       Previous</a>
     <a th:if="${page.content.currentPage < page.content.totalPages}"
-       th:href="@{${'/page/' + (page.content.currentPage + 1)}}">Next &raquo;</a>
+       th:href="@{${page.currentPath}(page=${page.content.currentPage + 1})}">Next &raquo;</a>
   </div>
 </main>

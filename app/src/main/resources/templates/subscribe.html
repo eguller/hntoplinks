@@ -105,9 +105,17 @@
              th:errors="*{selectedPeriods}">
           Checkbox Error
         </div>
+        <div id="invalid-captcha"
+             class="invalid-feedback d-block"
+             th:if="${#fields.hasErrors('captchaResponse')}"
+             th:errors="*{captchaResponse}"
+
+        >
+          Invalid captcha
+        </div>
       </div>
 
-      <button type="submit" class="btn btn-primary" disabled>Subscribe</button>
+      <button type="submit" class="btn btn-primary" disabled="disabled">Subscribe</button>
     </form>
     <script>
       // When document loads
@@ -125,6 +133,7 @@
         function gRecaptchaCallback(response) {
           document.querySelector('.subscription-form button').removeAttribute('disabled');
           document.getElementById('captchaResponse').value = response;
+          document.getElementById('invalid-captcha').classList.remove('d-block');
         }
       </script>
   </div>

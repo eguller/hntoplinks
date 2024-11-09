@@ -6,11 +6,10 @@ import org.springframework.stereotype.Service;
 @Service
 @ConditionalOnProperty(
     value = "hntoplinks.captcha.impl",
-    havingValue = "mock"
+    havingValue = "mock-reject"
 )
-public class MockRecaptchaVerifier implements RecaptchaVerifier {
-  @Override
-  public boolean verify(String recaptchaResponse) {
-    return true;
+public class MockRejectingRecaptchaVerifier implements RecaptchaVerifier{
+    public boolean verify(String recaptchaResponse) {
+      return false;
   }
 }
