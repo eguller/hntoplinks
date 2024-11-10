@@ -1,0 +1,58 @@
+<!-- about.html -->
+<html layout:decorate="~{layouts/main}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+  <th:block layout:fragment="page-css">
+    <th:block th:replace="fragments/css :: about"/>
+  </th:block>
+</head>
+<section layout:fragment="content" class="about-page">
+    <div class="about-content">
+        <h1>About HN Top Links</h1>
+
+        <div class="section">
+            <h2>What is HN Top Links?</h2>
+            <p>
+                HN Top Links is a Hacker News aggregator that helps you discover the most engaging content by organizing stories based on different time periods. Similar to Reddit's "Top" feature, we group stories by:
+            </p>
+            <ul>
+                <li>Daily Top Stories</li>
+                <li>Weekly Best</li>
+                <li>Monthly Highlights</li>
+                <li>Yearly Favorites</li>
+                <li>All-Time Best</li>
+            </ul>
+            <p>
+                For each time period, you can sort stories by either most upvoted or most commented, helping you find the content that resonates most with the HN community.
+            </p>
+        </div>
+
+        <div class="section">
+            <h2>Features</h2>
+            <ul>
+                <li>Browse top stories by different time periods</li>
+                <li>Sort by upvotes or comment count</li>
+                <li>Email subscriptions for daily, weekly, or monthly digests</li>
+                <li>Comprehensive archive access dating back to 2010</li>
+                <li>Clean, modern interface focused on readability</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>Open Source</h2>
+            <p>
+                HN Top Links is an open-source project. You can find the complete source code on
+                <a href="https://github.com/eguller/hntoplinks" target="_blank" rel="noopener noreferrer">GitHub</a>.
+                Feel free to contribute, report issues, or suggest improvements.
+            </p>
+        </div>
+
+        <div class="section">
+            <h2>Stay Updated</h2>
+            <p>
+                Don't miss the best content from Hacker News.
+                <a href="/subscribers">Subscribe to our email digests</a>
+                to receive curated lists of top stories directly in your inbox.
+            </p>
+        </div>
+    </div>
+</section>

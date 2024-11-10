@@ -17,3 +17,8 @@
     <link crossorigin="anonymous" media="all" rel="stylesheet"
           th:href="@{{stylesheets}/subscribers.css(stylesheets=${@environment.getProperty('hntoplinks.stylesheets')})}">
 </th:block>
+
+<th:block th:fragment="about">
+    <link crossorigin="anonymous" media="all" rel="stylesheet"
+          th:href="@{{stylesheets}/about.css(stylesheets=${@environment.getProperty('hntoplinks.stylesheets')})}">
+</th:block>

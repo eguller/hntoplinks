@@ -2,7 +2,10 @@ package com.eguller.hntoplinks.controllers;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.eguller.hntoplinks.models.Breadcrumb;
 import com.eguller.hntoplinks.util.StoriesUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -56,6 +59,7 @@ public class StoriesController {
     var items = itemRepository.findByInterval(interval, sort, StoriesUtils.PAGE_SIZE, page);
     var storiesContent =
       StoriesContent.builder()
+        .title("Daily Top Stories")
         .stories(items)
         .sortBy(sort)
         .currentPage(page)
@@ -84,6 +88,7 @@ public class StoriesController {
     var items = itemRepository.findByInterval(interval, sort, StoriesUtils.PAGE_SIZE, page);
     var storiesContent =
       StoriesContent.builder()
+        .title("Weekly Best")
         .stories(items)
         .sortBy(sort)
         .currentPage(page)
@@ -112,7 +117,7 @@ public class StoriesController {
     var items = itemRepository.findByInterval(interval, sort, StoriesUtils.PAGE_SIZE, page);
     var storiesContent =
       StoriesContent.builder()
-        .title("Stories of %s".formatted(LocalDate.now().format(DateTimeFormatter.ofPattern("MMMM yyyy"))))
+        .title("Monthly Highlights")
         .stories(items)
         .sortBy(sort)
         .currentPage(page)
@@ -141,6 +146,7 @@ public class StoriesController {
     var items = itemRepository.findByInterval(interval, sort, StoriesUtils.PAGE_SIZE, page);
     var storiesContent =
       StoriesContent.builder()
+        .title("Yearly Favorites")
         .stories(items)
         .sortBy(sort)
         .currentPage(page)
@@ -179,7 +185,7 @@ public class StoriesController {
 
     var pageModel =
       Page.builder()
-        .title("Best of All Time")
+        .title("All-Time Best")
         .currentPath("/all")
         .navigation(navigation)
         .content(storiesContent)
@@ -194,7 +200,7 @@ public class StoriesController {
     @PathVariable int year,
     @RequestParam(value = "page", required = false, defaultValue = "1") int page,
     @RequestParam(value = "sort", required = false, defaultValue = "upvotes") SortType sort) {
-    var title = "Stories from %d".formatted(year);
+    var title = "%d Archive".formatted(year);
     var interval = DateUtils.getInterval(year);
     var items = itemRepository.findByInterval(interval, sort, StoriesUtils.PAGE_SIZE, page);
     var storiesContent =
@@ -206,8 +212,12 @@ public class StoriesController {
         .totalPages(items.size() < StoriesUtils.PAGE_SIZE ? page : page + 1)
         .build();
 
-    var activeMenu = year == LocalDate.now().getYear() ? "year" :  null;
-    var navigation = Navigation.builder().activeMenu(activeMenu).build();
+    var activeMenu = year == LocalDate.now().getYear() ? "year" : null;
+    var navigation = Navigation
+      .builder()
+      .activeMenu(activeMenu)
+      .breadcrumbs(generateBreadcrumbs(year))
+      .build();
 
     var pageModel =
       Page.builder()
@@ -230,7 +240,7 @@ public class StoriesController {
     @RequestParam(value = "page", defaultValue = "1") int page,
     @RequestParam(value = "sort", defaultValue = "upvotes") SortType sort) {
     var date = LocalDate.of(year, month, 1);
-    var title = "Stories from %s".formatted(date.format(DateTimeFormatter.ofPattern("MMMM yyyy")));
+    var title = "%s Archive".formatted(date.format(DateTimeFormatter.ofPattern("MMMM yyyy")));
     var interval = DateUtils.getInterval(year, month);
     var items = itemRepository.findByInterval(interval, sort, StoriesUtils.PAGE_SIZE, page);
     var storiesContent =
@@ -242,7 +252,10 @@ public class StoriesController {
         .totalPages(items.size() < StoriesUtils.PAGE_SIZE ? page : page + 1)
         .build();
 
-    var navigation = Navigation.builder().build();
+    var navigation = Navigation
+      .builder()
+      .breadcrumbs(generateBreadcrumbs(year, month))
+      .build();
 
     var pageModel =
       Page.builder()
@@ -265,7 +278,7 @@ public class StoriesController {
     @RequestParam(value = "page", defaultValue = "1") int page,
     @RequestParam(value = "sort", defaultValue = "upvotes") SortType sort) {
     var date = LocalDate.of(year, month, 1);
-    var title = "Stories from %s".formatted(date.format(DateTimeFormatter.ofPattern("MMMM yyyy")));
+    var title = "%s Archive".formatted(date.format(DateTimeFormatter.ofPattern("MMMM yyyy")));
 
     var interval = DateUtils.getInterval(year, month, day);
 
@@ -279,7 +292,10 @@ public class StoriesController {
         .totalPages(items.size() < StoriesUtils.PAGE_SIZE ? page : page + 1)
         .build();
 
-    var navigation = Navigation.builder().build();
+    var navigation = Navigation
+      .builder()
+      .breadcrumbs(generateBreadcrumbs(year, month, day))
+      .build();
 
     var pageModel =
       Page
@@ -293,5 +309,28 @@ public class StoriesController {
         .build();
     model.addAttribute("page", pageModel);
     return "index";
+  }
+
+  private List<Breadcrumb> generateBreadcrumbs(Integer year) {
+    return generateBreadcrumbs(year, null, null);
+  }
+
+  private List<Breadcrumb> generateBreadcrumbs(Integer year, Integer month) {
+    return generateBreadcrumbs(year, month, null);
+  }
+
+  private List<Breadcrumb> generateBreadcrumbs(Integer year, Integer month, Integer day) {
+    var list = new ArrayList<Breadcrumb>();
+    if (year != null) {
+      list.add(Breadcrumb.builder().title(year.toString()).url("/stories/%d".formatted(year)).build());
+    }
+    if (year != null && month != null) {
+      list.add(Breadcrumb.builder().title(month.toString()).url("/stories/%d/%d".formatted(year, month)).build());
+    }
+
+    if (year != null && month != null && day != null) {
+      list.add(Breadcrumb.builder().title(day.toString()).url("/stories/%d/%d/%d".formatted(year, month, day)).build());
+    }
+    return list;
   }
 }

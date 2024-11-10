@@ -30,7 +30,8 @@
     <a href="/">Home</a>
     <span class="breadcrumb-separator">/</span>
     <th:block th:each="breadcrumb, iterStat : ${page.navigation.breadcrumbs}">
-      <a href="${breadcrumb.url}">${breadcrumb.title}</a>
+      <a href="${breadcrumb.url}" th:text="${breadcrumb.title}">2024</a>
+      <span class="breadcrumb-separator" th:if="${!iterStat.last}">/</span>
     </th:block>
   </div>
 </div>
@@ -63,7 +64,9 @@
     </div>
 
     <div class="copyright">
-      <p>&copy; <span th:text="${#dateUtils.year(#dateUtils.now())}">2024</span> Hacker News Top Links</p>
+      <a href="/about">About</a>
+      <p>&copy; <span th:text="'2013 - ' +  ${#dateUtils.currentYear()}">2024</span> Hacker News Top Links</p>
+
     </div>
   </div>
 </footer>
