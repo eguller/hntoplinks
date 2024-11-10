@@ -5,13 +5,18 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.Month;
 import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.TextStyle;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.time.temporal.WeekFields;
+import java.util.List;
 import java.util.Locale;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +27,7 @@ import lombok.val;
 
 public class DateUtils {
   private static final Logger logger =
-      LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static String since(LocalDateTime time) {
     long yearsBetween = ChronoUnit.YEARS.between(time, LocalDateTime.now());
@@ -84,42 +89,42 @@ public class DateUtils {
 
   public static LocalDateTime tomorrow_7_AM(ZoneId targetZone) {
     return ZonedDateTime.now(targetZone)
-        .plusDays(1)
-        .withHour(7)
-        .withMinute(0)
-        .withSecond(0)
-        .withZoneSameInstant(ZoneId.systemDefault())
-        .toLocalDateTime();
+      .plusDays(1)
+      .withHour(7)
+      .withMinute(0)
+      .withSecond(0)
+      .withZoneSameInstant(ZoneId.systemDefault())
+      .toLocalDateTime();
   }
 
   public static LocalDateTime nextMonday_7_AM(ZoneId targetZone) {
     return ZonedDateTime.now(targetZone)
-        .with(TemporalAdjusters.next(DayOfWeek.MONDAY))
-        .withHour(7)
-        .withMinute(0)
-        .withSecond(0)
-        .withZoneSameInstant(ZoneId.systemDefault())
-        .toLocalDateTime();
+      .with(TemporalAdjusters.next(DayOfWeek.MONDAY))
+      .withHour(7)
+      .withMinute(0)
+      .withSecond(0)
+      .withZoneSameInstant(ZoneId.systemDefault())
+      .toLocalDateTime();
   }
 
   public static LocalDateTime firstDayOfNextMonth_7_AM(ZoneId targetZone) {
     return ZonedDateTime.now(targetZone)
-        .with(TemporalAdjusters.firstDayOfNextMonth())
-        .withHour(7)
-        .withMinute(0)
-        .withSecond(0)
-        .withZoneSameInstant(ZoneId.systemDefault())
-        .toLocalDateTime();
+      .with(TemporalAdjusters.firstDayOfNextMonth())
+      .withHour(7)
+      .withMinute(0)
+      .withSecond(0)
+      .withZoneSameInstant(ZoneId.systemDefault())
+      .toLocalDateTime();
   }
 
   public static LocalDateTime firstDayOfNextYear_7_AM(ZoneId targetZone) {
     return ZonedDateTime.now(targetZone)
-        .with(TemporalAdjusters.firstDayOfNextYear())
-        .withHour(7)
-        .withMinute(0)
-        .withSecond(0)
-        .withZoneSameInstant(ZoneId.systemDefault())
-        .toLocalDateTime();
+      .with(TemporalAdjusters.firstDayOfNextYear())
+      .withHour(7)
+      .withMinute(0)
+      .withSecond(0)
+      .withZoneSameInstant(ZoneId.systemDefault())
+      .toLocalDateTime();
   }
 
   public static ZoneId zoneOf(String zoneIdStr) {
@@ -179,5 +184,32 @@ public class DateUtils {
     var from = date.atStartOfDay();
     var to = date.atTime(LocalTime.MAX);
     return new Interval(from, to);
+  }
+
+  public static List<Integer> getYears() {
+    return Stream.iterate(LocalDateTime.now().getYear(), i -> i >= 2006, i -> i - 1)
+      .toList();
+  }
+
+  public static List<Month> getMonthsForYear(Integer year) {
+    int start;
+    int end;
+    if (year == null || year == LocalDate.now().getYear()) {
+      start = 1;
+      end = LocalDate.now().getMonthValue();
+    } else if (year == 2006) {
+      start = 10; //hacker news first story posted in '6 Oct 2006'
+      end = 12;
+    } else {
+      start = 1;
+      end = 12;
+    }
+    return IntStream.iterate(end, i -> i >= start, i -> i - 1)
+      .mapToObj(Month::of)
+      .toList();
+  }
+
+  public static String getDisplayName(Month month) {
+    return month.getDisplayName(TextStyle.FULL, Locale.ENGLISH);
   }
 }

@@ -1,5 +1,6 @@
 package com.eguller.hntoplinks.models;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -13,8 +14,8 @@ public class Page<T> {
   @Builder.Default
   private String currentPath = "/";
   private Map<String, Object> metadata;
-  @Builder.Default
-  private int selectedYear = LocalDateTime.now().getYear();
+  private Integer selectedYear;
+  private Integer selectedMonth;
   private T content; // Specific page content
 
   // Optional components

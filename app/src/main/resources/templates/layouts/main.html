@@ -43,37 +43,27 @@
       <div class="archive-section">
         <h3>Browse by Year</h3>
         <div class="archive-links">
-          <a th:each="year : ${#numbers.sequence(2024, 2006)}"
-             th:href="@{/(year=${year})}"
+          <a th:each="year : ${#dateUtils.getYears()}"
+             th:href="@{/stories/{year}(year=${year})}"
              th:text="${year}"
             th:class="${page.selectedYear != null and page.selectedYear == year} ? 'active'">2024</a>
         </div>
       </div>
 
-      <div class="archive-section" th:if="${selectedYear}">
-        <h3 th:text="${selectedYear + ' Archives'}">2024 Archives</h3>
+      <div class="archive-section">
+        <h3 th:text="${(page.selectedYear == null ? #dateUtils.currentYear() : page.selectedYear) + ' Archives'}">2024 Archives</h3>
         <div class="archive-links">
           <a href="#"
-             th:each="month : ${{'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'}}"
-             th:href="@{'/archive/' + ${selectedYear} + '/' + ${monthStat.count}}"
-             th:text="${month}">January</a>
-        </div>
-      </div>
-
-      <div class="archive-section">
-        <h3>Browse By Month</h3>
-        <div class="archive-links">
-          <a href="/top/day">Today</a>
-          <a href="/top/week">This Week</a>
-          <a href="/top/month">This Month</a>
-          <a href="/top/year">This Year</a>
-          <a href="/top/all">All Time</a>
+             th:each="month : ${#dateUtils.getMonthsForYear(page.selectedYear)}"
+             th:href="@{'/stories/' + ${#dateUtils.getYearOrDefault(page.selectedYear)} + '/' + ${month.getValue()}}"
+             th:text="${#dateUtils.getDisplayName(month)}"
+            th:class="${page.selectedMonth != null and page.selectedMonth == month.getValue()} ? 'active'">January</a>
         </div>
       </div>
     </div>
 
     <div class="copyright">
-      <p>&copy; <span th:text="${#dates.year(#dates.createNow())}">2024</span> Hacker News Top Links</p>
+      <p>&copy; <span th:text="${#dateUtils.year(#dateUtils.now())}">2024</span> Hacker News Top Links</p>
     </div>
   </div>
 </footer>

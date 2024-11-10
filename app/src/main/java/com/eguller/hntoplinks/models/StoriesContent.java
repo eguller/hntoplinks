@@ -15,7 +15,8 @@ public class StoriesContent {
   private List<Item> stories;
   private SortType sortBy;
   private int currentPage;
-  private int totalPages;
+  private int    totalPages;
+  private String title;
 
   @Builder.Default
   private int storiesPerPage = StoriesUtils.PAGE_SIZE;

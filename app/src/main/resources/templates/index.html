@@ -8,10 +8,7 @@
 </head>
 <main layout:fragment="content">
   <div class="story-controls">
-    <div class="current-view" th:text="${timeframe == 'day' ? 'Today' :
-                                               timeframe == 'week' ? 'This Week' :
-                                               timeframe == 'month' ? 'This Month' :
-                                               'All Stories'}">
+    <div class="current-view" th:text="${page.content.title}">
       Today
     </div>
     <div class="view-toggle">
