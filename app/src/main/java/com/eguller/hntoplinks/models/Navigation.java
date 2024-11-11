@@ -9,9 +9,7 @@ import lombok.Data;
 @Builder
 @Data
 public class Navigation {
-  @Builder.Default
-  private List<Breadcrumb> breadcrumbs = new ArrayList<>();
+  @Builder.Default private List<Breadcrumb> breadcrumbs = new ArrayList<>();
 
-  @Builder.Default
-  private String activeMenu = "day";
+  @Builder.Default private String activeMenu = "day";
 }

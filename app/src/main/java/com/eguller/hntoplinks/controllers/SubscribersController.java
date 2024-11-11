@@ -3,9 +3,6 @@ package com.eguller.hntoplinks.controllers;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.eguller.hntoplinks.repository.SubscriptionsRepository;
-import com.eguller.hntoplinks.services.RecaptchaVerifier;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,6 +21,10 @@ import com.eguller.hntoplinks.models.Page;
 import com.eguller.hntoplinks.models.SubscribersContent;
 import com.eguller.hntoplinks.models.SubscriptionForm;
 import com.eguller.hntoplinks.repository.SubscribersRepository;
+import com.eguller.hntoplinks.repository.SubscriptionsRepository;
+import com.eguller.hntoplinks.services.RecaptchaVerifier;
+
+import jakarta.validation.Valid;
 
 @Controller
 @RequestScope
@@ -33,11 +34,15 @@ public class SubscribersController {
   @Value("${hntoplinks.captcha.enabled}")
   private boolean captchaEnabled;
 
-  private final SubscribersRepository   subscriberRepository;
+  private final SubscribersRepository subscriberRepository;
   private final SubscriptionsRepository subscriptionsRepository;
   private final RecaptchaVerifier recaptchaVerifier;
-  public SubscribersController(SubscribersRepository subscribersRepository, SubscriptionsRepository subscriptionsRepository, RecaptchaVerifier recaptchaVerifier) {
-    this.subscriberRepository    = subscribersRepository;
+
+  public SubscribersController(
+      SubscribersRepository subscribersRepository,
+      SubscriptionsRepository subscriptionsRepository,
+      RecaptchaVerifier recaptchaVerifier) {
+    this.subscriberRepository = subscribersRepository;
     this.subscriptionsRepository = subscriptionsRepository;
     this.recaptchaVerifier = recaptchaVerifier;
   }
@@ -45,13 +50,17 @@ public class SubscribersController {
   @GetMapping("/subscribers")
   public String subscribers(Model model) {
     var subscriptionForm = createDefaultSubscriptionForm();
-    var content = SubscribersContent.builder().captchaEnabled(captchaEnabled).subscriptionForm(subscriptionForm).build();
+    var content =
+        SubscribersContent.builder()
+            .captchaEnabled(captchaEnabled)
+            .subscriptionForm(subscriptionForm)
+            .build();
     var page =
-      Page.<SubscribersContent>builder()
-        .title(TITLE)
-        .navigation(Navigation.builder().activeMenu("subscribe").build())
-        .content(content)
-        .build();
+        Page.<SubscribersContent>builder()
+            .title(TITLE)
+            .navigation(Navigation.builder().activeMenu("subscribe").build())
+            .content(content)
+            .build();
     model.addAttribute("page", page);
     model.addAttribute("subscriptionForm", page.getContent().getSubscriptionForm());
     return "subscribe";
@@ -59,15 +68,15 @@ public class SubscribersController {
 
   private SubscriptionForm createDefaultSubscriptionForm() {
     var subscriptionForm =
-      SubscriptionForm.builder().selectedPeriods(Set.of(Period.WEEKLY)).build();
+        SubscriptionForm.builder().selectedPeriods(Set.of(Period.WEEKLY)).build();
     return subscriptionForm;
   }
 
   @GetMapping("/subscribers/{subscriberId}")
   public String subscribers(
-    Model model,
-    @PathVariable("subscriberId") String subscriberId,
-    @RequestParam(value = "action") String action) {
+      Model model,
+      @PathVariable("subscriberId") String subscriberId,
+      @RequestParam(value = "action") String action) {
     if ("unsubscribe".equals(action)) {
       this.subscriberRepository.deleteBySubscriberId(subscriberId);
       createUnsubscribePage(model);
@@ -82,55 +91,64 @@ public class SubscribersController {
     var subscriptionFormBuilder = SubscriptionForm.builder();
 
     var subscriptionForm =
-      this.subscriberRepository
-        .findBySubscriberId(subscriberId)
-        .map(
-          subscriber ->
-            subscriptionFormBuilder
-              .subscriberId(subscriber.getSubscriberId())
-              .email(subscriber.getEmail())
-              .selectedPeriods(
-                subscriber.getSubscriptionList().stream()
-                  .map(subscription -> subscription.getPeriod())
-                  .collect(Collectors.toSet()))
-              .build())
-        .orElse(subscriptionFormBuilder.selectedPeriods(Set.of(Period.WEEKLY)).build());
+        this.subscriberRepository
+            .findBySubscriberId(subscriberId)
+            .map(
+                subscriber ->
+                    subscriptionFormBuilder
+                        .subscriberId(subscriber.getSubscriberId())
+                        .email(subscriber.getEmail())
+                        .selectedPeriods(
+                            subscriber.getSubscriptionList().stream()
+                                .map(subscription -> subscription.getPeriod())
+                                .collect(Collectors.toSet()))
+                        .build())
+            .orElse(subscriptionFormBuilder.selectedPeriods(Set.of(Period.WEEKLY)).build());
 
-    var content = SubscribersContent.builder().captchaEnabled(captchaEnabled).subscriptionForm(subscriptionForm).build();
+    var content =
+        SubscribersContent.builder()
+            .captchaEnabled(captchaEnabled)
+            .subscriptionForm(subscriptionForm)
+            .build();
     var page =
-      Page.<SubscribersContent>builder()
-        .title(TITLE)
-        .navigation(Navigation.builder().activeMenu("subscribe").build())
-        .content(content)
-        .build();
+        Page.<SubscribersContent>builder()
+            .title(TITLE)
+            .navigation(Navigation.builder().activeMenu("subscribe").build())
+            .content(content)
+            .build();
     model.addAttribute("page", page);
   }
 
   private void createUnsubscribePage(Model model) {
     var page =
-      Page.<SubscribersContent>builder()
-        .title("Unsubscribed")
-        .navigation(Navigation.builder().build())
-        .build();
+        Page.<SubscribersContent>builder()
+            .title("Unsubscribed")
+            .navigation(Navigation.builder().build())
+            .build();
     model.addAttribute("page", page);
   }
 
   @PostMapping("/subscribers")
-  public String subscribe(@Valid @ModelAttribute SubscriptionForm subscriptionForm,
-                          BindingResult bindingResult,
-                          Model model) {
-    if(captchaEnabled) {
+  public String subscribe(
+      @Valid @ModelAttribute SubscriptionForm subscriptionForm,
+      BindingResult bindingResult,
+      Model model) {
+    if (captchaEnabled) {
       if (!recaptchaVerifier.verify(subscriptionForm.getCaptchaResponse())) {
         bindingResult.rejectValue("captchaResponse", "recaptcha.invalid", "Invalid captcha");
       }
     }
-    var content = SubscribersContent.builder().captchaEnabled(captchaEnabled).subscriptionForm(subscriptionForm).build();
+    var content =
+        SubscribersContent.builder()
+            .captchaEnabled(captchaEnabled)
+            .subscriptionForm(subscriptionForm)
+            .build();
     var page =
-      Page.<SubscribersContent>builder()
-        .title(TITLE)
-        .navigation(Navigation.builder().activeMenu("subscribe").build())
-        .content(content)
-        .build();
+        Page.<SubscribersContent>builder()
+            .title(TITLE)
+            .navigation(Navigation.builder().activeMenu("subscribe").build())
+            .content(content)
+            .build();
 
     model.addAttribute("page", page);
     model.addAttribute("subscriptionForm", page.getContent().getSubscriptionForm());
@@ -151,19 +169,25 @@ public class SubscribersController {
       content.setSuccessMessage("You have successfully subscribed to HN Top Links");
       // save subscribers
     } else {
-      //update subscriber
-      subscriberRepository.findBySubscriberId(subscriptionForm.getSubscriberId()).map(subscriber -> {
-        subscriber.setEmail(subscriptionForm.getEmail());
-        subscriberRepository.save(subscriber);
-        //update subscriptions
-        var subscriptions = subscriptionForm.toSubscriptionEntities();
-        subscriptions.forEach(subscription -> subscription.setSubscriberId(subscriber.getId()));
-        subscriber.getSubscriptionList().stream().filter(subscription -> !subscriptions.contains(subscription)).forEach(subscription -> subscriptionsRepository.delete(subscription));
-        subscriptionsRepository.saveAll(subscriptions);
-        content.setSuccess(true);
-        content.setSuccessMessage("Subscription updated successfully");
-        return subscriber;
-      });
+      // update subscriber
+      subscriberRepository
+          .findBySubscriberId(subscriptionForm.getSubscriberId())
+          .map(
+              subscriber -> {
+                subscriber.setEmail(subscriptionForm.getEmail());
+                subscriberRepository.save(subscriber);
+                // update subscriptions
+                var subscriptions = subscriptionForm.toSubscriptionEntities();
+                subscriptions.forEach(
+                    subscription -> subscription.setSubscriberId(subscriber.getId()));
+                subscriber.getSubscriptionList().stream()
+                    .filter(subscription -> !subscriptions.contains(subscription))
+                    .forEach(subscription -> subscriptionsRepository.delete(subscription));
+                subscriptionsRepository.saveAll(subscriptions);
+                content.setSuccess(true);
+                content.setSuccessMessage("Subscription updated successfully");
+                return subscriber;
+              });
     }
     return "subscribe";
   }

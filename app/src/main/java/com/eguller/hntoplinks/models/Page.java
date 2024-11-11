@@ -1,7 +1,5 @@
 package com.eguller.hntoplinks.models;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Map;
 
 import lombok.Builder;
@@ -11,8 +9,7 @@ import lombok.Data;
 @Data
 public class Page<T> {
   private String title;
-  @Builder.Default
-  private String currentPath = "/";
+  @Builder.Default private String currentPath = "/";
   private Map<String, Object> metadata;
   private Integer selectedYear;
   private Integer selectedMonth;

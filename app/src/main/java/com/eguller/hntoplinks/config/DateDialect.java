@@ -1,16 +1,17 @@
 package com.eguller.hntoplinks.config;
 
-import com.eguller.hntoplinks.util.DateUtils;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.util.List;
+import java.util.Set;
+
 import org.springframework.stereotype.Component;
 import org.thymeleaf.context.IExpressionContext;
 import org.thymeleaf.dialect.AbstractDialect;
 import org.thymeleaf.dialect.IExpressionObjectDialect;
 import org.thymeleaf.expression.IExpressionObjectFactory;
 
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.util.List;
-import java.util.Set;
+import com.eguller.hntoplinks.util.DateUtils;
 
 @Component
 public class DateDialect extends AbstractDialect implements IExpressionObjectDialect {
@@ -30,7 +31,7 @@ public class DateDialect extends AbstractDialect implements IExpressionObjectDia
 
       @Override
       public Object buildObject(IExpressionContext context, String expressionObjectName) {
-        return new DateUtilMethods();  // Wrapper class with instance methods
+        return new DateUtilMethods(); // Wrapper class with instance methods
       }
 
       @Override
@@ -43,15 +44,15 @@ public class DateDialect extends AbstractDialect implements IExpressionObjectDia
   // Wrapper class
   public static class DateUtilMethods {
     public List<Month> getMonthsForYear(Integer year) {
-      return DateUtils.getMonthsForYear(year);  // Delegates to static method
+      return DateUtils.getMonthsForYear(year); // Delegates to static method
     }
 
     public List<Integer> getYears() {
-      return DateUtils.getYears();  // Delegates to static method
+      return DateUtils.getYears(); // Delegates to static method
     }
 
     public String getDisplayName(Month month) {
-      return DateUtils.getDisplayName(month);  // Delegates to static method
+      return DateUtils.getDisplayName(month); // Delegates to static method
     }
 
     public LocalDateTime now() {
@@ -74,6 +75,4 @@ public class DateDialect extends AbstractDialect implements IExpressionObjectDia
       return String.format("%02d", month);
     }
   }
-
 }
-
