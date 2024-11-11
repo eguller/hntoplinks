@@ -1,11 +1,13 @@
 package com.eguller.hntoplinks.controllers;
 
 import java.time.LocalDate;
+import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.eguller.hntoplinks.models.Breadcrumb;
+import com.eguller.hntoplinks.util.SanitizedDate;
 import com.eguller.hntoplinks.util.StoriesUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -212,11 +214,13 @@ public class StoriesController {
         .totalPages(items.size() < StoriesUtils.PAGE_SIZE ? page : page + 1)
         .build();
 
+    var sanitizedDate = DateUtils.sanitizeYear(year);
+
     var activeMenu = year == LocalDate.now().getYear() ? "year" : null;
     var navigation = Navigation
       .builder()
       .activeMenu(activeMenu)
-      .breadcrumbs(generateBreadcrumbs(year))
+      .breadcrumbs(generateBreadcrumbs(sanitizedDate))
       .build();
 
     var pageModel =
@@ -252,14 +256,15 @@ public class StoriesController {
         .totalPages(items.size() < StoriesUtils.PAGE_SIZE ? page : page + 1)
         .build();
 
+    var sanitizedDate = DateUtils.sanitizeDate(year, month, null);
     var navigation = Navigation
       .builder()
-      .breadcrumbs(generateBreadcrumbs(year, month))
+      .breadcrumbs(generateBreadcrumbs(sanitizedDate))
       .build();
 
     var pageModel =
       Page.builder()
-        .currentPath("/stories/%d/%d".formatted(year, month))
+        .currentPath("/stories/%d/%s".formatted(year, sanitizedDate.getPaddedMonth()))
         .selectedYear(year)
         .selectedMonth(month)
         .title(title)
@@ -278,7 +283,7 @@ public class StoriesController {
     @RequestParam(value = "page", defaultValue = "1") int page,
     @RequestParam(value = "sort", defaultValue = "upvotes") SortType sort) {
     var date = LocalDate.of(year, month, 1);
-    var title = "%s Archive".formatted(date.format(DateTimeFormatter.ofPattern("MMMM yyyy")));
+    var title = "%s Archive".formatted(date.format(DateTimeFormatter.ofPattern("dd MMMM yyyy, EEEE")));
 
     var interval = DateUtils.getInterval(year, month, day);
 
@@ -292,15 +297,16 @@ public class StoriesController {
         .totalPages(items.size() < StoriesUtils.PAGE_SIZE ? page : page + 1)
         .build();
 
+    var sanitizedDate = DateUtils.sanitizeDate(year, month, day);
     var navigation = Navigation
       .builder()
-      .breadcrumbs(generateBreadcrumbs(year, month, day))
+      .breadcrumbs(generateBreadcrumbs(sanitizedDate))
       .build();
 
     var pageModel =
       Page
         .builder()
-        .currentPath("/stories/%d/%d/%d".formatted(year, month, day))
+        .currentPath("/stories/%d/%s/%s".formatted(year, sanitizedDate.getPaddedMonth(), sanitizedDate.getPaddedDay()))
         .selectedYear(year)
         .selectedMonth(month)
         .title(title)
@@ -311,25 +317,18 @@ public class StoriesController {
     return "index";
   }
 
-  private List<Breadcrumb> generateBreadcrumbs(Integer year) {
-    return generateBreadcrumbs(year, null, null);
-  }
-
-  private List<Breadcrumb> generateBreadcrumbs(Integer year, Integer month) {
-    return generateBreadcrumbs(year, month, null);
-  }
-
-  private List<Breadcrumb> generateBreadcrumbs(Integer year, Integer month, Integer day) {
+  private List<Breadcrumb> generateBreadcrumbs(SanitizedDate sanitizedDate) {
     var list = new ArrayList<Breadcrumb>();
-    if (year != null) {
-      list.add(Breadcrumb.builder().title(year.toString()).url("/stories/%d".formatted(year)).build());
+    if (sanitizedDate.getYear() != null) {
+      list.add(Breadcrumb.builder().title(sanitizedDate.getYear().toString()).url("/stories/%d".formatted(sanitizedDate.getYear())).build());
     }
-    if (year != null && month != null) {
-      list.add(Breadcrumb.builder().title(month.toString()).url("/stories/%d/%d".formatted(year, month)).build());
+    if (sanitizedDate.getYear() != null && sanitizedDate.getMonth() != null) {
+
+      list.add(Breadcrumb.builder().title(DateUtils.getDisplayName(sanitizedDate.getMonth())).url("/stories/%d/%s".formatted(sanitizedDate.getYear(), sanitizedDate.getPaddedMonth())).build());
     }
 
-    if (year != null && month != null && day != null) {
-      list.add(Breadcrumb.builder().title(day.toString()).url("/stories/%d/%d/%d".formatted(year, month, day)).build());
+    if (sanitizedDate.getYear() != null && sanitizedDate.getMonth() != null && sanitizedDate.getDay() != null) {
+      list.add(Breadcrumb.builder().title(sanitizedDate.getPaddedDay()).url("/stories/%d/%s/%s".formatted(sanitizedDate.getYear(), sanitizedDate.getPaddedMonth(), sanitizedDate.getPaddedDay())).build());
     }
     return list;
   }

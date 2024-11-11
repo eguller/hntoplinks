@@ -66,8 +66,12 @@ public class DateDialect extends AbstractDialect implements IExpressionObjectDia
       return LocalDateTime.now().getYear();
     }
 
-    public int getYearOrDefault(Integer year) {
+    public int getYearOrCurrent(Integer year) {
       return year == null ? LocalDateTime.now().getYear() : year;
+    }
+
+    public String getPaddedMonth(Integer month) {
+      return String.format("%02d", month);
     }
   }
 

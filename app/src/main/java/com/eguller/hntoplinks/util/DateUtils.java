@@ -15,6 +15,7 @@ import java.time.temporal.TemporalAdjusters;
 import java.time.temporal.WeekFields;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -196,13 +197,13 @@ public class DateUtils {
     int end;
     if (year == null || year == LocalDate.now().getYear()) {
       start = 1;
-      end = LocalDate.now().getMonthValue();
+      end   = LocalDate.now().getMonthValue();
     } else if (year == 2006) {
       start = 10; //hacker news first story posted in '6 Oct 2006'
-      end = 12;
+      end   = 12;
     } else {
       start = 1;
-      end = 12;
+      end   = 12;
     }
     return IntStream.iterate(end, i -> i >= start, i -> i - 1)
       .mapToObj(Month::of)
@@ -211,5 +212,63 @@ public class DateUtils {
 
   public static String getDisplayName(Month month) {
     return month.getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+  }
+
+  public static String getDisplayName(int month) {
+    String monthName = getDisplayName(Month.of(month));
+    return monthName;
+  }
+
+  public static SanitizedDate sanitizeYear(Integer year) {
+    return sanitizeDate(year, null, null);
+  }
+
+  public static SanitizedDate sanitizedDate(Integer year, Integer month) {
+    return sanitizeDate(year, month, null);
+  }
+
+  public static SanitizedDate sanitizeDate(Integer year, Integer month, Integer day) {
+    LocalDate now = LocalDate.now();
+    int currentYear = now.getYear();
+
+    // Sanitize year
+    int sanitizedYear = Optional.ofNullable(year)
+      .map(y -> Math.min(Math.max(y, 2006), currentYear))
+      .orElse(currentYear);
+
+    // Sanitize month
+    Integer sanitizedMonth;
+    if (sanitizedYear == currentYear) {
+      sanitizedMonth = Optional.ofNullable(month)
+        .map(m -> Math.min(Math.max(m, 1), now.getMonthValue()))
+        .orElse(null);
+    } else {
+      sanitizedMonth = Optional.ofNullable(month)
+        .map(m -> Math.min(Math.max(m, 1), 12))
+        .orElse(null);
+    }
+
+    // Sanitize day
+    Integer sanitizedDay;
+    if (sanitizedMonth != null) {
+      int maxDay = YearMonth.of(sanitizedYear, sanitizedMonth).lengthOfMonth();
+      if (sanitizedYear == currentYear && sanitizedMonth == now.getMonthValue()) {
+        maxDay = now.getDayOfMonth();
+      }
+
+      int maxDayF = maxDay;
+
+      sanitizedDay = Optional.ofNullable(day)
+        .map(d -> Math.min(Math.max(d, 1), maxDayF))
+        .orElse(maxDayF);
+    } else {
+      sanitizedDay = null;
+    }
+
+    return SanitizedDate.builder()
+      .year(sanitizedYear)
+      .month(sanitizedMonth)
+      .day(sanitizedDay)
+      .build();
   }
 }

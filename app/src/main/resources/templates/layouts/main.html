@@ -30,7 +30,7 @@
     <a href="/">Home</a>
     <span class="breadcrumb-separator">/</span>
     <th:block th:each="breadcrumb, iterStat : ${page.navigation.breadcrumbs}">
-      <a href="${breadcrumb.url}" th:text="${breadcrumb.title}">2024</a>
+      <a th:href="@{${breadcrumb.url}}" th:text="${breadcrumb.title}">2024</a>
       <span class="breadcrumb-separator" th:if="${!iterStat.last}">/</span>
     </th:block>
   </div>
@@ -56,7 +56,7 @@
         <div class="archive-links">
           <a href="#"
              th:each="month : ${#dateUtils.getMonthsForYear(page.selectedYear)}"
-             th:href="@{'/stories/' + ${#dateUtils.getYearOrDefault(page.selectedYear)} + '/' + ${month.getValue()}}"
+             th:href="@{'/stories/' + ${#dateUtils.getYearOrCurrent(page.selectedYear)} + '/' + ${#dateUtils.getPaddedMonth(month.getValue())}}"
              th:text="${#dateUtils.getDisplayName(month)}"
             th:class="${page.selectedMonth != null and page.selectedMonth == month.getValue()} ? 'active'">January</a>
         </div>
