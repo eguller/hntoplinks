@@ -2,12 +2,12 @@ package com.eguller.hntoplinks.services;
 
 import java.lang.invoke.MethodHandles;
 
+import com.eguller.hntoplinks.repository.ItemsRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.eguller.hntoplinks.models.EmailTarget;
-import com.eguller.hntoplinks.repository.StoryRepository;
 import com.eguller.hntoplinks.repository.SubscriptionsRepository;
 import com.eguller.hntoplinks.services.subscription.DailySubscriptionEmailTask;
 import com.eguller.hntoplinks.services.subscription.MonthlySubscriptionEmailTask;
@@ -20,17 +20,17 @@ public class SubscriptionService {
   private static final Logger logger =
       LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  private final StoryRepository storyRepository;
+  private final ItemsRepository itemsRepository;
   private final EmailProviderService emailProviderService;
   private final TemplateService templateService;
   private final SubscriptionsRepository subscriptionRepository;
 
   public SubscriptionService(
-      StoryRepository storyRepository,
+      ItemsRepository itemsRepository,
       EmailProviderService emailProviderService,
       TemplateService templateService,
       SubscriptionsRepository subscriberRepository) {
-    this.storyRepository = storyRepository;
+    this.itemsRepository = itemsRepository;
     this.emailProviderService = emailProviderService;
     this.templateService = templateService;
     this.subscriptionRepository = subscriberRepository;
@@ -60,13 +60,13 @@ public class SubscriptionService {
     var task =
         switch (emailTarget.subscription().getPeriod()) {
           case WEEKLY -> new WeeklySubscriptionEmailTask(
-              templateService, emailTarget, emailProviderService, storyRepository);
+              templateService, emailTarget, emailProviderService, itemsRepository);
           case MONTHLY -> new MonthlySubscriptionEmailTask(
-              templateService, emailTarget, emailProviderService, storyRepository);
+              templateService, emailTarget, emailProviderService, itemsRepository);
           case YEARLY -> new YearlySubscriptionEmailTask(
-              templateService, emailTarget, emailProviderService, storyRepository);
+              templateService, emailTarget, emailProviderService, itemsRepository);
           default -> new DailySubscriptionEmailTask(
-              templateService, emailTarget, emailProviderService, storyRepository);
+              templateService, emailTarget, emailProviderService, itemsRepository);
         };
 
     return task;

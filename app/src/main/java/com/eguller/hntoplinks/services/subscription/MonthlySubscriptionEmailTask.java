@@ -6,21 +6,22 @@ import java.util.List;
 
 import com.eguller.hntoplinks.entities.StoryEntity;
 import com.eguller.hntoplinks.models.EmailTarget;
+import com.eguller.hntoplinks.repository.ItemsRepository;
 import com.eguller.hntoplinks.repository.StoryRepository;
 import com.eguller.hntoplinks.services.EmailProviderService;
 import com.eguller.hntoplinks.services.TemplateService;
 import com.eguller.hntoplinks.util.DateUtils;
 
 public class MonthlySubscriptionEmailTask extends SubscriptionEmailTask {
-  private final StoryRepository storyRepository;
+  private final ItemsRepository itemsRepository;
 
   public MonthlySubscriptionEmailTask(
       TemplateService templateService,
       EmailTarget emailTarget,
       EmailProviderService emailProviderService,
-      StoryRepository storyRepository) {
+      ItemsRepository itemsRepository) {
     super(templateService, emailTarget, emailProviderService);
-    this.storyRepository = storyRepository;
+    this.itemsRepository = itemsRepository;
   }
 
   @Override
@@ -42,8 +43,8 @@ public class MonthlySubscriptionEmailTask extends SubscriptionEmailTask {
   }
 
   @Override
-  protected List<StoryEntity> getStories() {
-    var stories = storyRepository.readMonthlyTop();
+  protected List<ItemsRepository> getStories() {
+    var stories = itemsRepository.readMonthlyTop();
     return stories;
   }
 }

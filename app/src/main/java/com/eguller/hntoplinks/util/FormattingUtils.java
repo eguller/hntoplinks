@@ -1,13 +1,21 @@
 package com.eguller.hntoplinks.util;
 
+import com.eguller.hntoplinks.entities.Item;
+import org.springframework.util.StringUtils;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.Locale;
 
 public class FormattingUtils {
+  private static final DateTimeFormatter SHORT_DATE_FORMATTER =
+    DateTimeFormatter.ofPattern("MMM d, yyyy", Locale.ENGLISH);
+
   public String domainName(String url) {
     try {
       if (url == null) {
@@ -46,12 +54,11 @@ public class FormattingUtils {
 
   public String since(long timeL) {
     LocalDateTime time =
-        LocalDateTime.ofInstant(Instant.ofEpochMilli(timeL), ZoneId.systemDefault());
+      LocalDateTime.ofInstant(Instant.ofEpochMilli(timeL), ZoneId.systemDefault());
     long yearsBetween = ChronoUnit.YEARS.between(time, LocalDateTime.now());
-    if (yearsBetween == 1) {
-      return yearsBetween + " year ago";
-    } else if (yearsBetween > 1) {
-      return yearsBetween + " years ago";
+    if (yearsBetween >= 1) {
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d, yyyy", Locale.ENGLISH);
+      return "on %s".formatted(time.format(formatter));
     }
 
     long monthsBetween = ChronoUnit.MONTHS.between(time, LocalDateTime.now());
@@ -91,6 +98,14 @@ public class FormattingUtils {
       return minutesBetween + " minutes ago";
     } else {
       return "just now";
+    }
+  }
+
+  public String url(Item item) {
+    if (StringUtils.hasText(item.getUrl())) {
+      return item.getUrl();
+    } else {
+      return "https://news.ycombinator.com/item?id=" + item.getId();
     }
   }
 }

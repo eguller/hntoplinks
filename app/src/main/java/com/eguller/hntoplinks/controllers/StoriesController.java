@@ -142,7 +142,7 @@ public class StoriesController {
       Model model,
       @RequestParam(value = "page", defaultValue = "1") int page,
       @RequestParam(value = "sort", defaultValue = "upvotes") SortType sort) {
-    var interval = DateUtils.getIntervalForToday();
+    var interval = DateUtils.getIntervalForCurrentYear();
     var items = itemRepository.findByInterval(interval, sort, StoriesUtils.PAGE_SIZE, page);
     var storiesContent =
         StoriesContent.builder()

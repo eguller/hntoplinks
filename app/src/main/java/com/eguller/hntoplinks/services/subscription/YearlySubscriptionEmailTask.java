@@ -4,23 +4,23 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import com.eguller.hntoplinks.entities.StoryEntity;
+import com.eguller.hntoplinks.entities.Item;
 import com.eguller.hntoplinks.models.EmailTarget;
-import com.eguller.hntoplinks.repository.StoryRepository;
+import com.eguller.hntoplinks.repository.ItemsRepository;
 import com.eguller.hntoplinks.services.EmailProviderService;
 import com.eguller.hntoplinks.services.TemplateService;
 import com.eguller.hntoplinks.util.DateUtils;
 
 public class YearlySubscriptionEmailTask extends SubscriptionEmailTask {
-  private final StoryRepository storyRepository;
+  private final ItemsRepository itemsRepository;
 
   public YearlySubscriptionEmailTask(
       TemplateService templateService,
       EmailTarget emailTarget,
       EmailProviderService emailProviderService,
-      StoryRepository storyRepository) {
+      ItemsRepository itemsRepository) {
     super(templateService, emailTarget, emailProviderService);
-    this.storyRepository = storyRepository;
+    this.itemsRepository = itemsRepository;
   }
 
   @Override
@@ -41,8 +41,8 @@ public class YearlySubscriptionEmailTask extends SubscriptionEmailTask {
   }
 
   @Override
-  protected List<StoryEntity> getStories() {
-    var stories = this.storyRepository.readyAnnuallyTop();
+  protected List<Item> getStories() {
+    var stories = this.itemsRepository.readyAnnuallyTop();
     return stories;
   }
 }

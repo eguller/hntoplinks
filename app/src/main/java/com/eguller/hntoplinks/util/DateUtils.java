@@ -30,54 +30,6 @@ public class DateUtils {
   private static final Logger logger =
       LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  public static String since(LocalDateTime time) {
-    long yearsBetween = ChronoUnit.YEARS.between(time, LocalDateTime.now());
-    if (yearsBetween == 1) {
-      return yearsBetween + " year ago";
-    } else if (yearsBetween > 1) {
-      return yearsBetween + " years ago";
-    }
-
-    long monthsBetween = ChronoUnit.MONTHS.between(time, LocalDateTime.now());
-    if (monthsBetween == 1) {
-      return monthsBetween + " month ago";
-    } else if (monthsBetween > 1) {
-      return monthsBetween + " months ago";
-    }
-
-    long weeksBetween = ChronoUnit.WEEKS.between(time, LocalDateTime.now());
-    if (weeksBetween == 1) {
-      return weeksBetween + " week ago";
-    } else if (weeksBetween > 1) {
-      return weeksBetween + " weeks ago";
-    }
-
-    long daysBetween = ChronoUnit.DAYS.between(time, LocalDateTime.now());
-    long hoursBetween = ChronoUnit.HOURS.between(time, LocalDateTime.now());
-    if (hoursBetween >= 24) {
-      if (daysBetween == 1) {
-        return daysBetween + " day ago";
-      } else if (daysBetween > 1) {
-        return daysBetween + " days ago";
-      }
-    }
-
-    if (hoursBetween == 1) {
-      return hoursBetween + " hour ago";
-    } else if (hoursBetween > 1) {
-      return hoursBetween + " hours ago";
-    }
-
-    long minutesBetween = ChronoUnit.MINUTES.between(time, LocalDateTime.now());
-    if (minutesBetween == 1) {
-      return minutesBetween + " minute ago";
-    } else if (minutesBetween > 1) {
-      return minutesBetween + " minutes ago";
-    } else {
-      return "just now";
-    }
-  }
-
   public static ZoneId parseZoneId(String zoneIdStr) {
     var zoneId = ZoneId.systemDefault();
     try {
@@ -139,9 +91,23 @@ public class DateUtils {
   }
 
   public static Interval getIntervalForToday() {
-    val now = LocalDate.now();
+    var now = LocalDate.now();
     return getInterval(now.getYear(), now.getMonthValue(), now.getDayOfMonth());
   }
+
+  public static Interval getIntervalForYesterday() {
+    var yesterday = LocalDate.now().minusDays(1);
+    return getInterval(yesterday.getYear(), yesterday.getMonthValue(), yesterday.getDayOfMonth());
+  }
+
+  public static Interval getIntervalForLastWeek() {
+    LocalDate today = LocalDate.now();
+    LocalDate lastWeekEnd = today.minusWeeks(1)  // Go back one week
+                                .with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));  // Get Sunday
+    LocalDate lastWeekStart = lastWeekEnd.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));  // Get Monday
+
+    return Interval.of(lastWeekStart.atStartOfDay(), lastWeekEnd.atTime(LocalTime.MAX));
+}
 
   public static Interval getIntervalForCurrentWeek() {
     var now = LocalDate.now();
@@ -152,12 +118,12 @@ public class DateUtils {
   }
 
   public static Interval getIntervalForCurrentMonth() {
-    val now = LocalDate.now();
+    var now = LocalDate.now();
     return getInterval(now.getYear(), now.getMonthValue());
   }
 
   public static Interval getIntervalForCurrentYear() {
-    val now = LocalDate.now();
+    var now = LocalDate.now();
     return getInterval(now.getYear());
   }
 
@@ -268,4 +234,6 @@ public class DateUtils {
         .day(sanitizedDay)
         .build();
   }
+
+
 }

@@ -3,6 +3,7 @@ package com.eguller.hntoplinks.services.subscription;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.eguller.hntoplinks.entities.Item;
 import com.eguller.hntoplinks.entities.StoryEntity;
 import com.eguller.hntoplinks.models.Email;
 import com.eguller.hntoplinks.models.EmailTarget;
@@ -41,7 +42,7 @@ public abstract class SubscriptionEmailTask {
 
   protected abstract String getSubject();
 
-  protected abstract List<StoryEntity> getStories();
+  protected abstract List<Item> getStories();
 
   protected int getMaxStoryCount() {
     return MAX_STORY_COUNT;

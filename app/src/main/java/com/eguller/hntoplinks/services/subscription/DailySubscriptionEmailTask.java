@@ -4,23 +4,24 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import com.eguller.hntoplinks.entities.StoryEntity;
+import com.eguller.hntoplinks.entities.Item;
+import com.eguller.hntoplinks.entities.SortType;
 import com.eguller.hntoplinks.models.EmailTarget;
-import com.eguller.hntoplinks.repository.StoryRepository;
+import com.eguller.hntoplinks.repository.ItemsRepository;
 import com.eguller.hntoplinks.services.EmailProviderService;
 import com.eguller.hntoplinks.services.TemplateService;
 import com.eguller.hntoplinks.util.DateUtils;
 
 public class DailySubscriptionEmailTask extends SubscriptionEmailTask {
-  private StoryRepository storyRepository;
+  private ItemsRepository itemRepository;
 
   public DailySubscriptionEmailTask(
       TemplateService templateService,
       EmailTarget emailTarget,
       EmailProviderService emailProviderService,
-      StoryRepository storyRepository) {
+      ItemsRepository itemRepository) {
     super(templateService, emailTarget, emailProviderService);
-    this.storyRepository = storyRepository;
+    this.itemRepository = itemRepository;
   }
 
   @Override
@@ -39,8 +40,9 @@ public class DailySubscriptionEmailTask extends SubscriptionEmailTask {
   }
 
   @Override
-  protected List<StoryEntity> getStories() {
-    var stories = storyRepository.readDailyTop();
+  protected List<Item> getStories() {
+    var intervalForYesterday = DateUtils.getIntervalForYesterday();
+    var stories = itemRepository.findByInterval(intervalForYesterday, SortType.UPVOTES, getMaxStoryCount(), 0);
     return stories;
   }
 }
