@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.eguller.hntoplinks.entities.Item;
-import com.eguller.hntoplinks.entities.StoryEntity;
 import com.eguller.hntoplinks.models.Email;
 import com.eguller.hntoplinks.models.EmailTarget;
 import com.eguller.hntoplinks.services.EmailProviderService;
@@ -24,9 +23,9 @@ public abstract class SubscriptionEmailTask {
 
   public void execute() {
     var subject = getSubject();
-    var stories = getStories();
+    var items = getItems();
     var maxStoryCount = getMaxStoryCount();
-    var topStories = stories.subList(0, Math.min(stories.size() - 1, maxStoryCount));
+    var topStories = items.subList(0, Math.min(items.size() - 1, maxStoryCount));
     var content = templateService.generateTopEmail(subject, emailTarget.subscriber(), topStories);
     var email =
         Email.builder()
@@ -42,7 +41,7 @@ public abstract class SubscriptionEmailTask {
 
   protected abstract String getSubject();
 
-  protected abstract List<Item> getStories();
+  protected abstract List<Item> getItems();
 
   protected int getMaxStoryCount() {
     return MAX_STORY_COUNT;

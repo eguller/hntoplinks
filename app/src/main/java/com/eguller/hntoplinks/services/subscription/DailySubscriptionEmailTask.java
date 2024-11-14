@@ -34,15 +34,14 @@ public class DailySubscriptionEmailTask extends SubscriptionEmailTask {
   protected String getSubject() {
     String timePrefix =
         DateTimeFormatter.ofPattern("EEEE, dd MMMM")
-            .format(
-                LocalDateTime.now().minusDays(1).atZone(emailTarget.subscriber().getTimeZoneObj()));
+            .format(LocalDateTime.now(emailTarget.subscriber().getTimeZoneObj()).minusDays(1));
     return timePrefix + " - Daily Top Links";
   }
 
   @Override
-  protected List<Item> getStories() {
-    var intervalForYesterday = DateUtils.getIntervalForYesterday();
-    var stories = itemRepository.findByInterval(intervalForYesterday, SortType.UPVOTES, getMaxStoryCount(), 0);
+  protected List<Item> getItems() {
+    var interval = DateUtils.getIntervalForToday();
+    var stories = itemRepository.findByInterval(interval, SortType.UPVOTES, getMaxStoryCount(), 0);
     return stories;
   }
 }

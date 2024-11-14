@@ -42,12 +42,15 @@ public class SubscriberEntity implements HnEntity {
   private LocalDateTime activationDate;
 
   @Column("timezone")
+  @Builder.Default
   private String timeZone = ZoneId.systemDefault().getId();
 
   @Column("activated")
+  @Builder.Default
   private boolean activated = true;
 
   @MappedCollection(idColumn = "subscriber_id", keyColumn = "id")
+  @Builder.Default
   private List<SubscriptionEntity> subscriptionList = new ArrayList<>();
 
   public SubscriptionEntity createNewSubscription(Period period) {

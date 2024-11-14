@@ -10,8 +10,10 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import com.eguller.hntoplinks.entities.StoryEntity;
+import com.eguller.hntoplinks.entities.Item;
+import com.eguller.hntoplinks.entities.Period;
 import com.eguller.hntoplinks.entities.SubscriberEntity;
+import com.eguller.hntoplinks.entities.SubscriptionEntity;
 
 import lombok.Builder;
 import lombok.Data;
@@ -25,10 +27,16 @@ public class TemplateService {
   private String hntoplinksBaseUrl;
 
   public String generateSubscriptionEmail(SubscriberEntity subscriber) {
+    var periods =
+        subscriber.getSubscriptionList().stream().map(SubscriptionEntity::getPeriod).toList();
+    periods.sort(Period::compareTo);
+
     var subscriptionEmailData =
         SubscriptionEmailData.builder()
-            .baseUrl(hntoplinksBaseUrl)
-            .unsubscribeUrl(hntoplinksBaseUrl + "/unsubscribe/" + subscriber.getSubscriberId())
+            .unsubscribeUrl(
+                "%s/subscribers/%s?action=unsubscribe"
+                    .formatted(hntoplinksBaseUrl, subscriber.getSubscriberId()))
+            .periods(periods)
             .build();
     final Context ctx = new Context(Locale.ENGLISH);
     ctx.setVariable("data", subscriptionEmailData);
@@ -39,14 +47,16 @@ public class TemplateService {
   }
 
   public String generateTopEmail(
-      String subject, SubscriberEntity subscriber, List<StoryEntity> topEmails) {
+      String subject, SubscriberEntity subscriber, List<Item> topEmails) {
     var toplinksEmailData =
         TopEmailData.builder()
             .subject(subject)
-            .unsubscribeUrl(hntoplinksBaseUrl + "/unsubscribe/" + subscriber.getSubscriberId())
+            .unsubscribeUrl(
+                "%s/subscribers/%s?action=unsubscribe"
+                    .formatted(hntoplinksBaseUrl, subscriber.getSubscriberId()))
             .updateSubscriptionUrl(
-                hntoplinksBaseUrl + "/update-subscription/" + subscriber.getSubscriberId())
-            .storyList(topEmails)
+                "%s/subscribers/%s".formatted(hntoplinksBaseUrl, subscriber.getSubscriberId()))
+            .items(topEmails)
             .build();
 
     final Context ctx = new Context(Locale.ENGLISH);
@@ -59,16 +69,16 @@ public class TemplateService {
   @Data
   private static class TopEmailData {
     private String subject;
-    private List<StoryEntity> storyList;
     private String baseUrl;
     private String unsubscribeUrl;
     private String updateSubscriptionUrl;
+    private List<Item> items;
   }
 
   @Builder
   @Data
   private static class SubscriptionEmailData {
-    private String baseUrl;
     private String unsubscribeUrl;
+    private List<Period> periods;
   }
 }

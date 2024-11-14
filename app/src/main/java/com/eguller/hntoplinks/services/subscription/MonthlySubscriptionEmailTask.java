@@ -4,10 +4,10 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import com.eguller.hntoplinks.entities.StoryEntity;
+import com.eguller.hntoplinks.entities.Item;
+import com.eguller.hntoplinks.entities.SortType;
 import com.eguller.hntoplinks.models.EmailTarget;
 import com.eguller.hntoplinks.repository.ItemsRepository;
-import com.eguller.hntoplinks.repository.StoryRepository;
 import com.eguller.hntoplinks.services.EmailProviderService;
 import com.eguller.hntoplinks.services.TemplateService;
 import com.eguller.hntoplinks.util.DateUtils;
@@ -43,8 +43,9 @@ public class MonthlySubscriptionEmailTask extends SubscriptionEmailTask {
   }
 
   @Override
-  protected List<ItemsRepository> getStories() {
-    var stories = itemsRepository.readMonthlyTop();
-    return stories;
+  protected List<Item> getItems() {
+    var interval = DateUtils.getIntervalForLastMonth();
+    var items = itemsRepository.findByInterval(interval, SortType.UPVOTES, getMaxStoryCount(), 0);
+    return items;
   }
 }

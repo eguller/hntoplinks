@@ -10,9 +10,7 @@ import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.TextStyle;
-import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
-import java.time.temporal.WeekFields;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -23,8 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eguller.hntoplinks.models.Interval;
-
-import lombok.val;
 
 public class DateUtils {
   private static final Logger logger =
@@ -91,46 +87,29 @@ public class DateUtils {
   }
 
   public static Interval getIntervalForToday() {
-    var now = LocalDate.now();
-    return getInterval(now.getYear(), now.getMonthValue(), now.getDayOfMonth());
-  }
-
-  public static Interval getIntervalForYesterday() {
-    var yesterday = LocalDate.now().minusDays(1);
-    return getInterval(yesterday.getYear(), yesterday.getMonthValue(), yesterday.getDayOfMonth());
+    var now = LocalDateTime.now();
+    return Interval.of(now.minusDays(1), now);
   }
 
   public static Interval getIntervalForLastWeek() {
-    LocalDate today = LocalDate.now();
-    LocalDate lastWeekEnd = today.minusWeeks(1)  // Go back one week
-                                .with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));  // Get Sunday
-    LocalDate lastWeekStart = lastWeekEnd.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));  // Get Monday
-
-    return Interval.of(lastWeekStart.atStartOfDay(), lastWeekEnd.atTime(LocalTime.MAX));
-}
-
-  public static Interval getIntervalForCurrentWeek() {
-    var now = LocalDate.now();
-    var weekFields = WeekFields.of(Locale.getDefault());
-    LocalDateTime from = now.with(weekFields.dayOfWeek(), 1).atStartOfDay();
-    LocalDateTime to = now.with(weekFields.dayOfWeek(), 7).atTime(LocalTime.MAX);
-    return new Interval(from, to);
+    LocalDateTime now = LocalDateTime.now();
+    return Interval.of(now.minusDays(7), now);
   }
 
-  public static Interval getIntervalForCurrentMonth() {
-    var now = LocalDate.now();
-    return getInterval(now.getYear(), now.getMonthValue());
+  public static Interval getIntervalForLastMonth() {
+    LocalDateTime now = LocalDateTime.now();
+    return Interval.of(now.minusMonths(1), now);
   }
 
-  public static Interval getIntervalForCurrentYear() {
-    var now = LocalDate.now();
-    return getInterval(now.getYear());
+  public static Interval getIntervalForLastYear() {
+    var now = LocalDateTime.now();
+    return Interval.of(now.minusYears(1), now);
   }
 
   public static Interval getInterval(int year) {
     var from = LocalDate.of(year, 1, 1).atStartOfDay();
     var to = LocalDate.of(year, 12, 31).atTime(LocalTime.MAX);
-    return new Interval(from, to);
+    return Interval.of(from, to);
   }
 
   public static Interval getInterval(int year, int month) {
@@ -138,7 +117,7 @@ public class DateUtils {
     var from = LocalDate.of(year, validatedMonth, 1).atStartOfDay();
     var maxDay = YearMonth.of(year, validatedMonth).lengthOfMonth();
     var to = LocalDate.of(year, validatedMonth, maxDay).atTime(LocalTime.MAX);
-    return new Interval(from, to);
+    return Interval.of(from, to);
   }
 
   public static Interval getInterval(int year, int month, int day) {
@@ -150,7 +129,7 @@ public class DateUtils {
     var date = LocalDate.of(year, validatedMonth, validatedDay);
     var from = date.atStartOfDay();
     var to = date.atTime(LocalTime.MAX);
-    return new Interval(from, to);
+    return Interval.of(from, to);
   }
 
   public static List<Integer> getYears() {
@@ -234,6 +213,4 @@ public class DateUtils {
         .day(sanitizedDay)
         .build();
   }
-
-
 }

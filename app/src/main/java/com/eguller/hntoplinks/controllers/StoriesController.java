@@ -84,7 +84,7 @@ public class StoriesController {
       Model model,
       @RequestParam(value = "page", defaultValue = "1") int page,
       @RequestParam(value = "sort", defaultValue = "upvotes") SortType sort) {
-    var interval = DateUtils.getIntervalForCurrentWeek();
+    var interval = DateUtils.getIntervalForLastWeek();
     var items = itemRepository.findByInterval(interval, sort, StoriesUtils.PAGE_SIZE, page);
     var storiesContent =
         StoriesContent.builder()
@@ -113,7 +113,7 @@ public class StoriesController {
       Model model,
       @RequestParam(value = "page", defaultValue = "1") int page,
       @RequestParam(value = "sort", defaultValue = "upvotes") SortType sort) {
-    var interval = DateUtils.getIntervalForCurrentMonth();
+    var interval = DateUtils.getIntervalForLastMonth();
     var items = itemRepository.findByInterval(interval, sort, StoriesUtils.PAGE_SIZE, page);
     var storiesContent =
         StoriesContent.builder()
@@ -142,7 +142,7 @@ public class StoriesController {
       Model model,
       @RequestParam(value = "page", defaultValue = "1") int page,
       @RequestParam(value = "sort", defaultValue = "upvotes") SortType sort) {
-    var interval = DateUtils.getIntervalForCurrentYear();
+    var interval = DateUtils.getIntervalForLastYear();
     var items = itemRepository.findByInterval(interval, sort, StoriesUtils.PAGE_SIZE, page);
     var storiesContent =
         StoriesContent.builder()

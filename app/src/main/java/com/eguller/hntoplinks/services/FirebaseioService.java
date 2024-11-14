@@ -1,7 +1,6 @@
 package com.eguller.hntoplinks.services;
 
 import java.lang.invoke.MethodHandles;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -12,15 +11,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 
 import com.eguller.hntoplinks.entities.Item;
-import com.eguller.hntoplinks.models.HnStory;
 
 @Service
 public class FirebaseioService {
@@ -36,43 +32,6 @@ public class FirebaseioService {
   public FirebaseioService(RestTemplate restTemplate, RestClient fireBaseRestClient) {
     this.restTemplate = restTemplate;
     this.fireBaseRestClient = fireBaseRestClient;
-  }
-
-  public List<HnStory> readBestStories() {
-    return readStories("beststories.json");
-  }
-
-  public List<HnStory> readTopStories() {
-    return readStories("topstories.json");
-  }
-
-  private List<HnStory> readStories(String endpoint) {
-    String _endpoint = endpoint.startsWith("/") ? endpoint : "/" + endpoint;
-    var storyList = new ArrayList<HnStory>();
-    var topStories = restTemplate.getForEntity(firebaseIoBaseUrl + _endpoint, List.class);
-
-    if (topStories.getStatusCode() == HttpStatus.OK) {
-      topStories
-          .getBody()
-          .forEach(
-              storyId -> {
-                try {
-                  var story =
-                      restTemplate.getForEntity(
-                          firebaseIoBaseUrl + "/item/" + storyId.toString() + ".json",
-                          HnStory.class);
-                  storyList.add(story.getBody());
-                } catch (HttpClientErrorException ex) {
-                  logger.error(
-                      "Story cannot be read. story={}, status={}", storyId, ex.getStatusCode());
-                } catch (Exception ex) {
-                  logger.error("Story cannot be read. story={}", storyId, ex);
-                }
-              });
-    } else {
-      logger.error("Top stories cannot be retrieved. status=" + topStories.getStatusCodeValue());
-    }
-    return storyList;
   }
 
   public Long getMaxItem() {
@@ -102,13 +61,13 @@ public class FirebaseioService {
     return CompletableFuture.completedFuture(item);
   }
 
-  public List<Item> readBestStoriesNew() {
+  public List<Item> readBestStories() {
     var bestStoryIds = readBestStoryIds();
     var bestStories = readItems(bestStoryIds);
     return bestStories;
   }
 
-  public List<Item> readTopStoriesNew() {
+  public List<Item> readTopStories() {
     var topStoryIds = readTopStoryIds();
     var topStories = readItems(topStoryIds);
     return topStories;

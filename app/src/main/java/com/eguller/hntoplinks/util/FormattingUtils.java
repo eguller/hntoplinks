@@ -1,8 +1,5 @@
 package com.eguller.hntoplinks.util;
 
-import com.eguller.hntoplinks.entities.Item;
-import org.springframework.util.StringUtils;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Instant;
@@ -11,10 +8,21 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Locale;
+import java.util.Map;
+
+import org.springframework.util.StringUtils;
+
+import com.eguller.hntoplinks.entities.Item;
+import com.eguller.hntoplinks.entities.Period;
 
 public class FormattingUtils {
-  private static final DateTimeFormatter SHORT_DATE_FORMATTER =
-    DateTimeFormatter.ofPattern("MMM d, yyyy", Locale.ENGLISH);
+
+  private static final Map<Period, String> PERIOD_DESCRIPTION =
+      Map.of(
+          Period.DAILY, "Daily Updates",
+          Period.WEEKLY, "Weekly Digest",
+          Period.MONTHLY, "Monthly Roundup",
+          Period.YEARLY, "Yearly Review");
 
   public String domainName(String url) {
     try {
@@ -54,7 +62,7 @@ public class FormattingUtils {
 
   public String since(long timeL) {
     LocalDateTime time =
-      LocalDateTime.ofInstant(Instant.ofEpochMilli(timeL), ZoneId.systemDefault());
+        LocalDateTime.ofInstant(Instant.ofEpochMilli(timeL), ZoneId.systemDefault());
     long yearsBetween = ChronoUnit.YEARS.between(time, LocalDateTime.now());
     if (yearsBetween >= 1) {
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d, yyyy", Locale.ENGLISH);
@@ -107,5 +115,9 @@ public class FormattingUtils {
     } else {
       return "https://news.ycombinator.com/item?id=" + item.getId();
     }
+  }
+
+  public String periodDescription(Period period) {
+    return PERIOD_DESCRIPTION.getOrDefault(period, "");
   }
 }

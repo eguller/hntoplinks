@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import com.eguller.hntoplinks.entities.Item;
+import com.eguller.hntoplinks.entities.SortType;
 import com.eguller.hntoplinks.models.EmailTarget;
 import com.eguller.hntoplinks.repository.ItemsRepository;
 import com.eguller.hntoplinks.services.EmailProviderService;
@@ -47,8 +48,9 @@ public class WeeklySubscriptionEmailTask extends SubscriptionEmailTask {
   }
 
   @Override
-  protected List<Item> getStories() {
-    var stories = this.itemsRepository.readWeeklyTop();
-    return stories;
+  protected List<Item> getItems() {
+    var interval = DateUtils.getIntervalForLastWeek();
+    var items = itemsRepository.findByInterval(interval, SortType.UPVOTES, getMaxStoryCount(), 0);
+    return items;
   }
 }

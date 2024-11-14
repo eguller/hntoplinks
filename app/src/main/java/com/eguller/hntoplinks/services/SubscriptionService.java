@@ -2,12 +2,12 @@ package com.eguller.hntoplinks.services;
 
 import java.lang.invoke.MethodHandles;
 
-import com.eguller.hntoplinks.repository.ItemsRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.eguller.hntoplinks.models.EmailTarget;
+import com.eguller.hntoplinks.repository.ItemsRepository;
 import com.eguller.hntoplinks.repository.SubscriptionsRepository;
 import com.eguller.hntoplinks.services.subscription.DailySubscriptionEmailTask;
 import com.eguller.hntoplinks.services.subscription.MonthlySubscriptionEmailTask;
@@ -48,7 +48,7 @@ public class SubscriptionService {
       this.subscriptionRepository.save(emailTarget.subscription());
     } catch (Exception ex) {
       logger.error(
-          "Sending email has failed. subsUUID=%s, period=%s"
+          "Sending email has failed. subscriberId=%s, period=%s"
               .formatted(
                   emailTarget.subscriber().getSubscriberId(),
                   emailTarget.subscription().getPeriod()),

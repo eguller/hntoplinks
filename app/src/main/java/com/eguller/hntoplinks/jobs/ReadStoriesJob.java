@@ -22,10 +22,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.eguller.hntoplinks.entities.Item;
-import com.eguller.hntoplinks.models.HnStory;
 import com.eguller.hntoplinks.repository.CheckPointRepository;
 import com.eguller.hntoplinks.repository.ItemsRepository;
-import com.eguller.hntoplinks.repository.StoryRepository;
 import com.eguller.hntoplinks.services.FirebaseioService;
 
 /** User: eguller Date: 10/12/14 Time: 3:55 PM */
@@ -37,8 +35,6 @@ public class ReadStoriesJob {
   private static final long READ_ITEMS_BATCH_SIZE = 100;
 
   private final FirebaseioService firebaseioService;
-
-  private StoryRepository storyRepository;
 
   private ItemsRepository itemRepository;
 
@@ -52,12 +48,10 @@ public class ReadStoriesJob {
   @Autowired
   public ReadStoriesJob(
       FirebaseioService firebaseioService,
-      StoryRepository storyRepository,
       ItemsRepository itemsRepository,
       CheckPointRepository checkPointRepository,
       TaskScheduler taskScheduler) {
     this.firebaseioService = firebaseioService;
-    this.storyRepository = storyRepository;
     this.itemRepository = itemsRepository;
     this.checkPointRepository = checkPointRepository;
     this.taskScheduler = taskScheduler;
@@ -72,17 +66,10 @@ public class ReadStoriesJob {
 
   @Scheduled(cron = "${hntoplinks.top-stories.cron}")
   public void doJob() {
-    var topStories = firebaseioService.readTopStories();
-    saveStories(topStories);
-    var bestStories = firebaseioService.readBestStories();
-    saveStories(bestStories);
-  }
-
-  private void saveStories(List<HnStory> hnStoryList) {
-    logger.info("Stories read from firebase. numberOfStories={}", hnStoryList.size());
-    var storyList =
-        hnStoryList.stream().map(hnStory -> hnStory.toStory()).collect(Collectors.toList());
-    storyRepository.saveStories(storyList);
+    var topStories = firebaseioService.readTopStories().stream().collect(Collectors.toSet());
+    itemRepository.batchSave(topStories);
+    var bestStories = firebaseioService.readBestStories().stream().collect(Collectors.toSet());
+    itemRepository.batchSave(topStories);
   }
 
   public void readAllStories() {
@@ -151,8 +138,8 @@ public class ReadStoriesJob {
 
   @Scheduled(cron = "${hntoplinks.top-stories.cron}")
   public void readTopStories() {
-    var topStories = firebaseioService.readTopStoriesNew();
-    var bestStories = firebaseioService.readBestStoriesNew();
+    var topStories = firebaseioService.readTopStories();
+    var bestStories = firebaseioService.readBestStories();
     var newStories = firebaseioService.readNewStoriesNew();
     Stream.of(topStories, bestStories, newStories)
         .flatMap(List::stream)
