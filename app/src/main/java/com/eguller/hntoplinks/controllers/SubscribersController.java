@@ -2,7 +2,11 @@ package com.eguller.hntoplinks.controllers;
 
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
+import com.eguller.hntoplinks.entities.SubscriberEntity;
+import com.eguller.hntoplinks.models.Email;
+import com.eguller.hntoplinks.services.EmailService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,14 +41,17 @@ public class SubscribersController {
   private final SubscribersRepository subscriberRepository;
   private final SubscriptionsRepository subscriptionsRepository;
   private final RecaptchaVerifier recaptchaVerifier;
+  private final EmailService emailService;
 
   public SubscribersController(
-      SubscribersRepository subscribersRepository,
-      SubscriptionsRepository subscriptionsRepository,
-      RecaptchaVerifier recaptchaVerifier) {
+    SubscribersRepository subscribersRepository,
+    SubscriptionsRepository subscriptionsRepository,
+    RecaptchaVerifier recaptchaVerifier,
+    EmailService emailService) {
     this.subscriberRepository = subscribersRepository;
     this.subscriptionsRepository = subscriptionsRepository;
     this.recaptchaVerifier = recaptchaVerifier;
+    this.emailService = emailService;
   }
 
   @GetMapping("/subscribers")
@@ -160,11 +167,27 @@ public class SubscribersController {
 
     if (!StringUtils.hasText(subscriptionForm.getSubscriberId())) {
       var subscriber = subscriptionForm.toSubscriberEntity();
-      var savedSubscriber = subscriberRepository.save(subscriber);
+      var saveFailed = false;
+      final SubscriberEntity savedSubscriber;
+      SubscriberEntity tmpSaveSubscriber;
+      try {
+        tmpSaveSubscriber = subscriberRepository.save(subscriber);
+        saveFailed       = false;
+      } catch (Exception e) {
+        tmpSaveSubscriber = subscriber;
+        saveFailed       = true;
+      }
+
+      savedSubscriber = tmpSaveSubscriber;
       subscriptionForm.setSubscriberId(savedSubscriber.getSubscriberId());
       var subscriptions = subscriptionForm.toSubscriptionEntities();
       subscriptions.forEach(subscription -> subscription.setSubscriberId(savedSubscriber.getId()));
-      subscriptionsRepository.saveAll(subscriptions);
+      var savedSubscriptions = subscriptions;
+      if(!saveFailed) {
+        StreamSupport.stream(subscriptionsRepository.saveAll(subscriptions).spliterator(), false).collect(Collectors.toList());
+        savedSubscriber.setSubscriptionList(savedSubscriptions);
+        emailService.sendSubscriptionEmail(savedSubscriber);
+      }
       content.setSuccess(true);
       content.setSuccessMessage("You have successfully subscribed to HN Top Links");
       // save subscribers
