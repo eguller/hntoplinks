@@ -115,7 +115,7 @@
         </div>
       </div>
 
-      <button type="submit" class="btn btn-primary" disabled="disabled">Subscribe</button>
+      <button type="submit" class="btn btn-primary" th:disabled="${page.content.captchaEnabled}">Subscribe</button>
     </form>
     <script>
       // When document loads
@@ -136,5 +136,6 @@
           document.getElementById('invalid-captcha').classList.remove('d-block');
         }
       </script>
+    </th:block>
   </div>
 </section>
