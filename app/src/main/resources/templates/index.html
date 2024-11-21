@@ -29,7 +29,7 @@
       <span class="story-rank" th:text="${((page.content.currentPage - 1) * page.content.storiesPerPage) + iterStat.count} + '.'">1.</span>
       <div class="story-content">
         <div>
-          <a th:href="${#fmt.getUrl(story.url)}" class="story-title" th:text="${story.title}">Story Title</a>
+          <a th:href="${#fmt.url(story)}" class="story-title" th:text="${story.title}">Story Title</a>
           <th:block th:with="domain=${#fmt.domainName(story.url)}">
           <span class="domain"
                 th:if="${domain}"

@@ -23,8 +23,9 @@ import org.slf4j.LoggerFactory;
 import com.eguller.hntoplinks.models.Interval;
 
 public class DateUtils {
-  private static final Logger logger =
+  private static final Logger logger         =
       LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+  public static final  int    HN_LAUNCH_YEAR = 2006;
 
   public static ZoneId parseZoneId(String zoneIdStr) {
     var zoneId = ZoneId.systemDefault();
@@ -133,7 +134,7 @@ public class DateUtils {
   }
 
   public static List<Integer> getYears() {
-    return Stream.iterate(LocalDateTime.now().getYear(), i -> i >= 2006, i -> i - 1).toList();
+    return Stream.iterate(LocalDateTime.now().getYear(), i -> i >= HN_LAUNCH_YEAR, i -> i - 1).toList();
   }
 
   public static List<Month> getMonthsForYear(Integer year) {

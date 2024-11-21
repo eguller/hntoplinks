@@ -85,7 +85,9 @@ public class SubscribersController {
       @PathVariable("subscriberId") String subscriberId,
       @RequestParam(value = "action") String action) {
     if ("unsubscribe".equals(action)) {
-      this.subscriberRepository.deleteBySubscriberId(subscriberId);
+      var subscriberOpt = this.subscriberRepository.findBySubscriberId(subscriberId);
+      subscriberOpt.map(SubscriberEntity::getId).ifPresent(subscriptionsRepository::deleteBySubscriberId);
+      subscriberOpt.map(SubscriberEntity::getId).ifPresent(subscriberRepository::deleteById);
       createUnsubscribePage(model);
       return "unsubscribe";
     } else {

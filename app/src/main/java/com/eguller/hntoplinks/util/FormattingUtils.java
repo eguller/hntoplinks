@@ -17,12 +17,18 @@ import com.eguller.hntoplinks.entities.Period;
 
 public class FormattingUtils {
 
+  private static final FormattingUtils INSTANCE = new FormattingUtils();
+
   private static final Map<Period, String> PERIOD_DESCRIPTION =
       Map.of(
           Period.DAILY, "Daily Updates",
           Period.WEEKLY, "Weekly Digest",
           Period.MONTHLY, "Monthly Roundup",
           Period.YEARLY, "Yearly Review");
+
+    public static FormattingUtils getInstance() {
+        return INSTANCE;
+    }
 
   public String domainName(String url) {
     try {

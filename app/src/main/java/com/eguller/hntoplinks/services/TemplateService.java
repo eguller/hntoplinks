@@ -3,6 +3,7 @@ package com.eguller.hntoplinks.services;
 import java.util.List;
 import java.util.Locale;
 
+import com.eguller.hntoplinks.util.FormattingUtils;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,14 +29,6 @@ public class TemplateService {
   @Value("${hntoplinks.base-url}")
   private String hntoplinksBaseUrl;
 
-  private Context ctx = new Context(Locale.ENGLISH);
-
-
-  @PostConstruct
-  public void init() {
-    //ctx.setVariable("fmt", );
-  }
-
   public String generateSubscriptionEmail(SubscriberEntity subscriber) {
     var periods =
       subscriber.getSubscriptionList().stream().map(SubscriptionEntity::getPeriod).toList();
@@ -51,9 +44,9 @@ public class TemplateService {
             .formatted(hntoplinksBaseUrl, subscriber.getSubscriberId()))
         .periods(sortedPeriods)
         .build();
-    final Context ctx = new Context(Locale.ENGLISH);
-    ctx.setVariable("data", subscriptionEmailData);
 
+    var ctx = new Context(Locale.ENGLISH);
+    ctx.setVariable("data", subscriptionEmailData);
     final String htmlContent =
       this.templateEngine.process("/email/html/subscription_email.html", ctx);
     return htmlContent;

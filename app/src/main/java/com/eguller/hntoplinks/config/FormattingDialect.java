@@ -28,7 +28,7 @@ public class FormattingDialect extends AbstractDialect implements IExpressionObj
 
       @Override
       public Object buildObject(IExpressionContext context, String expressionObjectName) {
-        return new FormattingUtils();
+        return FormattingUtils.getInstance();
       }
 
       @Override

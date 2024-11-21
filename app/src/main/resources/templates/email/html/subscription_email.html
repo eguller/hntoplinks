@@ -57,7 +57,7 @@
       <p style="color: #7f8c8d; font-size: 14px; margin: 10px 0 0 0;">
         <a href="https://github.com/eguller/hntoplinks" style="color: #7f8c8d; text-decoration: underline;">GitHub</a>
         ·
-        <a th:href="${data.baseUrl}/about" style="color: #7f8c8d; text-decoration: underline;">About</a>
+        <a th:href="@{${data.baseUrl} + '/about'}" style="color: #7f8c8d; text-decoration: underline;">About</a>
         ·
         <a th:href="${data.unsubscribeUrl}" style="color: #7f8c8d; text-decoration: underline;">Unsubscribe</a>
       </p>

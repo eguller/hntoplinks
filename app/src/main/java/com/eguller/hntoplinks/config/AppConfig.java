@@ -12,6 +12,7 @@ import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
@@ -47,6 +48,9 @@ public class AppConfig implements WebMvcConfigurer, SchedulingConfigurer {
   @Value("${hntoplinks.firebaseio-url}")
   private String firebaseIoBaseUrl;
 
+  @Autowired
+  private FormattingDialect formattingDialect;
+
   @Bean
   public DeviceHandlerMethodArgumentResolver deviceHandlerMethodArgumentResolver() {
     return new DeviceHandlerMethodArgumentResolver();
@@ -80,6 +84,7 @@ public class AppConfig implements WebMvcConfigurer, SchedulingConfigurer {
   public TemplateEngine emailTemplateEngine() {
     final SpringTemplateEngine templateEngine = new SpringTemplateEngine();
     // Resolver for HTML emails (except the editable one)
+    templateEngine.addDialect(formattingDialect);
     templateEngine.addTemplateResolver(htmlTemplateResolver());
     return templateEngine;
   }
