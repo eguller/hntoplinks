@@ -77,15 +77,21 @@
         <tr>
           <td style="text-align: center; color: #666; font-size: 12px; padding-bottom: 10px;">
             <a th:href="${data.unsubscribeUrl}"
-               style="color: #666; text-decoration: underline; margin: 0 10px;">Unsubscribe</a>
+               style="color: #666; text-decoration: underline;">Unsubscribe</a>
+          </td>
+          <td style="text-align: center; color: #666; font-size: 12px; padding-bottom: 10px;">
+            <!-- Middot -->
             ·
+          </td>
+          <td style="text-align: center; color: #666; font-size: 12px; padding-bottom: 10px;">
             <a th:href="${data.manageEmailFrequencyUrl}"
-               style="color: #666; text-decoration: underline; margin: 0 10px;"
+               style="color: #666; text-decoration: underline;"
                title="Change how often you receive updates (daily, weekly, monthly)">Manage Email Frequency</a>
           </td>
         </tr>
         <tr>
-          <td style="text-align: center; color: #666; font-size: 12px;" th:text="'&copy; ' + ${#dateUtils.currentYear()} + ' HN Top Links'">
+          <td style="text-align: center; color: #666; font-size: 12px;"
+              th:text="'&copy; ' + ${#dateUtils.currentYear()} + ' HN Top Links'">
             &copy; 2024 HN Top Links
           </td>
         </tr>
