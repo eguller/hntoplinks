@@ -51,6 +51,9 @@ public class AppConfig implements WebMvcConfigurer, SchedulingConfigurer {
   @Autowired
   private FormattingDialect formattingDialect;
 
+  @Autowired
+  private DateDialect dateDialect;
+
   @Bean
   public DeviceHandlerMethodArgumentResolver deviceHandlerMethodArgumentResolver() {
     return new DeviceHandlerMethodArgumentResolver();
@@ -85,6 +88,7 @@ public class AppConfig implements WebMvcConfigurer, SchedulingConfigurer {
     final SpringTemplateEngine templateEngine = new SpringTemplateEngine();
     // Resolver for HTML emails (except the editable one)
     templateEngine.addDialect(formattingDialect);
+    templateEngine.addDialect(dateDialect);
     templateEngine.addTemplateResolver(htmlTemplateResolver());
     return templateEngine;
   }

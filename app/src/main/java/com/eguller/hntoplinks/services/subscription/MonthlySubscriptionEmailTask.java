@@ -36,15 +36,13 @@ public class MonthlySubscriptionEmailTask extends SubscriptionEmailTask {
     String lmString =
         DateTimeFormatter.ofPattern("MMMM YYYY")
             .format(
-                LocalDateTime.now()
-                    .minusMonths(1)
-                    .atZone(emailTarget.subscriber().getTimeZoneObj()));
-    return lmString + " - Best of Last Month";
+                DateUtils.getIntervalForLastMonth(emailTarget.subscriber().getTimeZoneObj()).to());
+    return lmString + " - Monthly Highlights";
   }
 
   @Override
   protected List<Item> getItems() {
-    var interval = DateUtils.getIntervalForLastMonth();
+    var interval = DateUtils.getIntervalForLastMonth(emailTarget.subscriber().getTimeZoneObj());
     var items = itemsRepository.findByInterval(interval, SortType.UPVOTES, getMaxStoryCount(), 0);
     return items;
   }

@@ -36,20 +36,21 @@ public class WeeklySubscriptionEmailTask extends SubscriptionEmailTask {
         LocalDateTime.now().minusDays(7).atZone(emailTarget.subscriber().getTimeZoneObj());
     var toDate = LocalDateTime.now().minusDays(1).atZone(emailTarget.subscriber().getTimeZoneObj());
 
-    var fromDateStr = DateTimeFormatter.ofPattern("dd MMMM").format(fromDate);
-    var toDateStr = DateTimeFormatter.ofPattern("dd MMMM").format(toDate);
+    var interval = DateUtils.getIntervalForLastWeek(emailTarget.subscriber().getTimeZoneObj());
+    var fromDateStr = DateTimeFormatter.ofPattern("dd MMMM").format(interval.from());
+    var toDateStr = DateTimeFormatter.ofPattern("dd MMMM").format(interval.to());
 
     // if week is in same month, display 14 - 21 June instead of 14 June - 21 June
     if (fromDate.getMonth().equals(toDate.getMonth())) {
       fromDateStr = DateTimeFormatter.ofPattern("dd").format(fromDate);
     }
 
-    return String.format("%s - %s Weekly Top Links", fromDateStr, toDateStr);
+    return String.format("%s - %s Weekly Best", fromDateStr, toDateStr);
   }
 
   @Override
   protected List<Item> getItems() {
-    var interval = DateUtils.getIntervalForLastWeek();
+    var interval = DateUtils.getIntervalForLastWeek(emailTarget.subscriber().getTimeZoneObj());
     var items = itemsRepository.findByInterval(interval, SortType.UPVOTES, getMaxStoryCount(), 0);
     return items;
   }

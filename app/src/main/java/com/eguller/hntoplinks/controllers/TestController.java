@@ -59,6 +59,7 @@ public class TestController {
     });
 
     var subscription = subscriber.createNewSubscription(period);
+    subscription.setSubscriberId(subscriber.getId());
 
     //make subscription expired
     subscription.setNextSendDate(LocalDateTime.now().minusDays(1));

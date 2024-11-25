@@ -24,7 +24,7 @@ import com.eguller.hntoplinks.models.Interval;
 
 public class DateUtils {
   private static final Logger logger         =
-      LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   public static final  int    HN_LAUNCH_YEAR = 2006;
 
   public static ZoneId parseZoneId(String zoneIdStr) {
@@ -39,42 +39,42 @@ public class DateUtils {
 
   public static LocalDateTime tomorrow_7_AM(ZoneId targetZone) {
     return ZonedDateTime.now(targetZone)
-        .plusDays(1)
-        .withHour(7)
-        .withMinute(0)
-        .withSecond(0)
-        .withZoneSameInstant(ZoneId.systemDefault())
-        .toLocalDateTime();
+      .plusDays(1)
+      .withHour(7)
+      .withMinute(0)
+      .withSecond(0)
+      .withZoneSameInstant(ZoneId.systemDefault())
+      .toLocalDateTime();
   }
 
   public static LocalDateTime nextMonday_7_AM(ZoneId targetZone) {
     return ZonedDateTime.now(targetZone)
-        .with(TemporalAdjusters.next(DayOfWeek.MONDAY))
-        .withHour(7)
-        .withMinute(0)
-        .withSecond(0)
-        .withZoneSameInstant(ZoneId.systemDefault())
-        .toLocalDateTime();
+      .with(TemporalAdjusters.next(DayOfWeek.MONDAY))
+      .withHour(7)
+      .withMinute(0)
+      .withSecond(0)
+      .withZoneSameInstant(ZoneId.systemDefault())
+      .toLocalDateTime();
   }
 
   public static LocalDateTime firstDayOfNextMonth_7_AM(ZoneId targetZone) {
     return ZonedDateTime.now(targetZone)
-        .with(TemporalAdjusters.firstDayOfNextMonth())
-        .withHour(7)
-        .withMinute(0)
-        .withSecond(0)
-        .withZoneSameInstant(ZoneId.systemDefault())
-        .toLocalDateTime();
+      .with(TemporalAdjusters.firstDayOfNextMonth())
+      .withHour(7)
+      .withMinute(0)
+      .withSecond(0)
+      .withZoneSameInstant(ZoneId.systemDefault())
+      .toLocalDateTime();
   }
 
   public static LocalDateTime firstDayOfNextYear_7_AM(ZoneId targetZone) {
     return ZonedDateTime.now(targetZone)
-        .with(TemporalAdjusters.firstDayOfNextYear())
-        .withHour(7)
-        .withMinute(0)
-        .withSecond(0)
-        .withZoneSameInstant(ZoneId.systemDefault())
-        .toLocalDateTime();
+      .with(TemporalAdjusters.firstDayOfNextYear())
+      .withHour(7)
+      .withMinute(0)
+      .withSecond(0)
+      .withZoneSameInstant(ZoneId.systemDefault())
+      .toLocalDateTime();
   }
 
   public static ZoneId zoneOf(String zoneIdStr) {
@@ -92,9 +92,30 @@ public class DateUtils {
     return Interval.of(now.minusDays(1), now);
   }
 
+  public static Interval getIntervalForYesterday(ZoneId zoneId) {
+    LocalDate yesterday = LocalDate.now(zoneId).minusDays(1);
+
+    LocalDateTime start = yesterday.atStartOfDay();
+    LocalDateTime end = yesterday.atTime(LocalTime.MAX);
+
+    return Interval.of(start, end);  // Assuming static factory method
+  }
+
   public static Interval getIntervalForLastWeek() {
     LocalDateTime now = LocalDateTime.now();
     return Interval.of(now.minusDays(7), now);
+  }
+
+  public static Interval getIntervalForLastWeek(ZoneId zoneId) {
+    LocalDate now = LocalDate.now(zoneId);
+
+    LocalDate lastSunday = now.with(TemporalAdjusters.previous(DayOfWeek.SUNDAY));
+    LocalDate lastMonday = lastSunday.with(TemporalAdjusters.previous(DayOfWeek.MONDAY));
+
+    LocalDateTime start = lastMonday.atStartOfDay();
+    LocalDateTime end = lastSunday.atTime(LocalTime.MAX);
+
+    return Interval.of(start, end);
   }
 
   public static Interval getIntervalForLastMonth() {
@@ -102,9 +123,39 @@ public class DateUtils {
     return Interval.of(now.minusMonths(1), now);
   }
 
+  public static Interval getIntervalForLastMonth(ZoneId zoneId) {
+    LocalDate now = LocalDate.now(zoneId);
+
+    // Get first day of last month
+    LocalDate firstDayOfLastMonth = now.minusMonths(1).withDayOfMonth(1);
+
+    // Get last day of last month
+    LocalDate lastDayOfLastMonth = now.withDayOfMonth(1).minusDays(1);
+
+    LocalDateTime start = firstDayOfLastMonth.atStartOfDay();
+    LocalDateTime end = lastDayOfLastMonth.atTime(LocalTime.MAX);
+
+    return Interval.of(start, end);
+  }
+
   public static Interval getIntervalForLastYear() {
     var now = LocalDateTime.now();
     return Interval.of(now.minusYears(1), now);
+  }
+
+  public static Interval getIntervalForLastYear(ZoneId zoneId) {
+    LocalDate now = LocalDate.now(zoneId);
+
+    // Get first day of last year
+    LocalDate firstDayOfLastYear = now.minusYears(1).withDayOfYear(1);
+
+    // Get last day of last year
+    LocalDate lastDayOfLastYear = now.withDayOfYear(1).minusDays(1);
+
+    LocalDateTime start = firstDayOfLastYear.atStartOfDay();
+    LocalDateTime end = lastDayOfLastYear.atTime(LocalTime.MAX);
+
+    return Interval.of(start, end);
   }
 
   public static Interval getInterval(int year) {
@@ -142,13 +193,13 @@ public class DateUtils {
     int end;
     if (year == null || year == LocalDate.now().getYear()) {
       start = 1;
-      end = LocalDate.now().getMonthValue();
+      end   = LocalDate.now().getMonthValue();
     } else if (year == 2006) {
       start = 10; // hacker news first story posted in '6 Oct 2006'
-      end = 12;
+      end   = 12;
     } else {
       start = 1;
-      end = 12;
+      end   = 12;
     }
     return IntStream.iterate(end, i -> i >= start, i -> i - 1).mapToObj(Month::of).toList();
   }
@@ -176,20 +227,20 @@ public class DateUtils {
 
     // Sanitize year
     int sanitizedYear =
-        Optional.ofNullable(year)
-            .map(y -> Math.min(Math.max(y, 2006), currentYear))
-            .orElse(currentYear);
+      Optional.ofNullable(year)
+        .map(y -> Math.min(Math.max(y, 2006), currentYear))
+        .orElse(currentYear);
 
     // Sanitize month
     Integer sanitizedMonth;
     if (sanitizedYear == currentYear) {
       sanitizedMonth =
-          Optional.ofNullable(month)
-              .map(m -> Math.min(Math.max(m, 1), now.getMonthValue()))
-              .orElse(null);
+        Optional.ofNullable(month)
+          .map(m -> Math.min(Math.max(m, 1), now.getMonthValue()))
+          .orElse(null);
     } else {
       sanitizedMonth =
-          Optional.ofNullable(month).map(m -> Math.min(Math.max(m, 1), 12)).orElse(null);
+        Optional.ofNullable(month).map(m -> Math.min(Math.max(m, 1), 12)).orElse(null);
     }
 
     // Sanitize day
@@ -203,15 +254,15 @@ public class DateUtils {
       int maxDayF = maxDay;
 
       sanitizedDay =
-          Optional.ofNullable(day).map(d -> Math.min(Math.max(d, 1), maxDayF)).orElse(maxDayF);
+        Optional.ofNullable(day).map(d -> Math.min(Math.max(d, 1), maxDayF)).orElse(maxDayF);
     } else {
       sanitizedDay = null;
     }
 
     return SanitizedDate.builder()
-        .year(sanitizedYear)
-        .month(sanitizedMonth)
-        .day(sanitizedDay)
-        .build();
+      .year(sanitizedYear)
+      .month(sanitizedMonth)
+      .day(sanitizedDay)
+      .build();
   }
 }

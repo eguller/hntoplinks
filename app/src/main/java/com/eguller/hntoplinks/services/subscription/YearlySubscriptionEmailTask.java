@@ -43,7 +43,7 @@ public class YearlySubscriptionEmailTask extends SubscriptionEmailTask {
 
   @Override
   protected List<Item> getItems() {
-    var interval = DateUtils.getIntervalForLastMonth();
+    var interval = DateUtils.getIntervalForLastYear(emailTarget.subscriber().getTimeZoneObj());
     var items = itemsRepository.findByInterval(interval, SortType.UPVOTES, getMaxStoryCount(), 0);
     return items;
   }

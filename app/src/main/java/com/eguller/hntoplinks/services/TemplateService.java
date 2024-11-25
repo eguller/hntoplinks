@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Locale;
 
 import com.eguller.hntoplinks.util.FormattingUtils;
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,16 +52,18 @@ public class TemplateService {
   }
 
   public String generateTopEmail(
-    String subject, SubscriberEntity subscriber, List<Item> topEmails) {
+    String subject, SubscriptionEntity subscription, SubscriberEntity subscriber, List<Item> topEmails) {
     var toplinksEmailData =
       TopEmailData.builder()
         .subject(subject)
+        .periodDescription(FormattingUtils.getInstance().periodDescription(subscription.getPeriod()))
+        .period(subscription.getPeriod())
         .unsubscribeUrl(
           "%s/subscribers/%s?action=unsubscribe"
             .formatted(hntoplinksBaseUrl, subscriber.getSubscriberId()))
-        .updateSubscriptionUrl(
+        .manageEmailFrequencyUrl(
           "%s/subscribers/%s".formatted(hntoplinksBaseUrl, subscriber.getSubscriberId()))
-        .items(topEmails)
+        .stories(topEmails)
         .build();
 
     final Context ctx = new Context(Locale.ENGLISH);
@@ -77,8 +78,10 @@ public class TemplateService {
     private String     subject;
     private String     baseUrl;
     private String     unsubscribeUrl;
-    private String     updateSubscriptionUrl;
-    private List<Item> items;
+    private String     manageEmailFrequencyUrl;
+    private String periodDescription;
+    private Period period;
+    private List<Item> stories;
   }
 
   @Builder
