@@ -37,15 +37,15 @@ public class WeeklySubscriptionEmailTask extends SubscriptionEmailTask {
     var toDate = LocalDateTime.now().minusDays(1).atZone(emailTarget.subscriber().getTimeZoneObj());
 
     var interval = DateUtils.getIntervalForLastWeek(emailTarget.subscriber().getTimeZoneObj());
-    var fromDateStr = DateTimeFormatter.ofPattern("dd MMMM").format(interval.from());
-    var toDateStr = DateTimeFormatter.ofPattern("dd MMMM").format(interval.to());
+    var fromDateStr = DateTimeFormatter.ofPattern("MMMM dd").format(interval.from());
+    var toDateStr = DateTimeFormatter.ofPattern("MMMM dd").format(interval.to());
 
     // if week is in same month, display 14 - 21 June instead of 14 June - 21 June
     if (fromDate.getMonth().equals(toDate.getMonth())) {
-      fromDateStr = DateTimeFormatter.ofPattern("dd").format(fromDate);
+      toDateStr = DateTimeFormatter.ofPattern("dd").format(toDate);
     }
 
-    return String.format("%s - %s Weekly Best", fromDateStr, toDateStr);
+    return String.format("%s-%s Weekly Digest", fromDateStr, toDateStr);
   }
 
   @Override

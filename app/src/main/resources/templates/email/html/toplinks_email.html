@@ -65,36 +65,42 @@
   </tr>
 
   <!-- Footer -->
-  <tr>
+  <tr style="background-color: #f5f5f2;">
     <td style="padding: 20px;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
         <tr>
-          <td style="text-align: center; color: #666; font-size: 12px; padding-bottom: 10px;">
+          <td style="text-align: center; color: #666; font-size: 12px; padding-bottom: 10px; border-bottom: 1px solid; border-color: #eaeaea;">
             You're receiving this email because you subscribed to HN Top Links
             <span th:text="${data.period.name().toLowerCase()}">weekly</span> updates.
           </td>
         </tr>
         <tr>
-          <td style="text-align: center; color: #666; font-size: 12px; padding-bottom: 10px;">
-            <a th:href="${data.unsubscribeUrl}"
-               style="color: #666; text-decoration: underline;">Unsubscribe</a>
-          </td>
-          <td style="text-align: center; color: #666; font-size: 12px; padding-bottom: 10px;">
-            <!-- Middot -->
-            ·
-          </td>
-          <td style="text-align: center; color: #666; font-size: 12px; padding-bottom: 10px;">
-            <a th:href="${data.manageEmailFrequencyUrl}"
-               style="color: #666; text-decoration: underline;"
-               title="Change how often you receive updates (daily, weekly, monthly)">Manage Email Frequency</a>
+          <td style="padding: 20px 0;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+              <tr>
+                <td style="text-align: right;" width="50%">
+                  <a th:href="${data.unsubscribeUrl}"
+                     style="color: #666; text-decoration: underline; padding: 0 15px; font-size: 12px;">Unsubscribe</a>
+                </td>
+                <td>&#183;</td>
+                <td style="text-align: left;" width="50%">
+                  <a th:href="${data.manageEmailFrequencyUrl}"
+                     style="color: #666; text-decoration: underline; padding: 0 15px; font-size: 12px;"
+                     title="Change how often you receive updates (daily, weekly, monthly)">Manage Email Frequency</a>
+                </td>
+              </tr>
+              <tr><td colspan="3">&nbsp;</td></tr>
+              <tr>
+                <td style="text-align: center; color: #666; font-size: 12px;" colspan="3"
+                    th:text="'&copy; ' + ${#dateUtils.currentYear()} + ' HN Top Links'">
+                  &copy; 2024 HN Top Links
+                </td>
+              </tr>
+            </table>
           </td>
         </tr>
-        <tr>
-          <td style="text-align: center; color: #666; font-size: 12px;"
-              th:text="'&copy; ' + ${#dateUtils.currentYear()} + ' HN Top Links'">
-            &copy; 2024 HN Top Links
-          </td>
-        </tr>
+        <tr><td>&nbsp;</td></tr>
+        <tr><td>&nbsp;</td></tr>
       </table>
     </td>
   </tr>

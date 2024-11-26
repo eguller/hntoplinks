@@ -83,7 +83,7 @@ public class SubscribersController {
   public String subscribers(
       Model model,
       @PathVariable("subscriberId") String subscriberId,
-      @RequestParam(value = "action") String action) {
+      @RequestParam(value = "action", required = false) String action) {
     if ("unsubscribe".equals(action)) {
       var subscriberOpt = this.subscriberRepository.findBySubscriberId(subscriberId);
       subscriberOpt.map(SubscriberEntity::getId).ifPresent(subscriptionsRepository::deleteBySubscriberId);
@@ -126,6 +126,7 @@ public class SubscribersController {
             .content(content)
             .build();
     model.addAttribute("page", page);
+    model.addAttribute("subscriptionForm", page.getContent().getSubscriptionForm());
   }
 
   private void createUnsubscribePage(Model model) {
