@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.UUID;
 
@@ -97,7 +98,7 @@ class SubscribersControllerTest {
             post("/subscribers")
                 .param("email", "test@example.com")
                 .param("selectedPeriods", Period.WEEKLY.name())
-                .param("timeZone", "UTC"))
+                .param("timeZone", ZoneId.systemDefault().getId()))
         .andExpect(status().isOk())
         .andExpect(
             model().attribute("page", hasProperty("content", hasProperty("success", is(true)))))
@@ -164,7 +165,7 @@ class SubscribersControllerTest {
         .subscriberId(UUID.randomUUID().toString())
         .subscriptionDate(LocalDateTime.now())
         .activationDate(LocalDateTime.now())
-        .timeZone("UTC")
+        .timeZone(ZoneId.systemDefault().getId())
         .subscriptionList(
             Collections.singletonList(
                 SubscriptionEntity.builder()
