@@ -13,7 +13,7 @@ import com.eguller.hntoplinks.services.TemplateService;
 import com.eguller.hntoplinks.util.DateUtils;
 
 public class DailySubscriptionEmailTask extends SubscriptionEmailTask {
-  private ItemsRepository itemRepository;
+  private final ItemsRepository itemRepository;
 
   public DailySubscriptionEmailTask(
       TemplateService templateService,

@@ -32,19 +32,19 @@ public class StatisticsService {
   @Value("${hntoplinks.stats-cache-expiry}")
   private long statsCacheExpiry;
 
-  private StatisticRepository statisticRepository;
+  private final StatisticRepository statisticRepository;
 
   private Statistics statistics = null;
   private LocalDateTime lastStatisticsLoaded = LocalDateTime.MIN;
 
-  private AtomicInteger sendEmailFailed = new AtomicInteger(0);
-  private AtomicInteger sendEmailSuccess = new AtomicInteger(0);
-  private AtomicInteger userSubscribed = new AtomicInteger(0);
-  private AtomicInteger userUnsubcribed = new AtomicInteger(0);
-  private AtomicInteger dailySubscribers = new AtomicInteger(0);
-  private AtomicInteger weeklySubscribers = new AtomicInteger(0);
-  private AtomicInteger monthlySubscribers = new AtomicInteger(0);
-  private AtomicInteger annuallySubscribers = new AtomicInteger(0);
+  private final AtomicInteger sendEmailFailed  = new AtomicInteger(0);
+  private final AtomicInteger sendEmailSuccess = new AtomicInteger(0);
+  private final AtomicInteger userSubscribed   = new AtomicInteger(0);
+  private final AtomicInteger userUnsubcribed  = new AtomicInteger(0);
+  private final AtomicInteger dailySubscribers = new AtomicInteger(0);
+  private final AtomicInteger weeklySubscribers = new AtomicInteger(0);
+  private final AtomicInteger monthlySubscribers = new AtomicInteger(0);
+  private final AtomicInteger annuallySubscribers = new AtomicInteger(0);
 
   private LocalDateTime lastEmailSend = null;
 

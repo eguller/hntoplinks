@@ -8,7 +8,7 @@ public enum SortType {
 
   private final String value;
 
-  private static Map<String, SortType> sortTypeMap =
+  private static final Map<String, SortType> sortTypeMap =
       Map.of(
           "upvotes", UPVOTES,
           "comments", COMMENTS);

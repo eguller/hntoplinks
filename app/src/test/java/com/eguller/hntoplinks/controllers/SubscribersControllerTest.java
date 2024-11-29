@@ -169,7 +169,7 @@ class SubscribersControllerTest {
         .subscriptionList(
             Collections.singletonList(
                 SubscriptionEntity.builder()
-                    .nextSendDate(LocalDateTime.now().plus(1, ChronoUnit.WEEKS))
+                    .nextSendDate(LocalDateTime.now().plusWeeks(1))
                     .period(Period.WEEKLY)
                     .build()))
         .build();

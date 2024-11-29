@@ -36,11 +36,11 @@ public class ReadStoriesJob {
 
   private final FirebaseioService firebaseioService;
 
-  private ItemsRepository itemRepository;
+  private final ItemsRepository itemRepository;
 
-  private CheckPointRepository checkPointRepository;
+  private final CheckPointRepository checkPointRepository;
 
-  private TaskScheduler taskScheduler;
+  private final TaskScheduler taskScheduler;
 
   @Value("${hntoplinks.read-all-stories.cron.enabled}")
   private boolean readAllStoriesCronEnabled;

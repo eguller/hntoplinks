@@ -2,6 +2,7 @@ package com.eguller.hntoplinks.config;
 
 import java.lang.invoke.MethodHandles;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
@@ -67,7 +68,7 @@ public class AppConfig implements WebMvcConfigurer, SchedulingConfigurer {
     return restTemplateBuilder
         .setConnectTimeout(Duration.of(5, ChronoUnit.SECONDS))
         .setReadTimeout(Duration.of(30, ChronoUnit.SECONDS))
-        .additionalMessageConverters(new StringHttpMessageConverter(Charset.forName("UTF-8")))
+        .additionalMessageConverters(new StringHttpMessageConverter(StandardCharsets.UTF_8))
         .build();
   }
 
