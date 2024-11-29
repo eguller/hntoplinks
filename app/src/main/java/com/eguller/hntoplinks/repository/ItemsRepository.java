@@ -168,7 +168,7 @@ public class ItemsRepository {
           LIMIT :limit
           OFFSET :offset
         """
-            .formatted(getSortyTypeColumnName(sortBy)),
+            .formatted((Object[]) getSortyTypeColumnName(sortBy)),
         new MapSqlParameterSource()
             .addValue("from", interval.from())
             .addValue("to", interval.to())

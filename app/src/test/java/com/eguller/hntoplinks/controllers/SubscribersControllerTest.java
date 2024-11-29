@@ -10,6 +10,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.UUID;
 
@@ -20,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -50,7 +53,7 @@ class SubscribersControllerTest {
 
   @Autowired private SubscriptionsRepository subscriptionsRepository;
 
-  @Autowired private EmailService emailService;
+  @MockBean private EmailService emailService;
 
   @Autowired private WebApplicationContext context;
 
@@ -94,7 +97,8 @@ class SubscribersControllerTest {
         .perform(
             post("/subscribers")
                 .param("email", "test@example.com")
-                .param("selectedPeriods", Period.WEEKLY.name()))
+                .param("selectedPeriods", Period.WEEKLY.name())
+                .param("timeZone", "UTC"))
         .andExpect(status().isOk())
         .andExpect(
             model().attribute("page", hasProperty("content", hasProperty("success", is(true)))))
@@ -159,8 +163,15 @@ class SubscribersControllerTest {
     return SubscriberEntity.builder()
         .email(email)
         .subscriberId(UUID.randomUUID().toString())
+        .subscriptionDate(LocalDateTime.now())
+        .activationDate(LocalDateTime.now())
+        .timeZone("UTC")
         .subscriptionList(
-            Collections.singletonList(SubscriptionEntity.builder().period(Period.WEEKLY).build()))
+            Collections.singletonList(
+                SubscriptionEntity.builder()
+                    .nextSendDate(LocalDateTime.now().plus(1, ChronoUnit.WEEKS))
+                    .period(Period.WEEKLY)
+                    .build()))
         .build();
   }
 }

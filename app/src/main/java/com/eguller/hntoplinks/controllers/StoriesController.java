@@ -314,24 +314,6 @@ public class StoriesController {
 
   private List<Breadcrumb> generateBreadcrumbs(SanitizedDate sanitizedDate) {
     var list = new ArrayList<Breadcrumb>();
-    if (sanitizedDate.getYear() != null) {
-      list.add(
-          Breadcrumb.builder()
-              .title(sanitizedDate.getYear().toString())
-              .url("/stories/%d".formatted(sanitizedDate.getYear()))
-              .build());
-    }
-    if (sanitizedDate.getYear() != null && sanitizedDate.getMonth() != null) {
-
-      list.add(
-          Breadcrumb.builder()
-              .title(DateUtils.getDisplayName(sanitizedDate.getMonth()))
-              .url(
-                  "/stories/%d/%s"
-                      .formatted(sanitizedDate.getYear(), sanitizedDate.getPaddedMonth()))
-              .build());
-    }
-
     if (sanitizedDate.getYear() != null
         && sanitizedDate.getMonth() != null
         && sanitizedDate.getDay() != null) {
@@ -346,6 +328,24 @@ public class StoriesController {
                           sanitizedDate.getPaddedDay()))
               .build());
     }
+    if (sanitizedDate.getYear() != null && sanitizedDate.getMonth() != null) {
+
+      list.add(
+          Breadcrumb.builder()
+              .title(DateUtils.getDisplayName(sanitizedDate.getMonth()))
+              .url(
+                  "/stories/%d/%s"
+                      .formatted(sanitizedDate.getYear(), sanitizedDate.getPaddedMonth()))
+              .build());
+    }
+    if (sanitizedDate.getYear() != null) {
+      list.add(
+          Breadcrumb.builder()
+              .title(sanitizedDate.getYear().toString())
+              .url("/stories/%d".formatted(sanitizedDate.getYear()))
+              .build());
+    }
+
     return list;
   }
 }

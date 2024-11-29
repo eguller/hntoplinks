@@ -234,19 +234,23 @@ public class DateUtils {
 
     // Sanitize month
     Integer sanitizedMonth;
-    if (sanitizedYear == currentYear) {
-      sanitizedMonth =
-          Optional.ofNullable(month)
-              .map(m -> Math.min(Math.max(m, 1), now.getMonthValue()))
-              .orElse(null);
+    if (month != null) {
+      if (sanitizedYear == currentYear) {
+        sanitizedMonth =
+            Optional.ofNullable(month)
+                .map(m -> Math.min(Math.max(m, 1), now.getMonthValue()))
+                .orElse(null);
+      } else {
+        sanitizedMonth =
+            Optional.ofNullable(month).map(m -> Math.min(Math.max(m, 1), 12)).orElse(null);
+      }
     } else {
-      sanitizedMonth =
-          Optional.ofNullable(month).map(m -> Math.min(Math.max(m, 1), 12)).orElse(null);
+      sanitizedMonth = null;
     }
 
     // Sanitize day
     Integer sanitizedDay;
-    if (sanitizedMonth != null) {
+    if (sanitizedMonth != null && day != null) {
       int maxDay = YearMonth.of(sanitizedYear, sanitizedMonth).lengthOfMonth();
       if (sanitizedYear == currentYear && sanitizedMonth == now.getMonthValue()) {
         maxDay = now.getDayOfMonth();
