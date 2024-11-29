@@ -1,7 +1,6 @@
 package com.eguller.hntoplinks.config;
 
 import java.lang.invoke.MethodHandles;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;

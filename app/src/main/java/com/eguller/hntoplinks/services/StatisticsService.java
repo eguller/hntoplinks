@@ -37,10 +37,10 @@ public class StatisticsService {
   private Statistics statistics = null;
   private LocalDateTime lastStatisticsLoaded = LocalDateTime.MIN;
 
-  private final AtomicInteger sendEmailFailed  = new AtomicInteger(0);
+  private final AtomicInteger sendEmailFailed = new AtomicInteger(0);
   private final AtomicInteger sendEmailSuccess = new AtomicInteger(0);
-  private final AtomicInteger userSubscribed   = new AtomicInteger(0);
-  private final AtomicInteger userUnsubcribed  = new AtomicInteger(0);
+  private final AtomicInteger userSubscribed = new AtomicInteger(0);
+  private final AtomicInteger userUnsubcribed = new AtomicInteger(0);
   private final AtomicInteger dailySubscribers = new AtomicInteger(0);
   private final AtomicInteger weeklySubscribers = new AtomicInteger(0);
   private final AtomicInteger monthlySubscribers = new AtomicInteger(0);
