@@ -34,7 +34,8 @@ public class DailySubscriptionEmailTask extends SubscriptionEmailTask {
   protected String getSubject() {
     String timePrefix =
         DateTimeFormatter.ofPattern("EEEE, dd MMMM")
-            .format(DateUtils.getIntervalForYesterday(emailTarget.subscriber().getTimeZoneObj()).to());
+            .format(
+                DateUtils.getIntervalForYesterday(emailTarget.subscriber().getTimeZoneObj()).to());
     return timePrefix + " - Daily Top Stories";
   }
 

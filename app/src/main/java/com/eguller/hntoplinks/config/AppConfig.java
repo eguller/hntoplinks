@@ -48,11 +48,9 @@ public class AppConfig implements WebMvcConfigurer, SchedulingConfigurer {
   @Value("${hntoplinks.firebaseio-url}")
   private String firebaseIoBaseUrl;
 
-  @Autowired
-  private FormattingDialect formattingDialect;
+  @Autowired private FormattingDialect formattingDialect;
 
-  @Autowired
-  private DateDialect dateDialect;
+  @Autowired private DateDialect dateDialect;
 
   @Bean
   public DeviceHandlerMethodArgumentResolver deviceHandlerMethodArgumentResolver() {

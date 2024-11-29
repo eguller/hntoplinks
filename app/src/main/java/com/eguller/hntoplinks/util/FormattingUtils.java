@@ -26,9 +26,9 @@ public class FormattingUtils {
           Period.MONTHLY, "Monthly Roundup",
           Period.YEARLY, "Yearly Review");
 
-    public static FormattingUtils getInstance() {
-        return INSTANCE;
-    }
+  public static FormattingUtils getInstance() {
+    return INSTANCE;
+  }
 
   public String domainName(String url) {
     try {

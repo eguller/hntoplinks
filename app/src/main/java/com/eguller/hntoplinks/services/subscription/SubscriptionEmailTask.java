@@ -26,7 +26,9 @@ public abstract class SubscriptionEmailTask {
     var items = getItems();
     var maxStoryCount = getMaxStoryCount();
     var topStories = items.subList(0, Math.min(items.size(), maxStoryCount));
-    var content = templateService.generateTopEmail(subject, emailTarget.subscription(), emailTarget.subscriber(), topStories);
+    var content =
+        templateService.generateTopEmail(
+            subject, emailTarget.subscription(), emailTarget.subscriber(), topStories);
     var email =
         Email.builder()
             .subject("[hntoplinks] - " + subject)

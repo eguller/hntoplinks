@@ -4,9 +4,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import com.eguller.hntoplinks.entities.SubscriberEntity;
-import com.eguller.hntoplinks.models.Email;
-import com.eguller.hntoplinks.services.EmailService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,12 +17,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.annotation.RequestScope;
 
 import com.eguller.hntoplinks.entities.Period;
+import com.eguller.hntoplinks.entities.SubscriberEntity;
 import com.eguller.hntoplinks.models.Navigation;
 import com.eguller.hntoplinks.models.Page;
 import com.eguller.hntoplinks.models.SubscribersContent;
 import com.eguller.hntoplinks.models.SubscriptionForm;
 import com.eguller.hntoplinks.repository.SubscribersRepository;
 import com.eguller.hntoplinks.repository.SubscriptionsRepository;
+import com.eguller.hntoplinks.services.EmailService;
 import com.eguller.hntoplinks.services.RecaptchaVerifier;
 
 import jakarta.validation.Valid;
@@ -44,10 +43,10 @@ public class SubscribersController {
   private final EmailService emailService;
 
   public SubscribersController(
-    SubscribersRepository subscribersRepository,
-    SubscriptionsRepository subscriptionsRepository,
-    RecaptchaVerifier recaptchaVerifier,
-    EmailService emailService) {
+      SubscribersRepository subscribersRepository,
+      SubscriptionsRepository subscriptionsRepository,
+      RecaptchaVerifier recaptchaVerifier,
+      EmailService emailService) {
     this.subscriberRepository = subscribersRepository;
     this.subscriptionsRepository = subscriptionsRepository;
     this.recaptchaVerifier = recaptchaVerifier;
@@ -86,7 +85,9 @@ public class SubscribersController {
       @RequestParam(value = "action", required = false) String action) {
     if ("unsubscribe".equals(action)) {
       var subscriberOpt = this.subscriberRepository.findBySubscriberId(subscriberId);
-      subscriberOpt.map(SubscriberEntity::getId).ifPresent(subscriptionsRepository::deleteBySubscriberId);
+      subscriberOpt
+          .map(SubscriberEntity::getId)
+          .ifPresent(subscriptionsRepository::deleteBySubscriberId);
       subscriberOpt.map(SubscriberEntity::getId).ifPresent(subscriberRepository::deleteById);
       createUnsubscribePage(model);
       return "unsubscribe";
@@ -175,10 +176,10 @@ public class SubscribersController {
       SubscriberEntity tmpSaveSubscriber;
       try {
         tmpSaveSubscriber = subscriberRepository.save(subscriber);
-        saveFailed       = false;
+        saveFailed = false;
       } catch (Exception e) {
         tmpSaveSubscriber = subscriber;
-        saveFailed       = true;
+        saveFailed = true;
       }
 
       savedSubscriber = tmpSaveSubscriber;
@@ -186,8 +187,9 @@ public class SubscribersController {
       var subscriptions = subscriptionForm.toSubscriptionEntities();
       subscriptions.forEach(subscription -> subscription.setSubscriberId(savedSubscriber.getId()));
       var savedSubscriptions = subscriptions;
-      if(!saveFailed) {
-        StreamSupport.stream(subscriptionsRepository.saveAll(subscriptions).spliterator(), false).collect(Collectors.toList());
+      if (!saveFailed) {
+        StreamSupport.stream(subscriptionsRepository.saveAll(subscriptions).spliterator(), false)
+            .collect(Collectors.toList());
         savedSubscriber.setSubscriptionList(savedSubscriptions);
         emailService.sendSubscriptionEmail(savedSubscriber);
       }

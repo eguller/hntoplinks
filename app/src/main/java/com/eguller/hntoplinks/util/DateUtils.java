@@ -23,9 +23,9 @@ import org.slf4j.LoggerFactory;
 import com.eguller.hntoplinks.models.Interval;
 
 public class DateUtils {
-  private static final Logger logger         =
-    LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-  public static final  int    HN_LAUNCH_YEAR = 2006;
+  private static final Logger logger =
+      LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+  public static final int HN_LAUNCH_YEAR = 2006;
 
   public static ZoneId parseZoneId(String zoneIdStr) {
     var zoneId = ZoneId.systemDefault();
@@ -39,42 +39,42 @@ public class DateUtils {
 
   public static LocalDateTime tomorrow_7_AM(ZoneId targetZone) {
     return ZonedDateTime.now(targetZone)
-      .plusDays(1)
-      .withHour(7)
-      .withMinute(0)
-      .withSecond(0)
-      .withZoneSameInstant(ZoneId.systemDefault())
-      .toLocalDateTime();
+        .plusDays(1)
+        .withHour(7)
+        .withMinute(0)
+        .withSecond(0)
+        .withZoneSameInstant(ZoneId.systemDefault())
+        .toLocalDateTime();
   }
 
   public static LocalDateTime nextMonday_7_AM(ZoneId targetZone) {
     return ZonedDateTime.now(targetZone)
-      .with(TemporalAdjusters.next(DayOfWeek.MONDAY))
-      .withHour(7)
-      .withMinute(0)
-      .withSecond(0)
-      .withZoneSameInstant(ZoneId.systemDefault())
-      .toLocalDateTime();
+        .with(TemporalAdjusters.next(DayOfWeek.MONDAY))
+        .withHour(7)
+        .withMinute(0)
+        .withSecond(0)
+        .withZoneSameInstant(ZoneId.systemDefault())
+        .toLocalDateTime();
   }
 
   public static LocalDateTime firstDayOfNextMonth_7_AM(ZoneId targetZone) {
     return ZonedDateTime.now(targetZone)
-      .with(TemporalAdjusters.firstDayOfNextMonth())
-      .withHour(7)
-      .withMinute(0)
-      .withSecond(0)
-      .withZoneSameInstant(ZoneId.systemDefault())
-      .toLocalDateTime();
+        .with(TemporalAdjusters.firstDayOfNextMonth())
+        .withHour(7)
+        .withMinute(0)
+        .withSecond(0)
+        .withZoneSameInstant(ZoneId.systemDefault())
+        .toLocalDateTime();
   }
 
   public static LocalDateTime firstDayOfNextYear_7_AM(ZoneId targetZone) {
     return ZonedDateTime.now(targetZone)
-      .with(TemporalAdjusters.firstDayOfNextYear())
-      .withHour(7)
-      .withMinute(0)
-      .withSecond(0)
-      .withZoneSameInstant(ZoneId.systemDefault())
-      .toLocalDateTime();
+        .with(TemporalAdjusters.firstDayOfNextYear())
+        .withHour(7)
+        .withMinute(0)
+        .withSecond(0)
+        .withZoneSameInstant(ZoneId.systemDefault())
+        .toLocalDateTime();
   }
 
   public static ZoneId zoneOf(String zoneIdStr) {
@@ -98,7 +98,7 @@ public class DateUtils {
     LocalDateTime start = yesterday.atStartOfDay();
     LocalDateTime end = yesterday.atTime(LocalTime.MAX);
 
-    return Interval.of(start, end);  // Assuming static factory method
+    return Interval.of(start, end); // Assuming static factory method
   }
 
   public static Interval getIntervalForLastWeek() {
@@ -185,7 +185,8 @@ public class DateUtils {
   }
 
   public static List<Integer> getYears() {
-    return Stream.iterate(LocalDateTime.now().getYear(), i -> i >= HN_LAUNCH_YEAR, i -> i - 1).toList();
+    return Stream.iterate(LocalDateTime.now().getYear(), i -> i >= HN_LAUNCH_YEAR, i -> i - 1)
+        .toList();
   }
 
   public static List<Month> getMonthsForYear(Integer year) {
@@ -193,13 +194,13 @@ public class DateUtils {
     int end;
     if (year == null || year == LocalDate.now().getYear()) {
       start = 1;
-      end   = LocalDate.now().getMonthValue();
+      end = LocalDate.now().getMonthValue();
     } else if (year == 2006) {
       start = 10; // hacker news first story posted in '6 Oct 2006'
-      end   = 12;
+      end = 12;
     } else {
       start = 1;
-      end   = 12;
+      end = 12;
     }
     return IntStream.iterate(end, i -> i >= start, i -> i - 1).mapToObj(Month::of).toList();
   }
@@ -227,20 +228,20 @@ public class DateUtils {
 
     // Sanitize year
     int sanitizedYear =
-      Optional.ofNullable(year)
-        .map(y -> Math.min(Math.max(y, 2006), currentYear))
-        .orElse(currentYear);
+        Optional.ofNullable(year)
+            .map(y -> Math.min(Math.max(y, 2006), currentYear))
+            .orElse(currentYear);
 
     // Sanitize month
     Integer sanitizedMonth;
     if (sanitizedYear == currentYear) {
       sanitizedMonth =
-        Optional.ofNullable(month)
-          .map(m -> Math.min(Math.max(m, 1), now.getMonthValue()))
-          .orElse(null);
+          Optional.ofNullable(month)
+              .map(m -> Math.min(Math.max(m, 1), now.getMonthValue()))
+              .orElse(null);
     } else {
       sanitizedMonth =
-        Optional.ofNullable(month).map(m -> Math.min(Math.max(m, 1), 12)).orElse(null);
+          Optional.ofNullable(month).map(m -> Math.min(Math.max(m, 1), 12)).orElse(null);
     }
 
     // Sanitize day
@@ -254,15 +255,15 @@ public class DateUtils {
       int maxDayF = maxDay;
 
       sanitizedDay =
-        Optional.ofNullable(day).map(d -> Math.min(Math.max(d, 1), maxDayF)).orElse(maxDayF);
+          Optional.ofNullable(day).map(d -> Math.min(Math.max(d, 1), maxDayF)).orElse(maxDayF);
     } else {
       sanitizedDay = null;
     }
 
     return SanitizedDate.builder()
-      .year(sanitizedYear)
-      .month(sanitizedMonth)
-      .day(sanitizedDay)
-      .build();
+        .year(sanitizedYear)
+        .month(sanitizedMonth)
+        .day(sanitizedDay)
+        .build();
   }
 }

@@ -1,6 +1,5 @@
 package com.eguller.hntoplinks.services.email;
 
-import com.eguller.hntoplinks.services.EmailProviderService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 

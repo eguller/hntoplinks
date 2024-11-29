@@ -1,5 +1,6 @@
 package com.eguller.hntoplinks.services;
 
+import com.eguller.hntoplinks.controllers.SubscribersController;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -17,7 +18,6 @@ import com.eguller.hntoplinks.Application;
 import com.eguller.hntoplinks.controllers.StoriesController;
 import com.eguller.hntoplinks.entities.Period;
 import com.eguller.hntoplinks.models.Email;
-import com.eguller.hntoplinks.models.SubscriptionPage;
 import com.eguller.hntoplinks.repository.SubscribersRepository;
 import com.eguller.hntoplinks.services.email.MockEmailStore;
 import com.eguller.hntoplinks.util.DbUtil;
@@ -43,7 +43,8 @@ public class SubscriptionServiceTest {
     DbUtil.updateDatabaseProperties(postgres, registry);
   }
 
-  @Autowired private StoriesController applicationController;
+=
+  @Autowired private SubscribersController subscribersController;
 
   @Autowired private SubscribersRepository subscriberRepository;
 
@@ -55,7 +56,7 @@ public class SubscriptionServiceTest {
   public void test_subscribe() {
     var emailAddress = "test_subscribe1@hntoplinks.com";
     DbUtil.deleteSubscriber(namedParameterJdbcTemplate, emailAddress);
-    var model = SubscriptionUtil.subscribeDailyNew(this.applicationController, emailAddress);
+    var model = SubscriptionUtil.subscribeDailyNew(this.storiesController, emailAddress);
 
     var subscriptionEntity = subscriberRepository.findByEmail(emailAddress);
     Assertions.assertEquals(emailAddress, subscriptionEntity.get().getEmail());
@@ -72,11 +73,10 @@ public class SubscriptionServiceTest {
   @Test
   public void test_unsubscribe() {
     var emailAddress = "test_unsubscribe1@hntoplinks.com";
-    var model = SubscriptionUtil.subscribeDailyNew(this.applicationController, emailAddress);
+    var model = SubscriptionUtil.subscribeDailyNew(this.storiesController, emailAddress);
     var subscriptionEntity = subscriberRepository.findByEmail(emailAddress);
     Assertions.assertEquals(emailAddress, subscriptionEntity.get().getEmail());
-    applicationController.unsubscribe_Get(
-        new ExtendedModelMap(), subscriptionEntity.get().getSubscriberId());
+    subscribersController.subscribers(new ExtendedModelMap(), subscriptionEntity.get().getSubscriberId(), "unsubscribe");
     subscriptionEntity = subscriberRepository.findByEmail(emailAddress);
     Assertions.assertFalse(subscriptionEntity.isPresent());
   }
@@ -84,14 +84,14 @@ public class SubscriptionServiceTest {
   @Test
   public void test_updateSubscription() {
     var emailAddress = "test_updatesubscription1@hntoplinks.com";
-    var model = SubscriptionUtil.subscribeDailyNew(this.applicationController, emailAddress);
+    var model = SubscriptionUtil.subscribeDailyNew(this.storiesController, emailAddress);
     var subscriptionEntity = subscriberRepository.findByEmail(emailAddress);
     Assertions.assertEquals(emailAddress, subscriptionEntity.get().getEmail());
     Assertions.assertTrue(subscriptionEntity.get().isSubscribedFor(Period.DAILY));
     Assertions.assertFalse(subscriptionEntity.get().isSubscribedFor(Period.WEEKLY));
 
     SubscriptionUtil.subscribe(
-        this.applicationController,
+        this.subscribersController,
         emailAddress,
         ((SubscriptionPage) model.getAttribute("page")).getSubscriptionForm().getSubsUUID(),
         Period.DAILY,
@@ -101,7 +101,7 @@ public class SubscriptionServiceTest {
     Assertions.assertTrue(subscriptionEntity.get().isSubscribedFor(Period.WEEKLY));
 
     SubscriptionUtil.subscribe(
-        this.applicationController,
+        this.subscribersController,
         emailAddress,
         ((SubscriptionPage) model.getAttribute("page")).getSubscriptionForm().getSubsUUID(),
         Period.DAILY,
@@ -115,7 +115,7 @@ public class SubscriptionServiceTest {
     Assertions.assertTrue(subscriptionEntity.get().isSubscribedFor(Period.YEARLY));
 
     SubscriptionUtil.subscribe(
-        this.applicationController,
+        this.subscribersController,
         emailAddress,
         ((SubscriptionPage) model.getAttribute("page")).getSubscriptionForm().getSubsUUID(),
         Period.DAILY,
