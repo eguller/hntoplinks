@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class StatisticEntity implements HnEntity {
-  private Long   id;
+  private Long id;
   private String statKey;
   private String statValue;
 

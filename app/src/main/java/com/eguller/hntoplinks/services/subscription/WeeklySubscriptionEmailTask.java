@@ -1,22 +1,27 @@
 package com.eguller.hntoplinks.services.subscription;
 
-import com.eguller.hntoplinks.entities.StoryEntity;
-import com.eguller.hntoplinks.models.EmailTarget;
-import com.eguller.hntoplinks.repository.StoryRepository;
-import com.eguller.hntoplinks.services.EmailProviderService;
-import com.eguller.hntoplinks.services.TemplateService;
-import com.eguller.hntoplinks.util.DateUtils;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-public class WeeklySubscriptionEmailTask extends SubscriptionEmailTask {
-  private final StoryRepository storyRepository;
+import com.eguller.hntoplinks.entities.Item;
+import com.eguller.hntoplinks.entities.SortType;
+import com.eguller.hntoplinks.models.EmailTarget;
+import com.eguller.hntoplinks.repository.ItemsRepository;
+import com.eguller.hntoplinks.services.EmailProviderService;
+import com.eguller.hntoplinks.services.TemplateService;
+import com.eguller.hntoplinks.util.DateUtils;
 
-  public WeeklySubscriptionEmailTask(TemplateService templateService, EmailTarget emailTarget, EmailProviderService emailProviderService, StoryRepository storyRepository) {
+public class WeeklySubscriptionEmailTask extends SubscriptionEmailTask {
+  private final ItemsRepository itemsRepository;
+
+  public WeeklySubscriptionEmailTask(
+      TemplateService templateService,
+      EmailTarget emailTarget,
+      EmailProviderService emailProviderService,
+      ItemsRepository itemsRepository) {
     super(templateService, emailTarget, emailProviderService);
-    this.storyRepository = storyRepository;
+    this.itemsRepository = itemsRepository;
   }
 
   @Override
@@ -27,23 +32,26 @@ public class WeeklySubscriptionEmailTask extends SubscriptionEmailTask {
 
   @Override
   protected String getSubject() {
-    var fromDate = LocalDateTime.now().minusDays(7).atZone(emailTarget.subscriber().getTimeZoneObj());
+    var fromDate =
+        LocalDateTime.now().minusDays(7).atZone(emailTarget.subscriber().getTimeZoneObj());
     var toDate = LocalDateTime.now().minusDays(1).atZone(emailTarget.subscriber().getTimeZoneObj());
 
-    var fromDateStr = DateTimeFormatter.ofPattern("dd MMMM").format(fromDate);
-    var toDateStr = DateTimeFormatter.ofPattern("dd MMMM").format(toDate);
+    var interval = DateUtils.getIntervalForLastWeek(emailTarget.subscriber().getTimeZoneObj());
+    var fromDateStr = DateTimeFormatter.ofPattern("MMMM dd").format(interval.from());
+    var toDateStr = DateTimeFormatter.ofPattern("MMMM dd").format(interval.to());
 
-    //if week is in same month, display 14 - 21 June instead of 14 June - 21 June
-    if(fromDate.getMonth().equals(toDate.getMonth())) {
-      fromDateStr = DateTimeFormatter.ofPattern("dd").format(fromDate);
+    // if week is in same month, display 14 - 21 June instead of 14 June - 21 June
+    if (fromDate.getMonth().equals(toDate.getMonth())) {
+      toDateStr = DateTimeFormatter.ofPattern("dd").format(toDate);
     }
 
-    return String.format("%s - %s Weekly Top Links", fromDateStr, toDateStr);
+    return String.format("%s-%s Weekly Digest", fromDateStr, toDateStr);
   }
 
   @Override
-  protected List<StoryEntity> getStories() {
-    var stories = this.storyRepository.readWeeklyTop();
-    return stories;
+  protected List<Item> getItems() {
+    var interval = DateUtils.getIntervalForLastWeek(emailTarget.subscriber().getTimeZoneObj());
+    var items = itemsRepository.findByInterval(interval, SortType.UPVOTES, getMaxStoryCount(), 0);
+    return items;
   }
 }

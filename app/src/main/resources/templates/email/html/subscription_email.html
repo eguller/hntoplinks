@@ -1,15 +1,68 @@
 <!DOCTYPE html>
 <html>
-<head lang="en">
+<head>
   <meta charset="UTF-8">
-  <title></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body>
-Hello, <br/>
-You will receive Hacker News Top Links emails periodically. <br/> <br/>
-If you did not subscribe, please click <br/>
-<a th:href="@{${data.unsubscribeUrl}}" th:text="${data.unsubscribeUrl}" target="_blank"></a> <br/>
-to unsubscribe. <br/><br/>
-Best wishes, <a th:href="@{${data.baseUrl}}" th:text="hntoplinks.com" target="_blank"></a>
+<body
+  style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f6f6ef;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0"
+       style="max-width: 600px; margin: 0 auto; padding: 20px;">
+  <tr>
+    <td>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
+             style="background-color: #ff6600; padding: 15px; border-radius: 5px 5px 0 0;">
+        <tr>
+          <td>
+            <h1 style="color: white; margin: 0; font-size: 24px;">HN Top Links</h1>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td style="background-color: white; padding: 30px; border-radius: 0 0 5px 5px;">
+      <h2 style="color: #2c3e50; margin: 0 0 20px 0;">Welcome to Hacker News Top Links</h2>
+
+      <p style="color: #34495e; line-height: 1.6; margin: 0 0 20px 0;">
+        HN Top Links is a Hacker News aggregator that helps you discover the most engaging content. Similar to Reddit's
+        "Top" feature, we organize stories by different time periods (daily, weekly, monthly, yearly) and let you sort
+        them by most upvoted or most commented.
+      </p>
+
+      <p style="color: #34495e; line-height: 1.6; margin: 0 0 20px 0;">
+        You've subscribed to receive:
+      </p>
+
+      <ul style="color: #34495e; line-height: 1.6; margin: 0 0 20px 0; padding-left: 20px;">
+        <li th:each="period : ${data.periods}"
+            th:text="${#fmt.periodDescription(period)}">
+        </li>
+      </ul>
+
+      <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+
+      <p style="color: #7f8c8d; font-size: 14px; line-height: 1.6; margin: 0;">
+        You're receiving this email because you signed up for HN Top Links updates.
+        If you didn't request this subscription,
+        <a th:href="${data.unsubscribeUrl}" style="color: #ff6600; text-decoration: none;">click here to unsubscribe</a>.
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding: 20px; text-align: center;">
+      <p style="color: #7f8c8d; font-size: 14px; margin: 0;">
+        &copy; 2024 HN Top Links
+      </p>
+      <p style="color: #7f8c8d; font-size: 14px; margin: 10px 0 0 0;">
+        <a href="https://github.com/eguller/hntoplinks" style="color: #7f8c8d; text-decoration: underline;">GitHub</a>
+        ·
+        <a th:href="@{${data.baseUrl} + '/about'}" style="color: #7f8c8d; text-decoration: underline;">About</a>
+        ·
+        <a th:href="${data.unsubscribeUrl}" style="color: #7f8c8d; text-decoration: underline;">Unsubscribe</a>
+      </p>
+    </td>
+  </tr>
+</table>
 </body>
 </html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HN Top Links - Popular Stories from Hacker News</title>
+  <!-- Include base CSS -->
+  <th:block th:replace="fragments/css :: base"/>
+  <th:block layout:fragment="page-css"/>
+</head>
+
+<body>
+<header>
+  <div class="header-content">
+    <a href="/" class="logo">HN Top Links</a>
+    <nav>
+      <a href="/" th:classappend="${page.navigation.activeMenu == 'day'} ? 'active'">Today</a>
+      <a href="/week" th:classappend="${page.navigation.activeMenu == 'week'} ? 'active'">This Week</a>
+      <a href="/month" th:classappend="${page.navigation.activeMenu == 'month'} ? 'active'">This Month</a>
+      <a href="/year" th:classappend="${page.navigation.activeMenu == 'year'} ? 'active'">This Year</a>
+      <a href="/all" th:classappend="${page.navigation.activeMenu == 'all'} ? 'active'">All</a>
+      <span class="nav-separator">|</span>
+      <a href="/subscribers" th:classappend="${page.navigation.activeMenu == 'subscribe'} ? 'active'">Subscribe</a>
+    </nav>
+  </div>
+</header>
+<div class="breadcrumb">
+  <div class="breadcrumb-content">
+    <a href="/">Home</a>
+    <span class="breadcrumb-separator">/</span>
+    <th:block th:each="breadcrumb, iterStat : ${page.navigation.breadcrumbs}">
+      <a th:href="@{${breadcrumb.url}}" th:text="${breadcrumb.title}">2024</a>
+      <span class="breadcrumb-separator" th:if="${!iterStat.last}">/</span>
+    </th:block>
+  </div>
+</div>
+
+<section layout:fragment="content"/>
+
+<footer>
+  <div class="footer-content">
+    <div class="archive-nav">
+      <div class="archive-section">
+        <h3>Browse by Year</h3>
+        <div class="archive-links">
+          <a th:each="year : ${#dateUtils.getYears()}"
+             th:href="@{/stories/{year}(year=${year})}"
+             th:text="${year}"
+            th:class="${page.selectedYear != null and page.selectedYear == year} ? 'active'">2024</a>
+        </div>
+      </div>
+
+      <div class="archive-section">
+        <h3 th:text="${(page.selectedYear == null ? #dateUtils.currentYear() : page.selectedYear) + ' Archives'}">2024 Archives</h3>
+        <div class="archive-links">
+          <a href="#"
+             th:each="month : ${#dateUtils.getMonthsForYear(page.selectedYear)}"
+             th:href="@{'/stories/' + ${#dateUtils.getYearOrCurrent(page.selectedYear)} + '/' + ${#dateUtils.getPaddedMonth(month.getValue())}}"
+             th:text="${#dateUtils.getDisplayName(month)}"
+            th:class="${page.selectedMonth != null and page.selectedMonth == month.getValue()} ? 'active'">January</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="copyright">
+      <a href="/about">About</a>
+      <p>&copy; <span th:text="'2013 - ' +  ${#dateUtils.currentYear()}">2024</span> Hacker News Top Links</p>
+
+    </div>
+  </div>
+</footer>
+
+<script>
+  function updateQueryParam(key, value) {
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set(key, value);
+    return `${window.location.pathname}?${urlParams.toString()}`;
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+/* Header styles */
+header {
+  background-color: var(--primary-color);
+  padding: 0.8rem;
+  margin-bottom: 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 4px var(--shadow-color);
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  gap: 2rem;
+}
+
+/* Stories section */
+main {
+  flex: 1;
+}
+
+.story-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.current-view {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+/* Footer styles */
+footer {
+  background-color: var(--footer-bg);
+  border-top: 1px solid var(--border-color);
+  padding: 2rem 0;
+  margin-top: auto;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.archive-section {
+  margin-bottom: 1.5rem;
+}
+
+.archive-section h3 {
+  color: var(--primary-color);
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+
+.archive-links a {
+  color: var(--text-color);
+  text-decoration: none;
+  font-size: 0.9rem;
+  padding: 0.3rem 0.5rem;
+  border-radius: 3px;
+  transition: background-color 0.2s;
+}
+
+.archive-links a:hover,
+.archive-links a.active {
+  background-color: rgba(255, 153, 102, 0.1);
+  color: var(--primary-color);
+}
+
+.copyright {
+  text-align: center;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+  color: var(--secondary-text);
+  font-size: 0.8rem;
+}
+
+.archive-nav {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.archive-links {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 0.5rem;
+}
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    gap: 0.8rem;
+    padding: 0.5rem;
+  }
+
+  .story-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.8rem;
+  }
+
+  .archive-section h3 {
+    margin-bottom: 0.5rem;
+  }
+
+  .archive-nav {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .archive-links {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  }
+}

@@ -4,12 +4,17 @@ import java.util.Arrays;
 import java.util.Optional;
 
 public enum PageTab {
-  today, week, month, year, all, subscribe;
+  today,
+  week,
+  month,
+  year,
+  all,
+  subscribe;
 
   public static Optional<PageTab> fromString(String pageTabStr) {
     return Arrays.stream(PageTab.values())
-      .filter(pageTab -> pageTab.name().equalsIgnoreCase(pageTabStr))
-      .findAny();
+        .filter(pageTab -> pageTab.name().equalsIgnoreCase(pageTabStr))
+        .findAny();
   }
 
   public String getTitleText() {

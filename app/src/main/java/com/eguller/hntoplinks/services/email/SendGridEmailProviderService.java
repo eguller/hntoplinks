@@ -1,27 +1,28 @@
 package com.eguller.hntoplinks.services.email;
 
-import com.eguller.hntoplinks.models.Email;
+import java.lang.invoke.MethodHandles;
 
-import com.eguller.hntoplinks.services.EmailProviderService;
-import com.sendgrid.Content;
-import com.sendgrid.Mail;
-import com.sendgrid.Method;
-import com.sendgrid.Request;
-import com.sendgrid.SendGrid;
-import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.lang.invoke.MethodHandles;
+import com.eguller.hntoplinks.models.Email;
+import com.eguller.hntoplinks.services.EmailProviderService;
+import com.sendgrid.Content;
+import com.sendgrid.Mail;
+import com.sendgrid.Method;
+import com.sendgrid.Request;
+import com.sendgrid.SendGrid;
+
+import lombok.SneakyThrows;
 
 @Service
 @ConditionalOnProperty(value = "hntoplinks.mail.provider", havingValue = "sendgrid")
 public class SendGridEmailProviderService implements EmailProviderService {
-  private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+  private static final Logger logger =
+      LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @Value("${hntoplinks.mail.sendgrid.api-key}")
   private String apiKey;

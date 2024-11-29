@@ -1,0 +1,24 @@
+<!-- fragments/css.html -->
+<th:block th:fragment="base">
+    <link crossorigin="anonymous" media="all" rel="stylesheet"
+          th:href="@{{stylesheets}/base.css(stylesheets=${@environment.getProperty('hntoplinks.stylesheets')})}">
+    <link crossorigin="anonymous" media="all" rel="stylesheet"
+          th:href="@{{stylesheets}/layout.css(stylesheets=${@environment.getProperty('hntoplinks.stylesheets')})}">
+    <link crossorigin="anonymous" media="all" rel="stylesheet"
+          th:href="@{{stylesheets}/components.css(stylesheets=${@environment.getProperty('hntoplinks.stylesheets')})}">
+</th:block>
+
+<th:block th:fragment="stories">
+    <link crossorigin="anonymous" media="all" rel="stylesheet"
+          th:href="@{{stylesheets}/stories.css(stylesheets=${@environment.getProperty('hntoplinks.stylesheets')})}">
+</th:block>
+
+<th:block th:fragment="subscribers">
+    <link crossorigin="anonymous" media="all" rel="stylesheet"
+          th:href="@{{stylesheets}/subscribers.css(stylesheets=${@environment.getProperty('hntoplinks.stylesheets')})}">
+</th:block>
+
+<th:block th:fragment="about">
+    <link crossorigin="anonymous" media="all" rel="stylesheet"
+          th:href="@{{stylesheets}/about.css(stylesheets=${@environment.getProperty('hntoplinks.stylesheets')})}">
+</th:block>

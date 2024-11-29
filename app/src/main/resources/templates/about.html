@@ -1,40 +1,58 @@
-<html layout:decorate="~{layouts/web}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      xmlns:th="http://www.thymeleaf.org"
->
+<!-- about.html -->
+<html layout:decorate="~{layouts/main}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+  <th:block layout:fragment="page-css">
+    <th:block th:replace="fragments/css :: about"/>
+  </th:block>
+</head>
+<section layout:fragment="content" class="about-page">
+    <div class="about-content">
+        <h1>About HN Top Links</h1>
 
-<table bgcolor=#f6f6ef border=0 cellpadding=0 cellspacing=0 layout:fragment="content" width="85%">
-  <tr th:insert="~{fragments/menu.html :: menu}">
-  </tr>
-  <tr style="height: 10px"></tr>
-  <tr>
-    <td class="about">
-      Hello,
-      <p>
-        I am a big fan of <a href="https://news.ycombinator.com" target="_blank">Hacker News</a> but sometimes I
-        do not
-        have time to check it frequently and I created this web page, so I can read daily, weekly, monthly top
-        news
-        to stay up to date. If you want to receive daily, weekly, monthly or annually <a
-        href="https://www.hntoplinks.com" target="_blank">Hacker News Top Links</a> emails please subscribe
-        from <a href="/subscribe" style="color: blue;" target="_blank">here</a>
-      </p>
+        <div class="section">
+            <h2>What is HN Top Links?</h2>
+            <p>
+                HN Top Links is a Hacker News aggregator that helps you discover the most engaging content by organizing stories based on different time periods. Similar to Reddit's "Top" feature, we group stories by:
+            </p>
+            <ul>
+                <li>Daily Top Stories</li>
+                <li>Weekly Best</li>
+                <li>Monthly Highlights</li>
+                <li>Yearly Favorites</li>
+                <li>All-Time Best</li>
+            </ul>
+            <p>
+                For each time period, you can sort stories by either most upvoted or most commented, helping you find the content that resonates most with the HN community.
+            </p>
+        </div>
 
-      <p>There are also other alternatives to help Hacker News fans to read it more efficiently. See <a
-        href="https://github.com/cheeaun/hackerweb/wiki/Hacker-News-apps" style="color: blue;"
-        target="_blank">this list</a>
-        for all alternative Hacker News reading applications.</p>
+        <div class="section">
+            <h2>Features</h2>
+            <ul>
+                <li>Browse top stories by different time periods</li>
+                <li>Sort by upvotes or comment count</li>
+                <li>Email subscriptions for daily, weekly, or monthly digests</li>
+                <li>Comprehensive archive access dating back to 2006</li>
+                <li>Clean, modern interface focused on readability</li>
+            </ul>
+        </div>
 
-      <p>
-        Please see following <a href="https://github.com/cheeaun/awesome-hacker-news"
-                                target="_blank">list</a> for alternative applications. <br>
-        Source code is availabe at <a href="https://github.com/eguller/hntoplinks" style="color: blue;"
-                                      target="blank">github</a>.
-        <br>
-        For questions/suggestions please send email to <img alt=""
-                                                            th:src="@{'/public/images/enginguller1.png'}">
-      </p>
-    </td>
-  </tr>
-  <tr th:replace="~{fragments/footer.html :: footer (footerSet='home')}"/>
-</table>
-</html>
+        <div class="section">
+            <h2>Open Source</h2>
+            <p>
+                HN Top Links is an open-source project. You can find the complete source code on
+                <a href="https://github.com/eguller/hntoplinks" target="_blank" rel="noopener noreferrer">GitHub</a>.
+                Feel free to contribute, report issues, or suggest improvements.
+            </p>
+        </div>
+
+        <div class="section">
+            <h2>Stay Updated</h2>
+            <p>
+                Don't miss the best content from Hacker News.
+                <a href="/subscribers">Subscribe to our email digests</a>
+                to receive curated lists of top stories directly in your inbox.
+            </p>
+        </div>
+    </div>
+</section>

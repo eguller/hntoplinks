@@ -1,0 +1,141 @@
+<html layout:decorate="~{layouts/main}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+  <th:block layout:fragment="page-css">
+    <th:block th:replace="fragments/css :: subscribers"/>
+  </th:block>
+</head>
+
+<section class="subscription-page">
+  <div class="subscription-form" layout:fragment="content">
+    <h1>Subscribe to HN Top Links</h1>
+
+    <!-- Success message -->
+    <div th:if="${page.content.success}" class="alert alert-success">
+      <span th:text="${page.content.successMessage}"></span>
+    </div>
+
+    <form th:action="@{/subscribers}"
+          th:object="${subscriptionForm}"
+          method="post"
+          class="subscription-form">
+
+      <input type="hidden" th:field="*{subscriberId}">
+      <input type="hidden" th:field="*{timeZone}" id="timeZone">
+      <input type="hidden" th:field="*{captchaResponse}" id="captchaResponse">
+
+      <!-- Email field -->
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email"
+               class="form-control"
+               id="email"
+               th:field="*{email}"
+               th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'">
+        <div class="invalid-feedback"
+             th:if="${#fields.hasErrors('email')}"
+             th:errors="*{email}">
+          Email Error
+        </div>
+      </div>
+
+      <!-- Subscription options -->
+      <div class="form-group subscription-options">
+        <label class="subscription-options-label">Subscription Options</label>
+
+        <div class="custom-control custom-checkbox">
+          <input type="checkbox"
+                 class="custom-control-input"
+                 id="dailyEmails"
+                 th:field="*{selectedPeriods}"
+                 th:value="${T(com.eguller.hntoplinks.entities.Period).DAILY}"
+          >
+          <label class="custom-control-label" for="dailyEmails">
+            Daily Updates
+          </label>
+        </div>
+
+        <div class="custom-control custom-checkbox">
+          <input type="checkbox"
+                 class="custom-control-input"
+                 id="weeklyEmails"
+                 th:field="*{selectedPeriods}"
+                 th:value="${T(com.eguller.hntoplinks.entities.Period).WEEKLY}"
+          >
+          <label class="custom-control-label" for="weeklyEmails">
+            Weekly Digest
+          </label>
+        </div>
+
+        <div class="custom-control custom-checkbox">
+          <input type="checkbox"
+                 class="custom-control-input"
+                 id="monthlyEmails"
+                 th:field="*{selectedPeriods}"
+                 th:value="${T(com.eguller.hntoplinks.entities.Period).MONTHLY}"
+          >
+          <label class="custom-control-label" for="monthlyEmails">
+            Monthly Roundup
+          </label>
+        </div>
+
+        <div class="custom-control custom-checkbox">
+          <input type="checkbox"
+                 class="custom-control-input"
+                 id="yearlyEmails"
+                 th:field="*{selectedPeriods}"
+                 th:value="${T(com.eguller.hntoplinks.entities.Period).YEARLY}"
+          >
+          <label class="custom-control-label" for="yearlyEmails">
+            Yearly Review
+          </label>
+        </div>
+
+        <th:block th:if="${page.content.captchaEnabled}">
+          <div class="custom-control">
+            <div class="g-recaptcha" data-sitekey="6LeciUUeAAAAAMixTT0VHQ3JyCih1jpz_4zRK_0b"
+                 data-callback="gRecaptchaCallback"></div>
+          </div>
+        </th:block>
+
+        <!-- Validation error for checkboxes -->
+        <div class="invalid-feedback d-block"
+             th:if="${#fields.hasErrors('selectedPeriods')}"
+             th:errors="*{selectedPeriods}">
+          Checkbox Error
+        </div>
+        <div id="invalid-captcha"
+             class="invalid-feedback d-block"
+             th:if="${#fields.hasErrors('captchaResponse')}"
+             th:errors="*{captchaResponse}"
+
+        >
+          Invalid captcha
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary" th:disabled="${page.content.captchaEnabled}">Subscribe</button>
+    </form>
+    <script>
+      // When document loads
+      document.addEventListener('DOMContentLoaded', function () {
+        // Get user's timezone
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+        // Set it to hidden field
+        document.getElementById('timeZone').value = timezone;
+      });
+    </script>
+    <th:block th:if="${page.content.captchaEnabled}">
+      <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+      <script>
+        function gRecaptchaCallback(response) {
+          document.querySelector('.subscription-form button').removeAttribute('disabled');
+          document.getElementById('captchaResponse').value = response;
+          document.getElementById('invalid-captcha').classList.remove('d-block');
+        }
+      </script>
+    </th:block>
+  </div>
+</section>

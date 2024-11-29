@@ -1,58 +1,109 @@
 <!DOCTYPE html>
-<html>
-<head lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body style="font-family: Verdana;font-size: 10pt;color: #828282;">
-<center>
-  <table bgcolor=#F6F6EF border=0 cellpadding=0 cellspacing=0 width="85%">
-    <tr>
-      <td bgcolor=#ff6600 colspan="3">
-        <table border=0 cellpadding=0 cellspacing=0 style="padding: 2px"
-               width="100%">
-          <tr>
-            <td style="line-height: 12pt; height: 10px;">
-			    			<span style="color:#222222;">
-                  <b><th:block th:text="${data.subject}"> </th:block></b>
-							</span>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <table border="0" cellpadding="0" cellspacing="0">
-          <th:block th:each="story,iterStat : ${data.storyList}">
-            <th:block th:insert="/fragments/item.html :: item(story=${story}, storyIndex=${iterStat.count})"/>
-        </th:block>
-        </table>
-      </td>
-    </tr>
-    <tr style="height: 5px"></tr>
-    <tr style="height:5px"></tr>
-    <tr style="height:10px"></tr>
-    <tr>
-      <td colspan="3">
-        <table cellpadding="1" cellspacing="0" width="100%">
-          <tbody>
-          <tr>
-            <td bgcolor="#ff6600"></td>
-          </tr>
-          </tbody>
-        </table>
-        <br>
-        <center>
-					<span style="font-size: 8pt;">
-                		| <a th:href="@{${data.unsubscribeUrl}}">Unsubscribe</a>
-                		| <a th:href="@{${data.updateSubscriptionUrl}}">Modify Subscription</a>
-                		|
-					</span>
-          <br><br>
-        </center>
-      </td>
-    </tr>
-  </table>
-</center>
+<body
+  style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f6f6ef;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0"
+       style="max-width: 600px; margin: 0 auto; padding: 20px;">
+  <!-- Header -->
+  <tr>
+    <td>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
+             style="background-color: #ff6600; padding: 15px; border-radius: 5px 5px 0 0;">
+        <tr>
+          <td>
+            <h1 style="color: white; margin: 0; font-size: 24px;">HN Top Links</h1>
+            <p style="color: white; margin: 5px 0 0 0; font-size: 14px;"
+               th:text="${data.periodDescription}">Weekly Top Stories</p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <!-- Content -->
+  <tr>
+    <td style="background-color: white; padding: 20px; border-radius: 0 0 5px 5px;">
+      <!-- Stories List -->
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+        <tr th:each="story, iterStat : ${data.stories}">
+          <td style="padding: 15px 0; border-bottom: 1px solid #eee;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+              <tr>
+                <td style="padding-right: 10px; color: #666; vertical-align: top; width: 20px;"
+                    th:text="${iterStat.count} + '.'">1.
+                </td>
+                <td>
+                  <a th:href="${#fmt.url(story)}"
+                     style="color: #2c3e50; text-decoration: none; font-weight: 500; font-size: 16px; display: block; margin-bottom: 5px;"
+                     th:text="${story.title}">Story Title</a>
+
+                  <span style="color: #666; font-size: 12px;">
+                                            <span th:if="${#fmt.domainName(story.url)}"
+                                                  style="color: #666;"
+                                                  th:text="'(' + ${#fmt.domainName(story.url)} + ')'"></span>
+                                            <br>
+                                            <span th:text="${story.score}">100</span> points by
+                                            <a th:href="'https://news.ycombinator.com/user?id=' + ${story.by}"
+                                               style="color: #666; text-decoration: none;"
+                                               th:text="${story.by}">author</a>
+                                            <span th:text="${#fmt.since(story.time)}">1 hour ago</span> |
+                                            <a th:href="'https://news.ycombinator.com/item?id=' + ${story.id}"
+                                               style="color: #666; text-decoration: none;"
+                                               th:text="${story.descendants + ' comments'}">comments</a>
+                                        </span>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <!-- Footer -->
+  <tr style="background-color: #f5f5f2;">
+    <td style="padding: 20px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+          <td style="text-align: center; color: #666; font-size: 12px; padding-bottom: 10px; border-bottom: 1px solid; border-color: #eaeaea;">
+            You're receiving this email because you subscribed to HN Top Links
+            <span th:text="${data.period.name().toLowerCase()}">weekly</span> updates.
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 20px 0;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+              <tr>
+                <td style="text-align: right;" width="50%">
+                  <a th:href="${data.unsubscribeUrl}"
+                     style="color: #666; text-decoration: underline; padding: 0 15px; font-size: 12px;">Unsubscribe</a>
+                </td>
+                <td>&#183;</td>
+                <td style="text-align: left;" width="50%">
+                  <a th:href="${data.manageEmailFrequencyUrl}"
+                     style="color: #666; text-decoration: underline; padding: 0 15px; font-size: 12px;"
+                     title="Change how often you receive updates (daily, weekly, monthly)">Manage Email Frequency</a>
+                </td>
+              </tr>
+              <tr><td colspan="3">&nbsp;</td></tr>
+              <tr>
+                <td style="text-align: center; color: #666; font-size: 12px;" colspan="3"
+                    th:text="'&copy; ' + ${#dateUtils.currentYear()} + ' HN Top Links'">
+                  &copy; 2024 HN Top Links
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr><td>&nbsp;</td></tr>
+        <tr><td>&nbsp;</td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
 </body>
 </html>

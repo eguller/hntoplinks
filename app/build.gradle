@@ -1,24 +1,22 @@
-
 plugins {
   id 'org.springframework.boot' version '3.1.5'
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
   id 'java'
   id 'idea'
+  id 'com.diffplug.spotless' version '6.25.0'
 }
 
-apply plugin: 'java'
-
-
 idea {
-    module {
-        downloadJavadoc = true
-        downloadSources = true
-    }
+  module {
+    downloadJavadoc = true
+    downloadSources = true
+  }
 }
 
 group = 'com.eguller.hntoplinks'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
+build.dependsOn spotlessApply
 
 configurations {
   compileOnly {
@@ -43,6 +41,33 @@ ext {
 }
 
 
+spotless {
+  java {
+    // Use Google's java formatter
+    googleJavaFormat('1.17.0')
+
+    // Optional: Configure import order
+    importOrder('java', 'javax', 'org', 'com', '')
+
+    // Optional: Remove unused imports
+    removeUnusedImports()
+
+    // Optional: Add custom rules
+    formatAnnotations()  // Formats annotations, keeps them on separate lines
+
+    // Optional: Configure line endings
+    endWithNewline()
+    indentWithSpaces(4)
+    trimTrailingWhitespace()
+
+    // Optional: Custom rules using regex
+    custom 'no empty lines between annotations', {
+      it.replace(/\n\s*\n\s*(@)/, '\n    @')
+    }
+  }
+}
+
+
 dependencies {
   implementation "org.springframework.boot:spring-boot-starter-data-jdbc:${springBootVersion}"
   implementation "org.springframework.boot:spring-boot-starter-thymeleaf:${springBootVersion}"
@@ -51,6 +76,7 @@ dependencies {
   implementation "org.springframework:spring-context:${springWebVersion}"
   implementation "org.springframework:spring-webmvc:${springWebVersion}"
   implementation "org.springframework:spring-web:${springWebVersion}"
+  implementation "org.springframework.boot:spring-boot-starter-validation:${springBootVersion}"
   implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.0.0'
   implementation 'org.flywaydb:flyway-core:9.22.3'
   implementation 'org.springframework.mobile:spring-mobile-device:1.1.5.RELEASE'
@@ -62,6 +88,7 @@ dependencies {
   implementation 'org.eclipse.angus:angus-activation:2.0.0'
   implementation 'org.eclipse.angus:angus-mail:2.0.1'
   implementation 'org.eclipse.angus:jakarta.mail:2.0.1'
+  implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
 
   compileOnly "org.projectlombok:lombok:${lombokVersion}"
   annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
