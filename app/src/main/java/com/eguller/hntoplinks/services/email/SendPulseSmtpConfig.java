@@ -1,9 +1,11 @@
 package com.eguller.hntoplinks.services.email;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 @Component
+@ConditionalOnProperty(value = "hntoplinks.mail.provider", havingValue = "sendpulse")
 public class SendPulseSmtpConfig implements SmtpConfig {
   private final String from;
   private final String fromName;
