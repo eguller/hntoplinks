@@ -235,4 +235,8 @@ public class ItemsRepository {
                 rs.getLong("parent"),
                 rs.getBoolean("dead")));
   }
+
+  public void deleteAll() {
+    template.update("DELETE FROM items", new MapSqlParameterSource());
+  }
 }
