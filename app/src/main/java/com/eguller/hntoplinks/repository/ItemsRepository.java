@@ -160,7 +160,7 @@ public class ItemsRepository {
             items
           WHERE
             time BETWEEN :from AND :to
-            AND type NOT IN ('comment')
+            AND type NOT IN ('comment', 'pollopt')
           ORDER BY
             %s DESC,
             %s DESC,

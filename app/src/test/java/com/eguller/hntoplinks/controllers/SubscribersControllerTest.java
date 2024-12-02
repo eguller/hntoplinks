@@ -3,7 +3,6 @@ package com.eguller.hntoplinks.controllers;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -109,7 +108,7 @@ class SubscribersControllerTest {
     assertThat(subscriber.getSubscriptionList()).hasSize(1);
     assertThat(subscriber.getSubscriptionList().get(0).getPeriod()).isEqualTo(Period.WEEKLY);
 
-    //verify(emailService).sendSubscriptionEmail(subscriber);
+    // verify(emailService).sendSubscriptionEmail(subscriber);
   }
 
   @Test
