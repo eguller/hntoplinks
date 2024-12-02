@@ -1,6 +1,7 @@
 package com.eguller.hntoplinks.controllers;
 
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -148,6 +149,10 @@ public class SubscribersController {
       if (!recaptchaVerifier.verify(subscriptionForm.getCaptchaResponse())) {
         bindingResult.rejectValue("captchaResponse", "recaptcha.invalid", "Invalid captcha");
       }
+    }
+
+     if (!StringUtils.hasText(subscriptionForm.getEmail()) && !Pattern.compile("^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$").matcher(subscriptionForm.getEmail()).matches()) {
+        bindingResult.rejectValue("email", "email.invalid", "Invalid email address");
     }
     var content =
         SubscribersContent.builder()
