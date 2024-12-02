@@ -5,19 +5,19 @@ A modern interface for browsing top stories from Hacker News, organized by diffe
 ## Features
 
 - Browse top stories by different time periods:
- - Today's best
- - Weekly digest
- - Monthly highlights
- - Yearly favorites
- - All-time best
+  - Today's best
+  - Weekly digest
+  - Monthly highlights
+  - Yearly favorites
+  - All-time best
 - Sort stories by:
- - Most upvoted
- - Most commented
+  - Most upvoted
+  - Most commented
 - Email subscription options:
- - Daily updates
- - Weekly digest
- - Monthly roundup
- - Yearly review
+  - Daily updates
+  - Weekly digest
+  - Monthly roundup
+  - Yearly review
 - Complete archive access back to 2006
 - Mobile-friendly responsive design
 
