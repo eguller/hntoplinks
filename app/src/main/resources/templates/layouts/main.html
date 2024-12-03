@@ -46,7 +46,7 @@
         <h3>Browse by Year</h3>
         <div class="archive-links">
           <a th:each="year : ${#dateUtils.getYears()}"
-             th:href="@{/stories/{year}(year=${year}, sort=${page.content.sortBy != null ? page.content.sortBy.getValue() : null})}"
+             th:href="@{/stories/{year}(year=${year})}"
              th:text="${year}"
             th:class="${page.selectedYear != null and page.selectedYear == year} ? 'active'">2024</a>
         </div>
@@ -57,9 +57,9 @@
         <div class="archive-links">
           <a href="#"
              th:each="month : ${#dateUtils.getMonthsForYear(page.selectedYear)}"
-             th:href="@{/stories/{year}/{month}(year=${#dateUtils.getYearOrCurrent(page.selectedYear)}, month=${#dateUtils.getPaddedMonth(month.getValue())}, sort=${page.content.sortBy != null ? page.content.sortBy.getValue() : null})}"
+             th:href="@{/stories/{year}/{month}(year=${#dateUtils.getYearOrCurrent(page.selectedYear)}, month=${#dateUtils.getPaddedMonth(month.value)})}"
              th:text="${#dateUtils.getDisplayName(month)}"
-            th:class="${page.selectedMonth != null and page.selectedMonth == month.getValue()} ? 'active'">January</a>
+            th:class="${page.selectedMonth != null and page.selectedMonth == month.value} ? 'active'">January</a>
         </div>
       </div>
     </div>
