@@ -151,8 +151,11 @@ public class SubscribersController {
       }
     }
 
-     if (!StringUtils.hasText(subscriptionForm.getEmail()) && !Pattern.compile("^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$").matcher(subscriptionForm.getEmail()).matches()) {
-        bindingResult.rejectValue("email", "email.invalid", "Invalid email address");
+    if (!StringUtils.hasText(subscriptionForm.getEmail())
+        && !Pattern.compile("^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
+            .matcher(subscriptionForm.getEmail())
+            .matches()) {
+      bindingResult.rejectValue("email", "email.invalid", "Invalid email address");
     }
     var content =
         SubscribersContent.builder()

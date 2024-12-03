@@ -89,6 +89,7 @@ dependencies {
   implementation 'org.eclipse.angus:angus-mail:2.0.1'
   implementation 'org.eclipse.angus:jakarta.mail:2.0.1'
   implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
+  implementation 'org.apache.commons:commons-text:1.10.0'
 
   compileOnly "org.projectlombok:lombok:${lombokVersion}"
   annotationProcessor "org.projectlombok:lombok:${lombokVersion}"

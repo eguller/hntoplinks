@@ -2,9 +2,11 @@ package com.eguller.hntoplinks.repository;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.text.StringSubstitutor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -16,6 +18,8 @@ import com.eguller.hntoplinks.util.DbUtils;
 
 @Repository
 public class ItemsRepository {
+  private static final int MIN_UPVOTES = 1000;
+  private static final int MIN_COMMENTS = 700;
   private final NamedParameterJdbcTemplate template;
 
   public ItemsRepository(NamedParameterJdbcTemplate jdbcTemplate) {
@@ -143,35 +147,100 @@ public class ItemsRepository {
   }
 
   public List<Item> findByInterval(Interval interval, SortType sortBy, int limit, int page) {
+    var queryTemplate =
+        """
+        SELECT
+          id,
+          by,
+          descendants,
+          score,
+          time,
+          title,
+          type,
+          url,
+          parent,
+          dead
+        FROM
+          items
+        WHERE
+          time BETWEEN :from AND :to
+          AND type NOT IN ('comment', 'pollopt')
+        ORDER BY
+          ${firstSortCriteria} DESC,
+          ${secondSortCriteria} DESC,
+          time DESC
+        LIMIT :limit
+        OFFSET :offset
+      """;
+
+    var sortCriterias = getSortyTypeColumnName(sortBy);
+    var values = new HashMap<String, String>();
+    values.put("firstSortCriteria", sortCriterias[0]);
+    values.put("secondSortCriteria", sortCriterias[1]);
+    var query = StringSubstitutor.replace(queryTemplate, values);
     return template.query(
-        """
-          SELECT
-            id,
-            by,
-            descendants,
-            score,
-            time,
-            title,
-            type,
-            url,
-            parent,
-            dead
-          FROM
-            items
-          WHERE
-            time BETWEEN :from AND :to
-            AND type NOT IN ('comment', 'pollopt')
-          ORDER BY
-            %s DESC,
-            %s DESC,
-            time DESC
-          LIMIT :limit
-          OFFSET :offset
-        """
-            .formatted((Object[]) getSortyTypeColumnName(sortBy)),
+        query,
         new MapSqlParameterSource()
             .addValue("from", interval.from())
             .addValue("to", interval.to())
+            .addValue("limit", limit)
+            .addValue("offset", DbUtils.pageToOffset(page, limit)),
+        (rs, rowNum) ->
+            new Item(
+                rs.getLong("id"),
+                rs.getString("by"),
+                rs.getInt("descendants"),
+                rs.getInt("score"),
+                rs.getTimestamp("time").getTime(),
+                rs.getString("title"),
+                rs.getString("type"),
+                rs.getString("url"),
+                rs.getLong("parent"),
+                rs.getBoolean("dead")));
+  }
+
+  public List<Item> findAll(int limit, SortType sortBy, int page) {
+    var queryTemplate =
+        """
+        SELECT
+          id,
+          by,
+          descendants,
+          score,
+          time,
+          title,
+          type,
+          url,
+          parent,
+          dead
+        FROM
+          items
+        WHERE
+          AND type NOT IN ('comment', 'pollopt')
+          AND ${sortByColumn} >= ${minValue}
+        ORDER BY
+          ${firstSortCriteria} DESC,
+          ${secondSortCriteria} DESC,
+        LIMIT :limit
+        OFFSET :offset
+      """;
+
+    var sortCriterias = getSortyTypeColumnName(sortBy);
+    var values = new HashMap<String, String>();
+    values.put("firstSortCriteria", sortCriterias[0]);
+    values.put("secondSortCriteria", sortCriterias[1]);
+
+    var sortByColumn = getSortByColumn(sortBy);
+    var minValue = getMinValueBySortBy(sortBy);
+
+    values.put("sortByColumn", sortByColumn);
+    values.put("minValue", String.valueOf(minValue));
+
+    var query = StringSubstitutor.replace(queryTemplate, values);
+
+    return template.query(
+        query,
+        new MapSqlParameterSource()
             .addValue("limit", limit)
             .addValue("offset", DbUtils.pageToOffset(page, limit)),
         (rs, rowNum) ->
@@ -195,45 +264,18 @@ public class ItemsRepository {
     };
   }
 
-  public List<Item> findAll(int limit, SortType sortBy, int page) {
-    return template.query(
-        """
-          SELECT
-            id,
-            by,
-            descendants,
-            score,
-            time,
-            title,
-            type,
-            url,
-            parent,
-            dead
-          FROM
-            items
-          WHERE
-            type NOT IN ('comment')
-          ORDER BY
-            %s DESC
-          LIMIT :limit
-          OFFSET :offset
-        """
-            .formatted((Object[]) getSortyTypeColumnName(sortBy)),
-        new MapSqlParameterSource()
-            .addValue("limit", limit)
-            .addValue("offset", DbUtils.pageToOffset(page, limit)),
-        (rs, rowNum) ->
-            new Item(
-                rs.getLong("id"),
-                rs.getString("by"),
-                rs.getInt("descendants"),
-                rs.getInt("score"),
-                rs.getTimestamp("time").getTime(),
-                rs.getString("title"),
-                rs.getString("type"),
-                rs.getString("url"),
-                rs.getLong("parent"),
-                rs.getBoolean("dead")));
+  private String getSortByColumn(SortType sortBy) {
+    return switch (sortBy) {
+      case UPVOTES -> "score";
+      case COMMENTS -> "descendants";
+    };
+  }
+
+  private int getMinValueBySortBy(SortType sortBy) {
+    return switch (sortBy) {
+      case UPVOTES -> MIN_UPVOTES;
+      case COMMENTS -> MIN_COMMENTS;
+    };
   }
 
   public void deleteAll() {
