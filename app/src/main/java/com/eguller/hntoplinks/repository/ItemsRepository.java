@@ -216,7 +216,7 @@ public class ItemsRepository {
         FROM
           items
         WHERE
-          ${sortByColumn} >= '${minValue}'
+          ${sortByColumn} > '${minValue}'
           AND type NOT IN ('comment', 'pollopt')
         ORDER BY
           ${firstSortCriteria} DESC,
