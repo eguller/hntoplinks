@@ -50,9 +50,9 @@
   </div>
 
   <div class="pagination" th:if="${page.content.totalPages > 1}">
-    <a th:if="${page.content.currentPage > 1}" th:href="@{${page.currentPath}(page=${page.content.currentPage - 1})}">&laquo;
+    <a th:if="${page.content.currentPage > 1}" th:href="@{${page.currentPath}(page=${page.content.currentPage - 1}, sort=${page.content.sortBy != null ? page.content.sortBy.getValue() : null})}">&laquo;
       Previous</a>
     <a th:if="${page.content.currentPage < page.content.totalPages}"
-       th:href="@{${page.currentPath}(page=${page.content.currentPage + 1})}">Next &raquo;</a>
+       th:href="@{${page.currentPath}(page=${page.content.currentPage + 1}, sort=${page.content.sortBy != null ? page.content.sortBy.getValue() : null})}">Next &raquo;</a>
   </div>
 </main>
