@@ -172,7 +172,7 @@ public class StoriesController {
       Model model,
       @RequestParam(value = "page", defaultValue = "1") int page,
       @RequestParam(value = "sort", defaultValue = "upvotes") SortType sort) {
-    var items = itemRepository.findAll(sort, StoriesUtils.PAGE_SIZE,  page);
+    var items = itemRepository.findAll(sort, StoriesUtils.PAGE_SIZE, page);
     var storiesContent =
         StoriesContent.builder()
             .title("All Time")

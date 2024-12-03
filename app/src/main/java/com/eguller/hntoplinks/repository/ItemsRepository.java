@@ -178,8 +178,7 @@ public class ItemsRepository {
             .addValue("to", interval.to())
             .addValue("limit", limit)
             .addValue("offset", DbUtils.pageToOffset(page, limit)),
-        (rs, rowNum) ->
-          resultSetToItem(rs));
+        (rs, rowNum) -> resultSetToItem(rs));
   }
 
   public List<Item> findByYear(int year, SortType sortBy, int limit, int page) {
@@ -211,8 +210,7 @@ public class ItemsRepository {
             .addValue("year", year)
             .addValue("limit", limit)
             .addValue("offset", DbUtils.pageToOffset(page, limit)),
-        (rs, rowNum) ->
-          resultSetToItem(rs));
+        (rs, rowNum) -> resultSetToItem(rs));
   }
 
   public List<Item> findByMonth(int year, int month, SortType sort, int limit, int page) {
@@ -246,8 +244,7 @@ public class ItemsRepository {
             .addValue("month", month)
             .addValue("limit", limit)
             .addValue("offset", DbUtils.pageToOffset(page, limit)),
-        (rs, rowNum) ->
-          resultSetToItem(rs));
+        (rs, rowNum) -> resultSetToItem(rs));
   }
 
   public List<Item> findAll(SortType sortBy, int limit, int page) {
@@ -285,22 +282,21 @@ public class ItemsRepository {
         new MapSqlParameterSource()
             .addValue("limit", limit)
             .addValue("offset", DbUtils.pageToOffset(page, limit)),
-        (rs, rowNum) ->
-          resultSetToItem(rs));
+        (rs, rowNum) -> resultSetToItem(rs));
   }
 
   private static Item resultSetToItem(ResultSet rs) throws SQLException {
     return new Item(
-      rs.getLong("id"),
-      rs.getString("by"),
-      rs.getInt("descendants"),
-      rs.getInt("score"),
-      rs.getTimestamp("time").getTime(),
-      rs.getString("title"),
-      rs.getString("type"),
-      rs.getString("url"),
-      rs.getLong("parent"),
-      rs.getBoolean("dead"));
+        rs.getLong("id"),
+        rs.getString("by"),
+        rs.getInt("descendants"),
+        rs.getInt("score"),
+        rs.getTimestamp("time").getTime(),
+        rs.getString("title"),
+        rs.getString("type"),
+        rs.getString("url"),
+        rs.getLong("parent"),
+        rs.getBoolean("dead"));
   }
 
   private String[] getSortyTypeColumnName(SortType sortBy) {
