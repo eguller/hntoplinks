@@ -167,7 +167,7 @@ public class ItemsRepository {
           AND type NOT IN ('comment', 'pollopt')
         ORDER BY
           ${firstSortCriteria} DESC,
-          ${secondSortCriteria} DESC,
+          ${secondSortCriteria} DESC
           time DESC
         LIMIT :limit
         OFFSET :offset
@@ -216,11 +216,11 @@ public class ItemsRepository {
         FROM
           items
         WHERE
+          ${sortByColumn} >= '${minValue}'
           AND type NOT IN ('comment', 'pollopt')
-          AND ${sortByColumn} >= '${minValue}'
         ORDER BY
           ${firstSortCriteria} DESC,
-          ${secondSortCriteria} DESC,
+          ${secondSortCriteria} DESC
         LIMIT :limit
         OFFSET :offset
       """;
