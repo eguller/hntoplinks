@@ -1,5 +1,7 @@
 package com.eguller.hntoplinks.repository;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.HashMap;
@@ -150,16 +152,7 @@ public class ItemsRepository {
     var queryTemplate =
         """
         SELECT
-          id,
-          by,
-          descendants,
-          score,
-          time,
-          title,
-          type,
-          url,
-          parent,
-          dead
+          *
         FROM
           items
         WHERE
@@ -186,33 +179,82 @@ public class ItemsRepository {
             .addValue("limit", limit)
             .addValue("offset", DbUtils.pageToOffset(page, limit)),
         (rs, rowNum) ->
-            new Item(
-                rs.getLong("id"),
-                rs.getString("by"),
-                rs.getInt("descendants"),
-                rs.getInt("score"),
-                rs.getTimestamp("time").getTime(),
-                rs.getString("title"),
-                rs.getString("type"),
-                rs.getString("url"),
-                rs.getLong("parent"),
-                rs.getBoolean("dead")));
+          resultSetToItem(rs));
   }
 
-  public List<Item> findAll(int limit, SortType sortBy, int page) {
+  public List<Item> findByYear(int year, SortType sortBy, int limit, int page) {
     var queryTemplate =
         """
         SELECT
-          id,
-          by,
-          descendants,
-          score,
-          time,
-          title,
-          type,
-          url,
-          parent,
-          dead
+          *
+        FROM
+          items
+        WHERE
+          year = :year
+          AND type NOT IN ('comment', 'pollopt')
+        ORDER BY
+          ${firstSortCriteria} DESC,
+          ${secondSortCriteria} DESC,
+          time DESC
+        LIMIT :limit
+        OFFSET :offset
+      """;
+
+    var sortCriterias = getSortyTypeColumnName(sortBy);
+    var values = new HashMap<String, String>();
+    values.put("firstSortCriteria", sortCriterias[0]);
+    values.put("secondSortCriteria", sortCriterias[1]);
+    var query = StringSubstitutor.replace(queryTemplate, values);
+    return template.query(
+        query,
+        new MapSqlParameterSource()
+            .addValue("year", year)
+            .addValue("limit", limit)
+            .addValue("offset", DbUtils.pageToOffset(page, limit)),
+        (rs, rowNum) ->
+          resultSetToItem(rs));
+  }
+
+  public List<Item> findByMonth(int year, int month, SortType sort, int limit, int page) {
+    var queryTemplate =
+        """
+        SELECT
+          *
+        FROM
+          items
+        WHERE
+          year = :year
+          AND month = :month
+          AND type NOT IN ('comment', 'pollopt')
+        ORDER BY
+          ${firstSortCriteria} DESC,
+          ${secondSortCriteria} DESC,
+          time DESC
+        LIMIT :limit
+        OFFSET :offset
+      """;
+
+    var sortCriterias = getSortyTypeColumnName(sort);
+    var values = new HashMap<String, String>();
+    values.put("firstSortCriteria", sortCriterias[0]);
+    values.put("secondSortCriteria", sortCriterias[1]);
+    var query = StringSubstitutor.replace(queryTemplate, values);
+    return template.query(
+        query,
+        new MapSqlParameterSource()
+            .addValue("year", year)
+            .addValue("month", month)
+            .addValue("limit", limit)
+            .addValue("offset", DbUtils.pageToOffset(page, limit)),
+        (rs, rowNum) ->
+          resultSetToItem(rs));
+  }
+
+  public List<Item> findAll(SortType sortBy, int limit, int page) {
+    var queryTemplate =
+        """
+        SELECT
+          *
         FROM
           items
         WHERE
@@ -244,17 +286,21 @@ public class ItemsRepository {
             .addValue("limit", limit)
             .addValue("offset", DbUtils.pageToOffset(page, limit)),
         (rs, rowNum) ->
-            new Item(
-                rs.getLong("id"),
-                rs.getString("by"),
-                rs.getInt("descendants"),
-                rs.getInt("score"),
-                rs.getTimestamp("time").getTime(),
-                rs.getString("title"),
-                rs.getString("type"),
-                rs.getString("url"),
-                rs.getLong("parent"),
-                rs.getBoolean("dead")));
+          resultSetToItem(rs));
+  }
+
+  private static Item resultSetToItem(ResultSet rs) throws SQLException {
+    return new Item(
+      rs.getLong("id"),
+      rs.getString("by"),
+      rs.getInt("descendants"),
+      rs.getInt("score"),
+      rs.getTimestamp("time").getTime(),
+      rs.getString("title"),
+      rs.getString("type"),
+      rs.getString("url"),
+      rs.getLong("parent"),
+      rs.getBoolean("dead"));
   }
 
   private String[] getSortyTypeColumnName(SortType sortBy) {

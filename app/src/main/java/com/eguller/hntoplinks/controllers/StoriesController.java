@@ -172,7 +172,7 @@ public class StoriesController {
       Model model,
       @RequestParam(value = "page", defaultValue = "1") int page,
       @RequestParam(value = "sort", defaultValue = "upvotes") SortType sort) {
-    var items = itemRepository.findAll(StoriesUtils.PAGE_SIZE, sort, page);
+    var items = itemRepository.findAll(sort, StoriesUtils.PAGE_SIZE,  page);
     var storiesContent =
         StoriesContent.builder()
             .title("All Time")
@@ -202,8 +202,7 @@ public class StoriesController {
       @RequestParam(value = "page", required = false, defaultValue = "1") int page,
       @RequestParam(value = "sort", required = false, defaultValue = "upvotes") SortType sort) {
     var title = "%d Archive".formatted(year);
-    var interval = DateUtils.getInterval(year);
-    var items = itemRepository.findByInterval(interval, sort, StoriesUtils.PAGE_SIZE, page);
+    var items = itemRepository.findByYear(year, sort, StoriesUtils.PAGE_SIZE, page);
     var storiesContent =
         StoriesContent.builder()
             .title(title)
@@ -244,8 +243,7 @@ public class StoriesController {
       @RequestParam(value = "sort", defaultValue = "upvotes") SortType sort) {
     var date = LocalDate.of(year, month, 1);
     var title = "%s Archive".formatted(date.format(DateTimeFormatter.ofPattern("MMMM yyyy")));
-    var interval = DateUtils.getInterval(year, month);
-    var items = itemRepository.findByInterval(interval, sort, StoriesUtils.PAGE_SIZE, page);
+    var items = itemRepository.findByMonth(year, month, sort, StoriesUtils.PAGE_SIZE, page);
     var storiesContent =
         StoriesContent.builder()
             .title(title)
