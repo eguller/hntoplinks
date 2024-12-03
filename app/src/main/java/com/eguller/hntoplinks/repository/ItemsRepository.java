@@ -160,8 +160,7 @@ public class ItemsRepository {
           AND type NOT IN ('comment', 'pollopt')
         ORDER BY
           ${firstSortCriteria} DESC,
-          ${secondSortCriteria} DESC,
-          time DESC
+          ${secondSortCriteria} DESC
         LIMIT :limit
         OFFSET :offset
       """;
@@ -193,8 +192,7 @@ public class ItemsRepository {
           AND type NOT IN ('comment', 'pollopt')
         ORDER BY
           ${firstSortCriteria} DESC,
-          ${secondSortCriteria} DESC,
-          time DESC
+          ${secondSortCriteria} DESC
         LIMIT :limit
         OFFSET :offset
       """;
@@ -226,8 +224,7 @@ public class ItemsRepository {
           AND type NOT IN ('comment', 'pollopt')
         ORDER BY
           ${firstSortCriteria} DESC,
-          ${secondSortCriteria} DESC,
-          time DESC
+          ${secondSortCriteria} DESC
         LIMIT :limit
         OFFSET :offset
       """;
