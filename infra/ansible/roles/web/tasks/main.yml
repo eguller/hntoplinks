@@ -36,6 +36,20 @@
     src: "{{ domain_name }}.cli.ini.j2"
     dest: /etc/letsencrypt/{{ domain_name }}.cli.ini
 
+- name: Create Certbot renewal hooks directory
+  ansible.builtin.file:
+    path: /etc/letsencrypt/renewal-hooks/post
+    state: directory
+    mode: '0755'
+
+- name: Create Nginx reload hook for Certbot
+  ansible.builtin.copy:
+    dest: /etc/letsencrypt/renewal-hooks/post/nginx-reload.sh
+    mode: '0755'
+    content: |
+      #!/bin/bash
+      systemctl reload nginx
+
 - name: reload nginx configuration
   ansible.builtin.systemd:
     name: nginx
