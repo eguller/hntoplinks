@@ -167,20 +167,9 @@ public class StoriesController {
     return "index";
   }
 
-  /**
-   * Some external web-pages linked /all endpoint with legacy page number which in path.
-   * In new design we are taking page as query parameter, but to keep old links alive if there is page parameter
-   * in path we are using it as page number.
-   * @param model
-   * @param pagePath
-   * @param page
-   * @param sort
-   * @return
-   */
-  @GetMapping("/all/{pagePath:\\d*}")
+  @GetMapping("/all")
   public String all(
       Model model,
-      @PathVariable(value = "pagePath", required = false) Integer pagePath,
       @RequestParam(value = "page", defaultValue = "1") int page,
       @RequestParam(value = "sort", defaultValue = "upvotes") SortType sort) {
     var items = itemRepository.findAll(sort, StoriesUtils.PAGE_SIZE, page);
@@ -189,7 +178,7 @@ public class StoriesController {
             .title("All Time")
             .stories(items)
             .sortBy(sort)
-            .currentPage(pagePath == null ? page : pagePath)
+            .currentPage(page)
             .totalPages(items.size() < StoriesUtils.PAGE_SIZE ? page : page + 1)
             .build();
 
