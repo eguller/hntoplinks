@@ -23,8 +23,6 @@ import com.eguller.hntoplinks.util.DateUtils;
 import com.eguller.hntoplinks.util.SanitizedDate;
 import com.eguller.hntoplinks.util.StoriesUtils;
 
-import jakarta.websocket.server.PathParam;
-
 @Controller
 @RequestScope
 public class StoriesController {
@@ -172,7 +170,7 @@ public class StoriesController {
   @GetMapping("/all/{pagePath:\\d*}")
   public String all(
       Model model,
-      @PathParam(value = "pagePath") Integer pagePath,
+      @PathVariable(value = "pagePath", required = false) Integer pagePath,
       @RequestParam(value = "page", defaultValue = "1") int page,
       @RequestParam(value = "sort", defaultValue = "upvotes") SortType sort) {
     var items = itemRepository.findAll(sort, StoriesUtils.PAGE_SIZE, page);
