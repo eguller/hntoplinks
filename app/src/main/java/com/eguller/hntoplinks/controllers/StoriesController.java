@@ -167,6 +167,16 @@ public class StoriesController {
     return "index";
   }
 
+  /**
+   * Some external web-pages linked /all endpoint with legacy page number which in path.
+   * In new design we are taking page as query parameter, but to keep old links alive if there is page parameter
+   * in path we are using it as page number.
+   * @param model
+   * @param pagePath
+   * @param page
+   * @param sort
+   * @return
+   */
   @GetMapping("/all/{pagePath:\\d*}")
   public String all(
       Model model,
