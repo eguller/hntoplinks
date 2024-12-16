@@ -13,7 +13,7 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public abstract class SubscriptionEmailTask {
-  private final int MAX_STORY_COUNT = 25;
+  private final int MAX_STORY_COUNT = 30;
 
   private final TemplateService templateService;
 
