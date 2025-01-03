@@ -12,7 +12,7 @@ import com.eguller.hntoplinks.entities.SubscriberEntity;
 public interface SubscribersRepository extends CrudRepository<SubscriberEntity, Long> {
   Optional<SubscriberEntity> findBySubscriberId(String subscriberId);
 
-  Optional<SubscriberEntity> findByEmail(String email);
+  Optional<SubscriberEntity> findByEmailIgnoreCase(String email);
 
   long deleteBySubscriptionDateBeforeAndActivatedIsFalse(LocalDate expiryDate);
 
