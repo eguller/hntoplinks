@@ -46,7 +46,7 @@ public class TestController {
 
     var subscriber =
         subscribersRepository
-            .findByEmail(request.getEmail())
+            .findByEmailIgnoreCase(request.getEmail())
             .orElseGet(
                 () -> {
                   log.info("Creating new subscriber with email: {}", request.getEmail());
