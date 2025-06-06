@@ -2,7 +2,7 @@
 <html layout:decorate="~{layouts/main}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
   <th:block layout:fragment="page-css">
-    <th:block th:replace="fragments/css :: about"/>
+    <th:block th:replace="~{fragments/css :: about}"/>
   </th:block>
 </head>
 <section layout:fragment="content" class="about-page">
