@@ -22,3 +22,8 @@
     <link crossorigin="anonymous" media="all" rel="stylesheet"
           th:href="@{{stylesheets}/about.css(stylesheets=${@environment.getProperty('hntoplinks.stylesheets')})}">
 </th:block>
+
+<th:block th:fragment="statistics">
+    <link crossorigin="anonymous" media="all" rel="stylesheet"
+          th:href="@{{stylesheets}/statistics.css(stylesheets=${@environment.getProperty('hntoplinks.stylesheets')})}">
+</th:block>

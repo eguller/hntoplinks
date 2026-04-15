@@ -18,6 +18,8 @@ public interface SubscribersRepository extends CrudRepository<SubscriberEntity, 
 
   void deleteBySubscriberId(String subscriberId);
 
+  long countByActivatedIsTrue();
+
   @Query(
       """
      SELECT

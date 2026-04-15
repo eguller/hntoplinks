@@ -1,0 +1,19 @@
+<!-- statistics.html -->
+<html layout:decorate="~{layouts/main}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+  <th:block layout:fragment="page-css">
+    <th:block th:replace="~{fragments/css :: statistics}"/>
+  </th:block>
+</head>
+<section layout:fragment="content" class="statistics-page">
+    <div class="statistics-content">
+        <h1>Statistics</h1>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" th:text="${page.content}">0</div>
+                <div class="stat-label">Active Subscribers</div>
+            </div>
+        </div>
+    </div>
+</section>
