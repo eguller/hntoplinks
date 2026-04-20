@@ -182,7 +182,7 @@ public class ItemsRepository {
         (rs, rowNum) -> resultSetToItem(rs));
   }
 
-  @Cacheable(value = "yearStories", key = "#sortBy.name() + '-' + #page")
+  @Cacheable("yearStories")
   public List<Item> findByLastYear(SortType sortBy, int limit, int page) {
     return findByInterval(DateUtils.getIntervalForLastYear(), sortBy, limit, page);
   }
