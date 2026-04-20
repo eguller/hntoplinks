@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.text.StringSubstitutor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Repository;
 import com.eguller.hntoplinks.entities.Item;
 import com.eguller.hntoplinks.entities.SortType;
 import com.eguller.hntoplinks.models.Interval;
+import com.eguller.hntoplinks.util.DateUtils;
 import com.eguller.hntoplinks.util.DbUtils;
 
 @Repository
@@ -178,6 +180,11 @@ public class ItemsRepository {
             .addValue("limit", limit)
             .addValue("offset", DbUtils.pageToOffset(page, limit)),
         (rs, rowNum) -> resultSetToItem(rs));
+  }
+
+  @Cacheable(value = "yearStories", key = "#sortBy.name() + '-' + #page")
+  public List<Item> findByLastYear(SortType sortBy, int limit, int page) {
+    return findByInterval(DateUtils.getIntervalForLastYear(), sortBy, limit, page);
   }
 
   public List<Item> findByYear(int year, SortType sortBy, int limit, int page) {
