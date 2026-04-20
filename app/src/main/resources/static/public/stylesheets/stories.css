@@ -1,35 +1,42 @@
 .stories {
   background: var(--white);
-  border-radius: 4px;
+  border-radius: 6px;
   box-shadow: 0 1px 3px var(--shadow-color);
-  padding: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
 }
 
 .story {
-  padding: 0.8rem;
+  padding: 0.75rem 1rem;
   border-bottom: 1px solid var(--border-color);
   display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 1rem;
+  grid-template-columns: 2rem 1fr;
+  gap: 0.75rem;
   align-items: start;
+  transition: background-color 0.1s;
 }
 
 .story:last-child {
   border-bottom: none;
 }
 
+.story:hover {
+  background-color: rgba(255, 102, 0, 0.03);
+}
+
 .story-rank {
   color: var(--secondary-text);
-  font-size: 0.9rem;
-  min-width: 2rem;
+  font-size: 0.8rem;
   text-align: right;
+  padding-top: 0.15rem;
+  font-variant-numeric: tabular-nums;
 }
 
 .story-content {
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.25rem;
+  min-width: 0;
 }
 
 .story-title {
@@ -37,17 +44,24 @@
   color: var(--text-color);
   text-decoration: none;
   font-weight: 500;
+  line-height: 1.4;
 }
 
 .story-title:hover {
-  color: var(--link-hover);
+  color: var(--primary-color);
+}
+
+.domain {
+  color: var(--secondary-text);
+  font-size: 0.75rem;
+  margin-left: 0.4rem;
 }
 
 .story-meta {
   display: flex;
-  gap: 1rem;
+  gap: 0.6rem;
   flex-wrap: wrap;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: var(--secondary-text);
   align-items: center;
 }
@@ -58,32 +72,29 @@
 }
 
 .story-meta a:hover {
-  text-decoration: underline;
+  color: var(--primary-color);
 }
 
-.domain {
-  color: var(--secondary-text);
-  font-size: 0.8rem;
-}
-
-.story-points, .story-comments {
-  transition: color 0.2s;
+.story-points,
+.story-comments {
+  transition: color 0.15s;
 }
 
 .sort-upvotes .story-points,
 .sort-comments .story-comments {
   color: var(--primary-color);
-  font-weight: 500;
+  font-weight: 600;
 }
 
 /* Mobile responsive styles */
 @media (max-width: 768px) {
-    .story {
-    padding: 0.6rem;
+  .story {
+    padding: 0.6rem 0.75rem;
+    grid-template-columns: 1.75rem 1fr;
+    gap: 0.5rem;
   }
 
   .story-title {
     font-size: 0.95rem;
   }
 }
-

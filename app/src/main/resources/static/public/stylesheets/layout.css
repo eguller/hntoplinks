@@ -1,122 +1,134 @@
-/* Header styles */
+/* Header */
 header {
   background-color: var(--primary-color);
-  padding: 0.8rem;
-  margin-bottom: 1rem;
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 2px 4px var(--shadow-color);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
 }
 
 .header-content {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  max-width: 1200px;
+  max-width: var(--content-width);
   margin: 0 auto;
+  padding: 0 1rem;
+  height: 44px;
   gap: 2rem;
 }
 
-/* Stories section */
-main {
-  flex: 1;
-}
-
+/* Story controls */
 .story-controls {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  padding: 1rem 0 0.75rem;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
 .current-view {
-  font-size: 1.1rem;
-  font-weight: 500;
+  font-size: 1rem;
+  font-weight: 600;
   color: var(--text-color);
 }
 
-/* Footer styles */
+/* Footer */
 footer {
   background-color: var(--footer-bg);
   border-top: 1px solid var(--border-color);
-  padding: 2rem 0;
+  padding: 1.25rem 0;
   margin-top: auto;
 }
 
 .footer-content {
-  max-width: 1200px;
+  max-width: var(--content-width);
   margin: 0 auto;
   padding: 0 1rem;
 }
 
+.archive-nav {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 1rem;
+}
+
 .archive-section {
-  margin-bottom: 1.5rem;
+  min-width: 0;
 }
 
 .archive-section h3 {
-  color: var(--primary-color);
-  font-size: 1.1rem;
-  margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--border-color);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--secondary-text);
+  margin-bottom: 0.5rem;
 }
 
+.archive-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
 
 .archive-links a {
   color: var(--text-color);
   text-decoration: none;
-  font-size: 0.9rem;
-  padding: 0.3rem 0.5rem;
+  font-size: 0.8rem;
+  padding: 0.15rem 0.5rem;
   border-radius: 3px;
-  transition: background-color 0.2s;
+  border: 1px solid transparent;
+  transition: all 0.15s;
+  white-space: nowrap;
 }
 
 .archive-links a:hover,
 .archive-links a.active {
-  background-color: rgba(255, 153, 102, 0.1);
+  border-color: var(--border-color);
+  background-color: var(--white);
   color: var(--primary-color);
 }
 
 .copyright {
-  text-align: center;
-  margin-top: 2rem;
-  padding-top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding-top: 0.75rem;
   border-top: 1px solid var(--border-color);
   color: var(--secondary-text);
   font-size: 0.8rem;
 }
 
-.archive-nav {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
+.copyright p {
+  margin-left: auto;
 }
 
-.archive-links {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 0.5rem;
+.copyright a {
+  color: var(--secondary-text);
+  text-decoration: none;
 }
 
-/* Mobile responsive styles */
+.copyright a:hover {
+  color: var(--primary-color);
+}
+
+/* Mobile */
 @media (max-width: 768px) {
   .header-content {
+    height: auto;
     flex-direction: column;
-    gap: 0.8rem;
-    padding: 0.5rem;
+    align-items: flex-start;
+    padding: 0.6rem 1rem;
+    gap: 0.4rem;
   }
 
   .story-controls {
     flex-direction: column;
     align-items: stretch;
-    gap: 0.8rem;
-  }
-
-  .archive-section h3 {
-    margin-bottom: 0.5rem;
+    gap: 0.75rem;
   }
 
   .archive-nav {
@@ -124,7 +136,13 @@ footer {
     gap: 1rem;
   }
 
-  .archive-links {
-    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  .copyright {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+  }
+
+  .copyright p {
+    margin-left: 0;
   }
 }
