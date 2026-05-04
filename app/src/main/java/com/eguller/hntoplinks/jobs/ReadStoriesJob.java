@@ -64,17 +64,11 @@ public class ReadStoriesJob {
     }
   }
 
-  @Scheduled(cron = "${hntoplinks.top-stories.cron}")
-  public void doJob() {
-    var topStories = firebaseioService.readTopStories().stream().collect(Collectors.toSet());
-    itemRepository.batchSave(topStories);
-    var bestStories = firebaseioService.readBestStories().stream().collect(Collectors.toSet());
-    itemRepository.batchSave(topStories);
-  }
-
   public void readAllStories() {
     var maxItem = firebaseioService.getMaxItem();
     var lastItem = checkPointRepository.getLastItem();
+    logger.info(
+        "[readAllStories] checkpoint={}, maxItem={}, gap={}", lastItem, maxItem, maxItem - lastItem);
     if (maxItem - lastItem > READ_ITEMS_BATCH_SIZE) {
 
       var start = System.currentTimeMillis();
@@ -105,18 +99,29 @@ public class ReadStoriesJob {
       start = System.currentTimeMillis();
       itemRepository.batchSave(items);
       var saveItemsTook = System.currentTimeMillis() - start;
-      logger.info("Read items took {} ms, save items took {} ms", readItemsTook, saveItemsTook);
+      logger.info(
+          "[readAllStories] fetched={} items, readTook={} ms, saveTook={} ms",
+          items.size(),
+          readItemsTook,
+          saveItemsTook);
       var checkPoint = items.stream().map(Item::getId).sorted().reduce((first, second) -> second);
 
       checkPoint.ifPresentOrElse(
           c -> {
+            logger.info("[readAllStories] saving checkpoint={}", c);
             checkPointRepository.saveStoriesCheckPoint(c);
             taskScheduler.schedule(() -> readAllStories(), Instant.now());
           },
-          () ->
-              taskScheduler.schedule(
-                  () -> readAllStories(), Instant.now().plus(20, ChronoUnit.SECONDS)));
+          () -> {
+            logger.warn("[readAllStories] no items fetched in batch, retrying in 20s");
+            taskScheduler.schedule(
+                () -> readAllStories(), Instant.now().plus(20, ChronoUnit.SECONDS));
+          });
     } else {
+      logger.info(
+          "[readAllStories] caught up (gap={} <= batchSize={}), next check in 20s",
+          maxItem - lastItem,
+          READ_ITEMS_BATCH_SIZE);
       taskScheduler.schedule(() -> readAllStories(), Instant.now().plus(20, ChronoUnit.SECONDS));
     }
   }
@@ -138,16 +143,21 @@ public class ReadStoriesJob {
 
   @Scheduled(cron = "${hntoplinks.top-stories.cron}")
   public void readTopStories() {
+    logger.info("[readTopStories] starting top/best/new story sync");
     var topStories = firebaseioService.readTopStories();
     var bestStories = firebaseioService.readBestStories();
     var newStories = firebaseioService.readNewStoriesNew();
-    Stream.of(topStories, bestStories, newStories)
-        .flatMap(List::stream)
-        .forEach(
-            item -> {
-              if (item != null) {
-                itemRepository.save(item);
-              }
-            });
+    logger.info(
+        "[readTopStories] fetched top={}, best={}, new={} stories",
+        topStories.size(),
+        bestStories.size(),
+        newStories.size());
+    var saved =
+        Stream.of(topStories, bestStories, newStories)
+            .flatMap(List::stream)
+            .filter(item -> item != null)
+            .peek(item -> itemRepository.save(item))
+            .count();
+    logger.info("[readTopStories] saved {} items", saved);
   }
 }
