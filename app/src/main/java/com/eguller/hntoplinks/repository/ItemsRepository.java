@@ -1,5 +1,6 @@
 package com.eguller.hntoplinks.repository;
 
+import java.lang.invoke.MethodHandles;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -9,6 +10,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.text.StringSubstitutor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -22,6 +25,9 @@ import com.eguller.hntoplinks.util.DbUtils;
 
 @Repository
 public class ItemsRepository {
+  private static final Logger logger =
+      LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
   private static final int MIN_UPVOTES = 1000;
   private static final int MIN_COMMENTS = 700;
   private final NamedParameterJdbcTemplate template;
@@ -151,6 +157,13 @@ public class ItemsRepository {
   }
 
   public List<Item> findByInterval(Interval interval, SortType sortBy, int limit, int page) {
+    logger.info(
+        "[findByInterval] from={}, to={}, sortBy={}, limit={}, page={}",
+        interval.from(),
+        interval.to(),
+        sortBy,
+        limit,
+        page);
     var queryTemplate =
         """
         SELECT
@@ -172,7 +185,7 @@ public class ItemsRepository {
     values.put("firstSortCriteria", sortCriterias[0]);
     values.put("secondSortCriteria", sortCriterias[1]);
     var query = StringSubstitutor.replace(queryTemplate, values);
-    return template.query(
+    var results = template.query(
         query,
         new MapSqlParameterSource()
             .addValue("from", interval.from())
@@ -180,6 +193,8 @@ public class ItemsRepository {
             .addValue("limit", limit)
             .addValue("offset", DbUtils.pageToOffset(page, limit)),
         (rs, rowNum) -> resultSetToItem(rs));
+    logger.info("[findByInterval] returned {} items", results.size());
+    return results;
   }
 
   @Cacheable("yearStories")
@@ -290,12 +305,13 @@ public class ItemsRepository {
   }
 
   private static Item resultSetToItem(ResultSet rs) throws SQLException {
+    var timestamp = rs.getTimestamp("time");
     return new Item(
         rs.getLong("id"),
         rs.getString("by"),
         rs.getInt("descendants"),
         rs.getInt("score"),
-        rs.getTimestamp("time").getTime(),
+        timestamp != null ? timestamp.getTime() : null,
         rs.getString("title"),
         rs.getString("type"),
         rs.getString("url"),
