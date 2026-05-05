@@ -153,7 +153,7 @@ public class ItemsRepository {
   }
 
   public List<Item> findByInterval(Interval interval, int page) {
-    return findByInterval(interval, SortType.UPVOTES, 30, 1);
+    return findByInterval(interval, SortType.UPVOTES, 30, page);
   }
 
   public List<Item> findByInterval(Interval interval, SortType sortBy, int limit, int page) {
@@ -180,7 +180,7 @@ public class ItemsRepository {
         OFFSET :offset
       """;
 
-    var sortCriterias = getSortyTypeColumnName(sortBy);
+    var sortCriterias = getSortTypeColumnName(sortBy);
     var values = new HashMap<String, String>();
     values.put("firstSortCriteria", sortCriterias[0]);
     values.put("secondSortCriteria", sortCriterias[1]);
@@ -219,7 +219,7 @@ public class ItemsRepository {
         OFFSET :offset
       """;
 
-    var sortCriterias = getSortyTypeColumnName(sortBy);
+    var sortCriterias = getSortTypeColumnName(sortBy);
     var values = new HashMap<String, String>();
     values.put("firstSortCriteria", sortCriterias[0]);
     values.put("secondSortCriteria", sortCriterias[1]);
@@ -251,7 +251,7 @@ public class ItemsRepository {
         OFFSET :offset
       """;
 
-    var sortCriterias = getSortyTypeColumnName(sort);
+    var sortCriterias = getSortTypeColumnName(sort);
     var values = new HashMap<String, String>();
     values.put("firstSortCriteria", sortCriterias[0]);
     values.put("secondSortCriteria", sortCriterias[1]);
@@ -283,7 +283,7 @@ public class ItemsRepository {
         OFFSET :offset
       """;
 
-    var sortCriterias = getSortyTypeColumnName(sortBy);
+    var sortCriterias = getSortTypeColumnName(sortBy);
     var values = new HashMap<String, String>();
     values.put("firstSortCriteria", sortCriterias[0]);
     values.put("secondSortCriteria", sortCriterias[1]);
@@ -319,7 +319,7 @@ public class ItemsRepository {
         rs.getBoolean("dead"));
   }
 
-  private String[] getSortyTypeColumnName(SortType sortBy) {
+  private String[] getSortTypeColumnName(SortType sortBy) {
     return switch (sortBy) {
       case UPVOTES -> new String[] {"score", "descendants"};
       case COMMENTS -> new String[] {"descendants", "score"};

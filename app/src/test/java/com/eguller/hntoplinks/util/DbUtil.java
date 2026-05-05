@@ -12,9 +12,9 @@ public class DbUtil {
     var queryParams = new HashMap<String, String>();
     queryParams.put("email", email);
     namedParameterJdbcTemplate.update(
-        "delete from subscription where subscriber_id in (select id from subscriber where email=:email)",
+        "delete from subscriptions where subscriber_id in (select id from subscribers where email=:email)",
         queryParams);
-    namedParameterJdbcTemplate.update("delete from subscriber where email=:email", queryParams);
+    namedParameterJdbcTemplate.update("delete from subscribers where email=:email", queryParams);
   }
 
   public static void updateDatabaseProperties(
