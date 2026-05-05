@@ -41,7 +41,7 @@ public class FirebaseioService {
 
   public Item readItem(Long itemId) {
     var item =
-        fireBaseRestClient.get().uri("/item/" + itemId + ".json").retrieve().body(Item.class);
+        fireBaseRestClient.get().uri("/item/{id}.json", itemId).retrieve().body(Item.class);
     return item;
   }
 
@@ -50,7 +50,7 @@ public class FirebaseioService {
       var items = itemIds.stream().map(itemId -> readItem(itemId)).collect(Collectors.toList());
       return items;
     } catch (Exception ex) {
-      ex.printStackTrace();
+      logger.error("Failed to read HN items {}", itemIds, ex);
       return Collections.emptyList();
     }
   }

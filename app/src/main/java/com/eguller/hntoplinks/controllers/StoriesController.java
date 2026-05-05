@@ -42,7 +42,7 @@ public class StoriesController {
       @RequestParam(value = "sort", defaultValue = "upvotes") SortType sort) {
     if (year != null && month != null && day != null) {
       return byDay(model, year, month, day, page, sort);
-    } else if (year != null & month != null) {
+    } else if (year != null && month != null) {
       return byMonth(model, year, month, page, sort);
     } else if (year != null) {
       return byYear(model, year, page, sort);

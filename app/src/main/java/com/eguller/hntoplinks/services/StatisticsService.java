@@ -168,7 +168,7 @@ public class StatisticsService {
     updatedStatistics.add(unsubscribesEntity);
 
     var dailySubscribersEntity =
-        updatedStatistics(StatKey.ANNUALLY_SUBSCRIBER.name(), statisticsMap, dailySubscribers);
+        updatedStatistics(StatKey.DAILY_SUBSCRIBER.name(), statisticsMap, dailySubscribers);
     updatedStatistics.add(dailySubscribersEntity);
 
     var weeklySubscribersEntity =

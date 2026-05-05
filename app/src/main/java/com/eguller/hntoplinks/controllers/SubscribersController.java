@@ -34,6 +34,8 @@ import jakarta.validation.Valid;
 @RequestScope
 public class SubscribersController {
   private static final String TITLE = "Subscribe to Hacker News Top Links";
+  private static final Pattern EMAIL_PATTERN =
+      Pattern.compile("^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$");
 
   @Value("${hntoplinks.captcha.enabled}")
   private boolean captchaEnabled;
@@ -152,9 +154,7 @@ public class SubscribersController {
     }
 
     if (!StringUtils.hasText(subscriptionForm.getEmail())
-        && !Pattern.compile("^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
-            .matcher(subscriptionForm.getEmail())
-            .matches()) {
+        || !EMAIL_PATTERN.matcher(subscriptionForm.getEmail()).matches()) {
       bindingResult.rejectValue("email", "email.invalid", "Invalid email address");
     }
     var content =
@@ -179,31 +179,22 @@ public class SubscribersController {
 
     if (!StringUtils.hasText(subscriptionForm.getSubscriberId())) {
       var subscriber = subscriptionForm.toSubscriberEntity();
-      var saveFailed = false;
-      final SubscriberEntity savedSubscriber;
-      SubscriberEntity tmpSaveSubscriber;
       try {
-        tmpSaveSubscriber = subscriberRepository.save(subscriber);
-        saveFailed = false;
-      } catch (Exception e) {
-        tmpSaveSubscriber = subscriber;
-        saveFailed = true;
-      }
-
-      savedSubscriber = tmpSaveSubscriber;
-      subscriptionForm.setSubscriberId(savedSubscriber.getSubscriberId());
-      var subscriptions = subscriptionForm.toSubscriptionEntities();
-      subscriptions.forEach(subscription -> subscription.setSubscriberId(savedSubscriber.getId()));
-      var savedSubscriptions = subscriptions;
-      if (!saveFailed) {
+        var savedSubscriber = subscriberRepository.save(subscriber);
+        subscriptionForm.setSubscriberId(savedSubscriber.getSubscriberId());
+        var subscriptions = subscriptionForm.toSubscriptionEntities();
+        subscriptions.forEach(
+            subscription -> subscription.setSubscriberId(savedSubscriber.getId()));
         StreamSupport.stream(subscriptionsRepository.saveAll(subscriptions).spliterator(), false)
             .collect(Collectors.toList());
-        savedSubscriber.setSubscriptionList(savedSubscriptions);
+        savedSubscriber.setSubscriptionList(subscriptions);
         emailService.sendSubscriptionEmail(savedSubscriber);
+        content.setSuccess(true);
+        content.setSuccessMessage("You have successfully subscribed to HN Top Links");
+      } catch (Exception e) {
+        bindingResult.reject("save.failed", "Failed to save subscription, please try again");
+        return "subscribe";
       }
-      content.setSuccess(true);
-      content.setSuccessMessage("You have successfully subscribed to HN Top Links");
-      // save subscribers
     } else {
       // update subscriber
       subscriberRepository
