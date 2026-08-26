@@ -68,7 +68,10 @@ public class ReadStoriesJob {
     var maxItem = firebaseioService.getMaxItem();
     var lastItem = checkPointRepository.getLastItem();
     logger.info(
-        "[readAllStories] checkpoint={}, maxItem={}, gap={}", lastItem, maxItem, maxItem - lastItem);
+        "[readAllStories] checkpoint={}, maxItem={}, gap={}",
+        lastItem,
+        maxItem,
+        maxItem - lastItem);
     if (maxItem - lastItem > READ_ITEMS_BATCH_SIZE) {
 
       var start = System.currentTimeMillis();

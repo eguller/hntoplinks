@@ -40,8 +40,7 @@ public class FirebaseioService {
   }
 
   public Item readItem(Long itemId) {
-    var item =
-        fireBaseRestClient.get().uri("/item/{id}.json", itemId).retrieve().body(Item.class);
+    var item = fireBaseRestClient.get().uri("/item/{id}.json", itemId).retrieve().body(Item.class);
     return item;
   }
 
