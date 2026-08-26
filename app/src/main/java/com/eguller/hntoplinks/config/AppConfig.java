@@ -73,7 +73,7 @@ public class AppConfig implements WebMvcConfigurer, SchedulingConfigurer {
 
   @Bean
   public RestClient fireBaseRestClient(RestTemplate restTemplate) {
-    return RestClient.builder().baseUrl(firebaseIoBaseUrl).build();
+    return RestClient.builder(restTemplate).baseUrl(firebaseIoBaseUrl).build();
   }
 
   @Bean
