@@ -185,14 +185,15 @@ public class ItemsRepository {
     values.put("firstSortCriteria", sortCriterias[0]);
     values.put("secondSortCriteria", sortCriterias[1]);
     var query = StringSubstitutor.replace(queryTemplate, values);
-    var results = template.query(
-        query,
-        new MapSqlParameterSource()
-            .addValue("from", interval.from())
-            .addValue("to", interval.to())
-            .addValue("limit", limit)
-            .addValue("offset", DbUtils.pageToOffset(page, limit)),
-        (rs, rowNum) -> resultSetToItem(rs));
+    var results =
+        template.query(
+            query,
+            new MapSqlParameterSource()
+                .addValue("from", interval.from())
+                .addValue("to", interval.to())
+                .addValue("limit", limit)
+                .addValue("offset", DbUtils.pageToOffset(page, limit)),
+            (rs, rowNum) -> resultSetToItem(rs));
     logger.info("[findByInterval] returned {} items", results.size());
     return results;
   }

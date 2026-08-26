@@ -34,8 +34,8 @@ public abstract class SmtpEmailService implements EmailProviderService {
     props.put("mail.smtp.starttls.enable", "true"); // enable STARTTLS
 
     props.put("mail.smtp.connectiontimeout", "10000"); // TCP connect
-    props.put("mail.smtp.timeout", "10000");           // socket read
-    props.put("mail.smtp.writetimeout", "10000");      // socket write
+    props.put("mail.smtp.timeout", "10000"); // socket read
+    props.put("mail.smtp.writetimeout", "10000"); // socket write
 
     // create Authenticator object to pass in Session.getInstance argument
     Authenticator auth =
