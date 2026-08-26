@@ -46,6 +46,7 @@ jobs:
     if: github.ref == 'refs/heads/master'
     steps:
       - uses: actions/checkout@v4
+      - name: Download hntoplinks.jar
         uses: actions/download-artifact@v4
         with:
           name: hntoplinks.jar
