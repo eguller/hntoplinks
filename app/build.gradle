@@ -1,6 +1,6 @@
 plugins {
-  id 'org.springframework.boot' version '3.1.5'
-  id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+  id 'org.springframework.boot' version '3.3.5'
+  id 'io.spring.dependency-management' version '1.1.6'
   id 'java'
   id 'idea'
   id 'com.diffplug.spotless' version '6.25.0'
@@ -30,14 +30,14 @@ repositories {
 
 bootJar {
   mainClass = 'com.eguller.hntoplinks.Application'
-  archiveName = 'hntoplinks.jar'
+  archiveFileName = 'hntoplinks.jar'
 
 }
 
 ext {
-  springBootVersion = '3.1.5'
-  springWebVersion = '6.1.1'
-  lombokVersion = '1.18.22'
+  springBootVersion = '3.3.5'
+  springWebVersion = '6.1.14'
+  lombokVersion = '1.18.34'
 }
 
 ext['testcontainers.version'] = '1.20.6'
