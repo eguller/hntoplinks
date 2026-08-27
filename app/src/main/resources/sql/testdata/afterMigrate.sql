@@ -99,24 +99,3 @@ values (nextval('hibernate_sequence'), 'hntoplinks.com', '43', CURRENT_DATE - IN
 insert into item (id, comhead, comment, postdate, hnid, lastupdate, points, title, posturl, hnuser)
 values (nextval('hibernate_sequence'), 'hntoplinks.com', '44', CURRENT_DATE - INTERVAL '12 hour', 34,
         CURRENT_DATE + INTERVAL '1 hour', 266, ' Test - 34', 'https://hntoplinks.com/34', 'eguller') on conflict do nothing;
-insert into statistic (id, stat_key, stat_value)
-values (nextval('hibernate_sequence'), 'MONTHLY_SUBSCRIBER', '135') on conflict do nothing;
-insert into statistic (id, stat_key, stat_value)
-values (nextval('hibernate_sequence'), 'ANNUALLY_SUBSCRIBER', '110') on conflict do nothing;
-insert into statistic (id, stat_key, stat_value)
-values (nextval('hibernate_sequence'), 'UNSUBSCRIBES', '185') on conflict do nothing;
-insert into statistic (id, stat_key, stat_value)
-values (nextval('hibernate_sequence'), 'SUCCESS_EMAIL_COUNT', '327537') on conflict do nothing;
-insert into statistic (id, stat_key, stat_value)
-values (nextval('hibernate_sequence'), 'LAST_EMAIL_SENT', '15.03.2021 18:48:01') on conflict do nothing;
-insert into statistic (id, stat_key, stat_value)
-values (nextval('hibernate_sequence'), 'LAST_HN_UPDATE', '15.03.2021 19:08:51') on conflict do nothing;
-insert into statistic (id, stat_key, stat_value)
-values (nextval('hibernate_sequence'), 'SUBSCRIBERS', '509') on conflict do nothing;
-insert into statistic (id, stat_key, stat_value)
-values (nextval('hibernate_sequence'), 'WEEKLY_SUBSCRIBER', '428') on conflict do nothing;
-insert into statistic (id, stat_key, stat_value)
-values (nextval('hibernate_sequence'), 'FAILURE_EMAIL_COUNT', '2496') on conflict do nothing;
-insert into statistic (id, stat_key, stat_value)
-values (nextval('hibernate_sequence'), 'DAILY_SUBSCRIBER', '169') on conflict do nothing;
-

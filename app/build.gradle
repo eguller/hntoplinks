@@ -40,6 +40,8 @@ ext {
   lombokVersion = '1.18.22'
 }
 
+ext['testcontainers.version'] = '1.20.6'
+
 
 spotless {
   java {
@@ -99,10 +101,11 @@ dependencies {
   runtimeOnly 'org.postgresql:postgresql:42.6.0'
   annotationProcessor "org.springframework.boot:spring-boot-configuration-processor:${springBootVersion}"
   testImplementation "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
-  testImplementation "org.testcontainers:postgresql:1.19.7"
+  testImplementation "org.testcontainers:postgresql"
 
 }
 
 test {
   useJUnitPlatform()
+  environment 'DOCKER_API_VERSION', '1.44'
 }
