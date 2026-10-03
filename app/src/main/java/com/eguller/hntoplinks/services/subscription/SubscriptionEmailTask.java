@@ -22,8 +22,13 @@ public abstract class SubscriptionEmailTask {
   private EmailProviderService emailProviderService;
 
   public void execute() {
-    var subject = getSubject();
     var items = getItems();
+    if (items == null || items.isEmpty()) {
+      // nothing to send; still advance the schedule so we don't retry on every run
+      emailTarget.subscription().setNextSendDate(getNextSendDate());
+      return;
+    }
+    var subject = getSubject();
     var maxStoryCount = getMaxStoryCount();
     var topStories = items.subList(0, Math.min(items.size(), maxStoryCount));
     var content =
